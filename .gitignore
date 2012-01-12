@@ -1,0 +1,7 @@
+
+*.class
+.idea/*
+*.jar
+*.lnk
+.project
+.classpath
