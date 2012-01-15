@@ -38,6 +38,14 @@ public class  Vector2D implements Cloneable
       return new Vector2D(x, y);
    }
 
+   public static Vector2D fromRadianAngleAndLength(float angleInRadians, float length)
+   {
+      float x = length * (float)Math.cos(angleInRadians);
+      float y = length * (float)Math.sin(angleInRadians);
+
+      return new Vector2D(x, y);
+   }
+
    private float x;
    private float y;
 
@@ -161,7 +169,7 @@ public class  Vector2D implements Cloneable
       }
       else // 4 quarter
       {
-         resAngle = (float)Math.PI + asin;
+         resAngle = 2*(float)Math.PI + asin;
       }
 
       return (float)(180 / Math.PI) * resAngle;

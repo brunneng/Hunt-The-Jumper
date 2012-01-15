@@ -1,5 +1,6 @@
 package com.greenteam.huntjumper.utils;
 
+import net.phys2d.math.ROVector2f;
 import net.phys2d.math.Vector2f;
 
 import java.text.DecimalFormat;
@@ -34,6 +35,12 @@ public class Point implements Cloneable
    {
       this.x = other.x;
       this.y = other.y;
+   }
+
+   public Point(ROVector2f other)
+   {
+      this.x = other.getX();
+      this.y = other.getY();
    }
 
    public float getX()

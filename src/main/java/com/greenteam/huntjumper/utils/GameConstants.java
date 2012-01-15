@@ -14,6 +14,8 @@ public final class GameConstants
    public static final float JUMPER_RADIUS = 10;
    public static final float JUMPER_MASS = 100;
 
-   public static final float DEFAULT_MAP_RING_RADIUS = 2000;
-   public static final int DEFAULT_MAP_RING_ANGLES_COUNT = 36;
+   public static final float DEFAULT_MAP_RING_RADIUS = 500;
+   public static final int DEFAULT_MAP_RING_ANGLES_COUNT = 18;
+
+   public static final float CAMERA_MAX_DIST = 100;
 }

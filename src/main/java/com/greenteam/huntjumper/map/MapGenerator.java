@@ -19,7 +19,7 @@ public class MapGenerator
 {
    public static Map generateRingMap(float radius)
    {
-      Vector2D v = new Vector2D(new Point(0, 0), new Point(0, radius));
+      Vector2D v = new Vector2D(new Point(0, 0), new Point(radius, 0));
       int anglesCount = GameConstants.DEFAULT_MAP_RING_ANGLES_COUNT;
       float angleStep = 360.0f / anglesCount;
 
@@ -41,8 +41,10 @@ public class MapGenerator
       }
 
       Polygon polygon = new Polygon(points.toArray(new ROVector2f[points.size()]));
-      List<StaticBody> res = new ArrayList<StaticBody>(); 
-      res.add(new StaticBody(polygon));
+      List<StaticBody> res = new ArrayList<StaticBody>();
+      StaticBody body = new StaticBody(polygon);
+      body.setRestitution(1.0f);
+      res.add(body);
       return new Map(res);
    }
 }
