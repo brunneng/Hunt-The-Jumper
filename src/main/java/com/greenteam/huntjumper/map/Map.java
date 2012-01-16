@@ -35,7 +35,7 @@ public class Map implements IVisibleObject
    }
 
    @Override
-   public void draw(Graphics g, Camera camera)
+   public void draw(Graphics g)
    {
       g.setColor(ViewConstants.defaultMapColor);
       for (StaticBody b : mapPolygons)
@@ -47,7 +47,7 @@ public class Map implements IVisibleObject
          for (int i = 0; i < vertices.length; ++i)
          {
             ROVector2f v = vertices[i];
-            Point viewPoint = camera.toView(v);
+            Point viewPoint = Camera.instance().toView(v);
             viewVertices[2*i] = viewPoint.getX();
             viewVertices[2*i + 1] = viewPoint.getY();
          }

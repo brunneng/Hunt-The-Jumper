@@ -1,6 +1,9 @@
 package com.greenteam.huntjumper.contoller;
 
+import com.greenteam.huntjumper.Camera;
 import com.greenteam.huntjumper.model.Jumper;
+import com.greenteam.huntjumper.utils.GameConstants;
+import com.greenteam.huntjumper.utils.Point;
 import net.phys2d.math.Vector2f;
 import org.newdawn.slick.GameContainer;
 
@@ -10,15 +13,22 @@ import org.newdawn.slick.GameContainer;
 
 public class MouseController implements IJumperController
 {
+   private GameContainer container;
 
-   public void update(Jumper jumper, GameContainer container, int delta)
+   public MouseController(GameContainer container)
+   {
+      this.container = container;
+   }
+
+   public void update(Jumper jumper, int delta)
    {
       float mouseX = container.getInput().getMouseX();
       float mouseY = container.getInput().getMouseY();
       Vector2f velocity = new Vector2f();
-      velocity.set((mouseX - jumper.getBody().getPosition().getX()),
-              (mouseY - jumper.getBody().getPosition().getY()));
-      velocity.normalise();
-      jumper.getBody().adjustVelocity(velocity);
+      Point realPoint = Camera.instance().toPhys(new Vector2f(mouseX, mouseY));
+      velocity.set((realPoint.getX() - jumper.getBody().getPosition().getX()),
+              (realPoint.getY() - jumper.getBody().getPosition().getY()));
+      velocity.scale(GameConstants.JUMPER_FORCE_MULTIPLIER);
+      jumper.getBody().addForce(velocity);
    }
 }

@@ -28,12 +28,10 @@ public class HuntJumperGame implements Game
    private Map map;
    private List<JumperView> jumpers;
    private Jumper myJumper;
-   
-   private Camera camera;
 
    private void initWorld()
    {
-      world = new World(new Vector2f(0f, 300.0f), 5);
+      world = new World(new Vector2f(0f, 0f), 5);
    }
    
    private void initMap()
@@ -45,7 +43,7 @@ public class HuntJumperGame implements Game
       }
    }
 
-   private void initJumpers()
+   private void initJumpers(GameContainer container)
    {
       float maxRandomRadius = GameConstants.DEFAULT_MAP_RING_RADIUS - GameConstants.JUMPER_RADIUS;
       Vector2D v = new Vector2D(Utils.rand.nextFloat()*maxRandomRadius, 0);
@@ -56,13 +54,13 @@ public class HuntJumperGame implements Game
       myJumper = new Jumper("GreenTea", Color.red, new Point(x, y).toPhysVector());
 
       jumpers = new ArrayList<JumperView>();
-      jumpers.add(new JumperView(myJumper).addController(new MouseController()));
+      jumpers.add(new JumperView(myJumper).addController(new MouseController(container)));
       world.add(myJumper.getBody());
    }
 
    private void initCamera()
    {
-      camera = new Camera(new Point(myJumper.getBody().getPosition()),
+      Camera.instance = new Camera(new Point(myJumper.getBody().getPosition()),
               ViewConstants.VIEW_WIDTH, ViewConstants.VIEW_HEIGHT);
    }
 
@@ -70,20 +68,20 @@ public class HuntJumperGame implements Game
    {
       initWorld();
       initMap();
-      initJumpers();
+      initJumpers(container);
       initCamera();
    }
 
    private void updateCamera()
    {
       Point myJumperPos = new Point(myJumper.getBody().getPosition());
-      Vector2D jumperToCamera = new Vector2D(myJumperPos, camera.getViewCenter());
+      Vector2D jumperToCamera = new Vector2D(myJumperPos, Camera.instance().getViewCenter());
 
       if (jumperToCamera.length() > GameConstants.CAMERA_MAX_DIST)
       {
          jumperToCamera.setLength(GameConstants.CAMERA_MAX_DIST);
          Point newCameraPos = myJumperPos.plus(jumperToCamera);
-         camera.setViewCenter(newCameraPos);
+         Camera.instance().setViewCenter(newCameraPos);
       }
    }
 
@@ -96,10 +94,10 @@ public class HuntJumperGame implements Game
 
    public void render(GameContainer container, Graphics g) throws SlickException
    {
-      map.draw(g, camera);
+      map.draw(g);
       for (JumperView j : jumpers)
       {
-         j.draw(g, camera);
+         j.draw(g);
       }
 
    }

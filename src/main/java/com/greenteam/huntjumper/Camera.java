@@ -1,6 +1,7 @@
 package com.greenteam.huntjumper;
 
 import com.greenteam.huntjumper.utils.Point;
+import com.greenteam.huntjumper.utils.ViewConstants;
 import net.phys2d.math.ROVector2f;
 
 /**
@@ -9,6 +10,8 @@ import net.phys2d.math.ROVector2f;
  */
 public class Camera
 {
+   static Camera instance;
+
    private Point viewCenter;
    private int viewWidth;
    private int viewHeight;
@@ -16,7 +19,11 @@ public class Camera
    private float minX;
    private float minY;
 
-   public Camera(Point pos, int viewWidth, int viewHeight)
+   public static Camera instance() {
+      return instance;
+   }
+
+   Camera(Point pos, int viewWidth, int viewHeight)
    {
       this.viewWidth = viewWidth;
       this.viewHeight = viewHeight;
@@ -58,5 +65,10 @@ public class Camera
    public Point toView(ROVector2f physPoint)
    {
       return new Point(physPoint.getX() - minX, physPoint.getY() - minY);
+   }
+
+   public Point toPhys(ROVector2f physPoint)
+   {
+      return new Point(physPoint.getX() + minX, physPoint.getY() + minY);
    }
 }

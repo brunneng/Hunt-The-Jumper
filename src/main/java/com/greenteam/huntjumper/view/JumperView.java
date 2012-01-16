@@ -31,9 +31,9 @@ public class JumperView implements IVisibleObject
       this.model = jumper;
    }
 
-   public void draw(Graphics g, Camera camera)
+   public void draw(Graphics g)
    {
-      Point viewCenter = camera.toView(model.getBody().getPosition());
+      Point viewCenter = Camera.instance().toView(model.getBody().getPosition());
       float radius = model.getBodyCircle().getRadius();
 
       Circle viewCircle = new Circle(viewCenter.getX(), viewCenter.getY(), radius);
@@ -48,7 +48,7 @@ public class JumperView implements IVisibleObject
    }
 
    public void update(GameContainer container, int delta) {
-      for(IJumperController c : controllers) c.update(model, container, delta);
+      for(IJumperController c : controllers) c.update(model, delta);
    }
 
    public JumperView addController(IJumperController controller)

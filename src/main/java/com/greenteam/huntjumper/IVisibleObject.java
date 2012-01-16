@@ -8,5 +8,5 @@ import org.newdawn.slick.Graphics;
  */
 public interface IVisibleObject
 {
-   void draw(Graphics g, Camera camera);
+   void draw(Graphics g);
 }

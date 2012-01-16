@@ -9,5 +9,5 @@ import org.newdawn.slick.GameContainer;
 
 public interface IJumperController
 {
-   void update(Jumper jumper, GameContainer container, int delta);
+   void update(Jumper jumper, int delta);
 }
