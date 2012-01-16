@@ -18,7 +18,7 @@ import org.newdawn.slick.fills.GradientFill;
  * Created by IntelliJ IDEA. User: GreenTea Date: 14.01.12 Time: 21:11 To change this template use
  * File | Settings | File Templates.
  */
-public class Jumper implements IVisibleObject
+public class Jumper
 {
    private String playerName;
    private Color color;
@@ -57,21 +57,24 @@ public class Jumper implements IVisibleObject
       return playerName;
    }
 
-   @Override
-   public void draw(Graphics g, Camera camera)
+
+   public Color getColor()
    {
-      Point viewCenter = camera.toView(body.getPosition());
-      float radius = bodyCircle.getRadius();
+      return color;
+   }
 
-      org.newdawn.slick.geom.Circle viewCircle = new org.newdawn.slick.geom.Circle(
-              viewCenter.getX(), viewCenter.getY(), radius);
+   public void setColor(Color color)
+   {
+      this.color = color;
+   }
 
-      Vector2D rotationDirection = Vector2D.fromRadianAngleAndLength(body.getRotation(), radius);
-      rotationDirection.plus(new Vector2D(viewCenter));
+   public Circle getBodyCircle()
+   {
+      return bodyCircle;
+   }
 
-      g.setColor(color);
-      g.draw(viewCircle);
-      g.drawLine(viewCenter.getX(), viewCenter.getY(),
-              rotationDirection.getX(), rotationDirection.getY());
+   public void setBodyCircle(Circle bodyCircle)
+   {
+      this.bodyCircle = bodyCircle;
    }
 }

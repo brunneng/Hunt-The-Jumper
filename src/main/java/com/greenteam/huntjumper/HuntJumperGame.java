@@ -1,9 +1,11 @@
 package com.greenteam.huntjumper;
 
+import com.greenteam.huntjumper.contoller.MouseController;
 import com.greenteam.huntjumper.map.Map;
 import com.greenteam.huntjumper.map.MapGenerator;
 import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.utils.*;
+import com.greenteam.huntjumper.view.JumperView;
 import net.phys2d.math.Vector2f;
 import net.phys2d.raw.StaticBody;
 import net.phys2d.raw.World;
@@ -24,7 +26,7 @@ public class HuntJumperGame implements Game
    
    private World world;
    private Map map;
-   private List<Jumper> jumpers;
+   private List<JumperView> jumpers;
    private Jumper myJumper;
    
    private Camera camera;
@@ -53,8 +55,8 @@ public class HuntJumperGame implements Game
 
       myJumper = new Jumper("GreenTea", Color.red, new Point(x, y).toPhysVector());
 
-      jumpers = new ArrayList<Jumper>();
-      jumpers.add(myJumper);
+      jumpers = new ArrayList<JumperView>();
+      jumpers.add(new JumperView(myJumper).addController(new MouseController()));
       world.add(myJumper.getBody());
    }
 
@@ -87,14 +89,15 @@ public class HuntJumperGame implements Game
 
    public void update(GameContainer container, int delta) throws SlickException
    {
-      world.step(0.001f*delta);
+      world.step(0.001f * delta);
       updateCamera();
+      for (JumperView j : jumpers) j.update(container, delta);
    }
 
    public void render(GameContainer container, Graphics g) throws SlickException
    {
       map.draw(g, camera);
-      for (Jumper j : jumpers)
+      for (JumperView j : jumpers)
       {
          j.draw(g, camera);
       }
