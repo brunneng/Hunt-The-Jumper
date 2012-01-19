@@ -28,6 +28,7 @@ public class HuntJumperGame implements Game
    private Map map;
    private List<JumperView> jumpers;
    private Jumper myJumper;
+   private TimeAccumulator timeAccumulator = new TimeAccumulator();
 
    private void initWorld()
    {
@@ -87,9 +88,13 @@ public class HuntJumperGame implements Game
 
    public void update(GameContainer container, int delta) throws SlickException
    {
-      world.step(0.001f * delta);
-      updateCamera();
-      for (JumperView j : jumpers) j.update(container, delta);
+      int cycles = timeAccumulator.cycles(delta);
+      for (int i = 0; i < cycles; i++) 
+      {
+         world.step(0.001f * TimeAccumulator.CYCLE_LENGTH);
+         updateCamera();
+         for (JumperView j : jumpers) j.update(container, delta);
+      }
    }
 
    public void render(GameContainer container, Graphics g) throws SlickException

@@ -3,12 +3,14 @@ package com.greenteam.huntjumper.contoller;
 import com.greenteam.huntjumper.Camera;
 import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.utils.Point;
+import net.phys2d.math.ROVector2f;
 import net.phys2d.math.Vector2f;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Input;
 
 import static com.greenteam.huntjumper.utils.GameConstants.*;
 import static java.lang.String.format;
+import static org.newdawn.slick.Input.*;
 
 /**
  * Listen and react for mouse and/or keyboard events
@@ -41,6 +43,8 @@ public class MouseController implements IJumperController
          if (releasing()) {
             scale *= accumulatedScale > MAX_FORCE_SCALE ? MAX_FORCE_SCALE : accumulatedScale;
             accumulatedScale = MIN_IMPULSE;
+            Vector2f velocity = (Vector2f) jumper.getBody().getVelocity();
+            jumper.getBody().adjustVelocity(velocity.negate());
          }
 
          if (scale > DEFAULT_FORCE_SCALE) System.out.println(format("Force scale is %s", scale));
@@ -53,15 +57,16 @@ public class MouseController implements IJumperController
    private boolean releasing()
    {
       boolean result = false;
-      if (!container.getInput().isMouseButtonDown(Input.MOUSE_LEFT_BUTTON) && accumulatedScale > MIN_IMPULSE)
+      if (!container.getInput().isMouseButtonDown(MOUSE_LEFT_BUTTON) && accumulatedScale > MIN_IMPULSE)
       {
          result = true;
       }
       return result;
    }
 
-   private boolean accumulating() {
-      if (container.getInput().isMouseButtonDown(Input.MOUSE_LEFT_BUTTON))
+   private boolean accumulating()
+   {
+      if (container.getInput().isMouseButtonDown(MOUSE_LEFT_BUTTON))
       {
          accumulatedScale += SCALE_INC;
          return true;
@@ -69,12 +74,13 @@ public class MouseController implements IJumperController
       return false;
    }
 
-   private Vector2f createForce(Jumper jumper, float scale, float mouseX, float mouseY) {
+   private Vector2f createForce(Jumper jumper, float scale, float mouseX, float mouseY)
+   {
       Vector2f velocity = new Vector2f();
       Point realPoint = Camera.instance().toPhys(new Vector2f(mouseX, mouseY));
       velocity.set((realPoint.getX() - jumper.getBody().getPosition().getX()),
               (realPoint.getY() - jumper.getBody().getPosition().getY()));
-      velocity.negate();
+      velocity.normalise();
       velocity.scale(scale);
       return velocity;
    }

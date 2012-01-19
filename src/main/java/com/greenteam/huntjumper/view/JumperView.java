@@ -12,8 +12,10 @@ import org.newdawn.slick.geom.Circle;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static com.greenteam.huntjumper.utils.Vector2D.fromRadianAngleAndLength;
+import static java.lang.String.format;
 
 /**
  * Provides methods and properties for drawing Jumper on the screen
@@ -24,7 +26,7 @@ public class JumperView implements IVisibleObject
 {
    private Jumper model;
    private List<IJumperController> controllers = new ArrayList<IJumperController>();
-
+   private Random random = new Random();
 
    public JumperView(Jumper jumper)
    {
