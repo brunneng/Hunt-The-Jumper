@@ -231,6 +231,12 @@ public class  Vector2D implements Cloneable
                 Utils.equals(getY(),v.getY())).isEquals();
     }
 
+    public static Vector2D fromPhys(Vector2f phys)
+    {
+      return new Vector2D(phys.x, phys.y);
+    }
+
+
     public String toString()
     {
         return "[x=" + x + "][y=" + y + "]";

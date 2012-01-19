@@ -1,5 +1,10 @@
 package com.greenteam.huntjumper.utils;
 
+import com.greenteam.huntjumper.Camera;
+import net.phys2d.math.Vector2f;
+import net.phys2d.raw.Body;
+import org.newdawn.slick.Input;
+
 import java.util.Random;
 
 /**
@@ -19,5 +24,15 @@ public final class Utils
    public static boolean equals(double d1, double d2)
    {
       return Math.abs(d1 - d2) < ERROR;
+   }
+
+   public static Vector2D mouseVector(Input input, Body body, Camera camera)
+   {
+      float mouseX = input.getMouseX();
+      float mouseY = input.getMouseY();
+      Point realPoint = camera.toPhys(new Vector2f(mouseX, mouseY));
+      return new Vector2D((realPoint.getX() - body.getPosition().getX()),
+              (realPoint.getY() - body.getPosition().getY())).unit();
+
    }
 }
