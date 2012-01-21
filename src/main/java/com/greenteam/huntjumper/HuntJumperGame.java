@@ -93,7 +93,10 @@ public class HuntJumperGame implements Game
       {
          world.step(0.001f * TimeAccumulator.CYCLE_LENGTH);
          updateCamera();
-         for (JumperView j : jumpers) j.update(container, delta);
+         for (JumperView j : jumpers)
+         {
+            j.update(container, TimeAccumulator.CYCLE_LENGTH);
+         }
       }
    }
 
