@@ -4,7 +4,6 @@ import com.greenteam.huntjumper.Camera;
 import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.utils.Utils;
 import com.greenteam.huntjumper.utils.Vector2D;
-import net.phys2d.math.Vector2f;
 import net.phys2d.raw.Body;
 import org.newdawn.slick.GameContainer;
 
@@ -43,19 +42,15 @@ public class MouseController extends AbstractJumperController
             scale *= getAccumulatedImpulse();
             System.out.println(format("Accumulated impulse is %s", getAccumulatedImpulse()));
             Vector2D velocity = Vector2D.fromVector2f(jumper.getBody().getVelocity());
-            float angel = Math.abs(velocity.angleToVector(mouseVector));
-            scale *= angel;
+            float angle = Math.abs(velocity.angleToVector(mouseVector));
+            scale *= angle;
          }
 
          resetImpulse();
       }
 
       mouseVector.setLength(scale);
-      Vector2f force = mouseVector.toVector2f();
-
-      body.addForce(force);
-
-
+      body.addForce(mouseVector.toVector2f());
    }
 
    private boolean releasing()

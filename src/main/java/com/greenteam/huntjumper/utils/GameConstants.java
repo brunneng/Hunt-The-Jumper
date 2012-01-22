@@ -18,7 +18,7 @@ public final class GameConstants
    public static final float IMPULSE_INC = 0.1f;
    public static final float MAX_IMPULSE = 10f;
 
-   public static final float DEFAULT_MAP_RING_RADIUS = 500;
+   public static final float DEFAULT_MAP_RING_RADIUS = 600;
    public static final int DEFAULT_MAP_RING_ANGLES_COUNT = 18;
 
    public static final float CAMERA_MAX_DIST = 100;

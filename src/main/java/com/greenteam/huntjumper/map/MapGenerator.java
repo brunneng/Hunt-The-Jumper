@@ -29,20 +29,33 @@ public class MapGenerator
          points.add(v.toVector2f());
       }
 
-      float biggerRadius = radius * 1.2f;
-      v.setLength(biggerRadius);
+//      float biggerRadius = radius * 1.2f;
+//      v.setLength(biggerRadius);
+//      points.add(v.toVector2f());
+//      for (int i = 0; i < anglesCount; ++i)
+//      {
+//         v.rotate(-angleStep);
+//         points.add(v.toVector2f());
+//      }
+
+      Polygon polygon = new Polygon(points.toArray(new ROVector2f[points.size()]));
+      StaticBody innerBody = new StaticBody(polygon);
+      innerBody.setRestitution(1.0f);
+
+      float biggerRadius = radius * 1.1f;
+      v = new Vector2D(new Point(0, 0), new Point(biggerRadius, 0));
+      points = new ArrayList<ROVector2f>();
       points.add(v.toVector2f());
       for (int i = 0; i < anglesCount; ++i)
       {
-         v.rotate(-angleStep);
+         v.rotate(angleStep);
          points.add(v.toVector2f());
       }
+      polygon = new Polygon(points.toArray(new ROVector2f[points.size()]));
+      StaticBody outerBody = new StaticBody(polygon);
+      outerBody.setRestitution(1.0f);
 
-      Polygon polygon = new Polygon(points.toArray(new ROVector2f[points.size()]));
-      List<StaticBody> res = new ArrayList<StaticBody>();
-      StaticBody body = new StaticBody(polygon);
-      body.setRestitution(1.0f);
-      res.add(body);
-      return new Map(res);
+      List<StaticBody> polygons = new ArrayList<StaticBody>();
+      return new Map(outerBody, innerBody, polygons);
    }
 }

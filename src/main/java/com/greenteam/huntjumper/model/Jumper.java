@@ -94,15 +94,25 @@ public class Jumper implements IVisibleObject
       Point viewCenter = Camera.instance().toView(getBody().getPosition());
       float radius = getBodyCircle().getRadius();
 
-      org.newdawn.slick.geom.Circle
-              viewCircle = new org.newdawn.slick.geom.Circle(viewCenter.getX(), viewCenter.getY(), radius);
+      org.newdawn.slick.geom.Circle viewCircle = new org.newdawn.slick.geom.Circle(
+              viewCenter.getX(), viewCenter.getY(), radius);
 
-      Vector2D rotationDirection = fromRadianAngleAndLength(getBody().getRotation(), radius);
-      rotationDirection.plus(new Vector2D(viewCenter));
 
       g.setColor(getColor());
       g.draw(viewCircle);
-      g.drawLine(viewCenter.getX(), viewCenter.getY(),
-              rotationDirection.getX(), rotationDirection.getY());
+
+      final int segmentsCount = 6;
+      final float anglePerSegment = 360 / segmentsCount;
+      Vector2D rotationDirection = fromRadianAngleAndLength(getBody().getRotation(), radius);
+      for (int i = 0; i < segmentsCount; ++i)
+      {
+         Vector2D vectorFromCenter = new Vector2D(rotationDirection);
+         vectorFromCenter.plus(new Vector2D(viewCenter));
+
+         g.drawLine(viewCenter.getX(), viewCenter.getY(),
+                 vectorFromCenter.getX(), vectorFromCenter.getY());
+         rotationDirection.rotate(anglePerSegment);
+      }
+
    }
 }

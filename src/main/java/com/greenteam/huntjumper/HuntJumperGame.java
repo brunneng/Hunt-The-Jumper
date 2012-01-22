@@ -34,7 +34,7 @@ public class HuntJumperGame implements Game
    private void initMap()
    {
       map = MapGenerator.generateRingMap(GameConstants.DEFAULT_MAP_RING_RADIUS);
-      for (StaticBody body : map.getMapPolygons())
+      for (StaticBody body : map.getAllPolygons())
       {
          world.add(body);
       }

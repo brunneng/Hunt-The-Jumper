@@ -3,6 +3,7 @@ package com.greenteam.huntjumper.map;
 import com.greenteam.huntjumper.Camera;
 import com.greenteam.huntjumper.IVisibleObject;
 import com.greenteam.huntjumper.utils.Point;
+import com.greenteam.huntjumper.utils.Utils;
 import com.greenteam.huntjumper.utils.ViewConstants;
 import net.phys2d.math.ROVector2f;
 import net.phys2d.raw.StaticBody;
@@ -19,11 +20,22 @@ import java.util.List;
  */
 public class Map implements IVisibleObject
 {
-   private List<StaticBody> mapPolygons;
+   private StaticBody outerPolygon;
+   private StaticBody innerPolygon;
 
-   public Map(List<StaticBody> mapPolygons)
+   private List<StaticBody> mapPolygons;
+   private List<StaticBody> allPolygons;
+
+   public Map(StaticBody outerPolygon, StaticBody innerPolygon, List<StaticBody> mapPolygons)
    {
+      this.outerPolygon = outerPolygon;
+      this.innerPolygon = innerPolygon;
       this.mapPolygons = mapPolygons;
+
+      allPolygons = new ArrayList<StaticBody>();
+      allPolygons.add(outerPolygon);
+      allPolygons.add(innerPolygon);
+      allPolygons.addAll(mapPolygons);
    }
 
    public List<Shape> toGraphicsShapes()
@@ -37,29 +49,23 @@ public class Map implements IVisibleObject
    public void draw(Graphics g)
    {
       g.setColor(ViewConstants.defaultMapColor);
+      org.newdawn.slick.geom.Polygon op = Utils.toViewPolygon(this.outerPolygon);
+      g.fill(op);
+
+      g.setColor(ViewConstants.defaultGroundColor);
+      org.newdawn.slick.geom.Polygon ip = Utils.toViewPolygon(this.innerPolygon);
+      g.fill(ip);
+
       for (StaticBody b : mapPolygons)
       {
-         Polygon p = (Polygon)b.getShape();
-
-         ROVector2f[] vertices = p.getVertices();
-         float[] viewVertices = new float[vertices.length * 2];
-         for (int i = 0; i < vertices.length; ++i)
-         {
-            ROVector2f v = vertices[i];
-            Point viewPoint = Camera.instance().toView(v);
-            viewVertices[2*i] = viewPoint.getX();
-            viewVertices[2*i + 1] = viewPoint.getY();
-         }
-
-         org.newdawn.slick.geom.Polygon viewPolygon = new org.newdawn.slick.geom.Polygon(
-                 viewVertices);
-         viewPolygon.setAllowDuplicatePoints(false);
+         g.setColor(ViewConstants.defaultMapColor);
+         org.newdawn.slick.geom.Polygon viewPolygon = Utils.toViewPolygon(b);
          g.draw(viewPolygon);
       }
    }
 
-   public List<StaticBody> getMapPolygons()
+   public List<StaticBody> getAllPolygons()
    {
-      return mapPolygons;
+      return allPolygons;
    }
 }

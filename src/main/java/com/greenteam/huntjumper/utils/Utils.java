@@ -1,8 +1,11 @@
 package com.greenteam.huntjumper.utils;
 
 import com.greenteam.huntjumper.Camera;
+import net.phys2d.math.ROVector2f;
 import net.phys2d.math.Vector2f;
 import net.phys2d.raw.Body;
+import net.phys2d.raw.StaticBody;
+import net.phys2d.raw.shapes.Polygon;
 import org.newdawn.slick.Input;
 
 import java.util.Random;
@@ -31,5 +34,23 @@ public final class Utils
       float mouseY = input.getMouseY();
       Point realPoint = camera.toPhys(new Point(mouseX, mouseY));
       return new Vector2D(new Point(body.getPosition()), realPoint);
+   }
+
+   public static org.newdawn.slick.geom.Polygon toViewPolygon(StaticBody b)
+   {
+      Polygon p = (Polygon)b.getShape();
+
+      ROVector2f[] vertices = p.getVertices();
+      float[] viewVertices = new float[vertices.length * 2];
+      for (int i = 0; i < vertices.length; ++i)
+      {
+         ROVector2f v = vertices[i];
+         Point viewPoint = Camera.instance().toView(v);
+         viewVertices[2*i] = viewPoint.getX();
+         viewVertices[2*i + 1] = viewPoint.getY();
+      }
+
+      return new org.newdawn.slick.geom.Polygon(
+              viewVertices);
    }
 }
