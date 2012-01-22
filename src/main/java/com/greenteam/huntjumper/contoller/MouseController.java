@@ -32,7 +32,8 @@ public class MouseController extends AbstractJumperController
       }
 
       final Body body = jumper.getBody();
-      Vector2D mouseVector = Utils.getPhysVectorFromBodyToCursor(body, container.getInput(), Camera.instance());
+      Vector2D mouseVector = Utils.getPhysVectorToCursor(body, container.getInput(),
+              Camera.instance());
 
       float scale = DEFAULT_FORCE_SCALE;
       if (releasing())

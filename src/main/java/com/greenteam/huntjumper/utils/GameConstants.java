@@ -10,7 +10,7 @@ public final class GameConstants
       
    }
    
-   public static final float JUMPER_RADIUS = 10;
+   public static final float JUMPER_RADIUS = 10f;
    public static final float JUMPER_MASS = 10;
    public static final float DEFAULT_FORCE_SCALE = 1000;
 

@@ -28,7 +28,7 @@ public final class Utils
       return Math.abs(d1 - d2) < ERROR;
    }
 
-   public static Vector2D getPhysVectorFromBodyToCursor(Body body, Input input, Camera camera)
+   public static Vector2D getPhysVectorToCursor(Body body, Input input, Camera camera)
    {
       float mouseX = input.getMouseX();
       float mouseY = input.getMouseY();
