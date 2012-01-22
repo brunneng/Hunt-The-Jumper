@@ -38,6 +38,7 @@ public class Jumper implements IVisibleObject
       this.color = color;
       bodyCircle = new Circle(GameConstants.JUMPER_RADIUS);
       body = new Body(bodyCircle, GameConstants.JUMPER_MASS);
+      body.setMaxVelocity(GameConstants.MAX_VELOCITY, GameConstants.MAX_VELOCITY);
       body.setPosition(startPos.getX(), startPos.getY());
       body.setRestitution(1.0f);
       this.controller = controller;
