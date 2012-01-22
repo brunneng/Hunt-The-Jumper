@@ -5,8 +5,7 @@ import com.greenteam.huntjumper.utils.ViewConstants;
 import net.phys2d.math.ROVector2f;
 
 /**
- * Created by IntelliJ IDEA. User: GreenTea Date: 14.01.12 Time: 22:29 To change this template use
- * File | Settings | File Templates.
+ * User: GreenTea Date: 14.01.12 Time: 22:29
  */
 public class Camera
 {
@@ -67,8 +66,18 @@ public class Camera
       return new Point(physPoint.getX() - minX, physPoint.getY() - minY);
    }
 
-   public Point toPhys(ROVector2f physPoint)
+   public Point toPhys(ROVector2f viewPoint)
    {
-      return new Point(physPoint.getX() + minX, physPoint.getY() + minY);
+      return new Point(viewPoint.getX() + minX, viewPoint.getY() + minY);
+   }
+
+   public Point toView(Point physPoint)
+   {
+      return new Point(physPoint.getX() - minX, physPoint.getY() - minY);
+   }
+
+   public Point toPhys(Point viewPoint)
+   {
+      return new Point(viewPoint.getX() + minX, viewPoint.getY() + minY);
    }
 }

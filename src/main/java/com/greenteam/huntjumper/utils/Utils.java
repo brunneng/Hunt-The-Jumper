@@ -8,8 +8,7 @@ import org.newdawn.slick.Input;
 import java.util.Random;
 
 /**
- * Created by IntelliJ IDEA. User: GreenTea Date: 01.01.11 Time: 18:52 To change this template use
- * File | Settings | File Templates.
+ * User: GreenTea Date: 01.01.11 Time: 18:52
  */
 public final class Utils
 {
@@ -26,13 +25,11 @@ public final class Utils
       return Math.abs(d1 - d2) < ERROR;
    }
 
-   public static Vector2D mouseVector(Input input, Body body, Camera camera)
+   public static Vector2D getPhysVectorFromBodyToCursor(Body body, Input input, Camera camera)
    {
       float mouseX = input.getMouseX();
       float mouseY = input.getMouseY();
-      Point realPoint = camera.toPhys(new Vector2f(mouseX, mouseY));
-      return new Vector2D((realPoint.getX() - body.getPosition().getX()),
-              (realPoint.getY() - body.getPosition().getY())).unit();
-
+      Point realPoint = camera.toPhys(new Point(mouseX, mouseY));
+      return new Vector2D(new Point(body.getPosition()), realPoint);
    }
 }

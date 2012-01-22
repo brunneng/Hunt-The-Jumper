@@ -3,8 +3,8 @@ package com.greenteam.huntjumper;
 /**
  * Slices time in same pieces for different CPUs
  */
-
-public class TimeAccumulator {
+public class TimeAccumulator
+{
    public static int CYCLE_LENGTH = 10;
 
    private int accumulator = 0;
@@ -14,6 +14,6 @@ public class TimeAccumulator {
       accumulator += delta;
       int cycles = accumulator / CYCLE_LENGTH;
       accumulator %= CYCLE_LENGTH;
-      return cycles;   
+      return cycles;
    }
 }

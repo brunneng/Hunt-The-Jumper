@@ -6,8 +6,7 @@ import net.phys2d.math.Vector2f;
 import java.text.DecimalFormat;
 
 /**
- * Created by IntelliJ IDEA. User: GreenTea Date: 01.01.11 Time: 17:40 To change this template
- * useInternal File | Settings | File Templates.
+ * User: GreenTea Date: 01.01.11 Time: 17:40
  */
 public class Point implements Cloneable
 {

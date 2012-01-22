@@ -9,26 +9,20 @@ import net.phys2d.raw.Body;
 import org.newdawn.slick.GameContainer;
 
 import static com.greenteam.huntjumper.utils.GameConstants.*;
-import static com.greenteam.huntjumper.utils.Vector2D.fromPhys;
-import static java.lang.Math.abs;
 import static java.lang.String.format;
 import static org.newdawn.slick.Input.*;
 
 /**
  * Listen and react for mouse and/or keyboard events
  */
-
-public class MouseController implements IJumperController
+public class MouseController extends AbstractJumperController
 {
-   private static float MIN_IMPULSE = 1.f;
-   private static final float SCALE_INC = 0.1f;
-
    private GameContainer container;
-   private float accumulatedScale = MIN_IMPULSE;
 
    public MouseController(GameContainer container)
    {
       this.container = container;
+      resetImpulse();
    }
 
    public void update(Jumper jumper, int delta)
@@ -37,37 +31,37 @@ public class MouseController implements IJumperController
       {
          return;
       }
-      else {
-         final Body body = jumper.getBody();
-         Vector2D mouseVector = Utils.mouseVector(container.getInput(), body, Camera.instance());
 
-         float scale = DEFAULT_FORCE_SCALE;
-         if (releasing()) {
-            scale *= accumulatedScale > MAX_FORCE_SCALE_MULTIPLIER ? MAX_FORCE_SCALE_MULTIPLIER : accumulatedScale;
+      final Body body = jumper.getBody();
+      Vector2D mouseVector = Utils.getPhysVectorFromBodyToCursor(body, container.getInput(), Camera.instance());
 
-            if (accumulatedScale > MIN_IMPULSE) System.out.println(format("Accumulated scale is %s", accumulatedScale));
-
-            accumulatedScale = MIN_IMPULSE;
-
-            Vector2D velocity = fromPhys((Vector2f) jumper.getBody().getVelocity());
-
-            float angel = abs(velocity.angleToVector(mouseVector));
-
+      float scale = DEFAULT_FORCE_SCALE;
+      if (releasing())
+      {
+         if (isImpulseSufficient())
+         {
+            scale *= getAccumulatedImpulse();
+            System.out.println(format("Accumulated impulse is %s", getAccumulatedImpulse()));
+            Vector2D velocity = Vector2D.fromVector2f(jumper.getBody().getVelocity());
+            float angel = Math.abs(velocity.angleToVector(mouseVector));
             scale *= angel;
          }
 
-         Vector2f force = mouseVector.toPhysVector();
-         force.scale(scale);
-
-         body.addForce(force);
-
+         resetImpulse();
       }
+
+      mouseVector.setLength(scale);
+      Vector2f force = mouseVector.toVector2f();
+
+      body.addForce(force);
+
+
    }
 
    private boolean releasing()
    {
       boolean result = false;
-      if (!container.getInput().isMouseButtonDown(MOUSE_LEFT_BUTTON) && accumulatedScale > MIN_IMPULSE)
+      if (!container.getInput().isMouseButtonDown(MOUSE_LEFT_BUTTON))
       {
          result = true;
       }
@@ -78,7 +72,7 @@ public class MouseController implements IJumperController
    {
       if (container.getInput().isMouseButtonDown(MOUSE_LEFT_BUTTON))
       {
-         accumulatedScale += SCALE_INC;
+         incrementImpulse();
          return true;
       }
       return false;

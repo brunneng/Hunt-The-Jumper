@@ -2,6 +2,7 @@ package com.greenteam.huntjumper.model;
 
 import com.greenteam.huntjumper.Camera;
 import com.greenteam.huntjumper.IVisibleObject;
+import com.greenteam.huntjumper.contoller.IJumperController;
 import com.greenteam.huntjumper.utils.GameConstants;
 import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.Utils;
@@ -14,11 +15,12 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.ShapeFill;
 import org.newdawn.slick.fills.GradientFill;
 
+import static com.greenteam.huntjumper.utils.Vector2D.fromRadianAngleAndLength;
+
 /**
- * Created by IntelliJ IDEA. User: GreenTea Date: 14.01.12 Time: 21:11 To change this template use
- * File | Settings | File Templates.
+ * User: GreenTea Date: 14.01.12 Time: 21:11
  */
-public class Jumper
+public class Jumper implements IVisibleObject
 {
    private String playerName;
    private Color color;
@@ -27,7 +29,10 @@ public class Jumper
    private Body body;
    private JumperRole jumperRole;
 
-   public Jumper(String playerName, Color color, ROVector2f startPos)
+   private IJumperController controller;
+
+   public Jumper(String playerName, Color color, ROVector2f startPos,
+                 IJumperController controller)
    {
       this.playerName = playerName;
       this.color = color;
@@ -35,6 +40,7 @@ public class Jumper
       body = new Body(bodyCircle, GameConstants.JUMPER_MASS);
       body.setPosition(startPos.getX(), startPos.getY());
       body.setRestitution(1.0f);
+      this.controller = controller;
    }
 
    public Body getBody()
@@ -76,5 +82,27 @@ public class Jumper
    public void setBodyCircle(Circle bodyCircle)
    {
       this.bodyCircle = bodyCircle;
+   }
+
+   public void update(int delta)
+   {
+      controller.update(this, delta);
+   }
+
+   public void draw(Graphics g)
+   {
+      Point viewCenter = Camera.instance().toView(getBody().getPosition());
+      float radius = getBodyCircle().getRadius();
+
+      org.newdawn.slick.geom.Circle
+              viewCircle = new org.newdawn.slick.geom.Circle(viewCenter.getX(), viewCenter.getY(), radius);
+
+      Vector2D rotationDirection = fromRadianAngleAndLength(getBody().getRotation(), radius);
+      rotationDirection.plus(new Vector2D(viewCenter));
+
+      g.setColor(getColor());
+      g.draw(viewCircle);
+      g.drawLine(viewCenter.getX(), viewCenter.getY(),
+              rotationDirection.getX(), rotationDirection.getY());
    }
 }

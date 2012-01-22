@@ -15,8 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by IntelliJ IDEA. User: GreenTea Date: 14.01.12 Time: 22:21 To change this template use
- * File | Settings | File Templates.
+ * User: GreenTea Date: 14.01.12 Time: 22:21
  */
 public class Map implements IVisibleObject
 {

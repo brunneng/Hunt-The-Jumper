@@ -3,8 +3,7 @@ package com.greenteam.huntjumper.utils;
 import org.newdawn.slick.Color;
 
 /**
- * Created by IntelliJ IDEA. User: GreenTea Date: 13.01.12 Time: 22:45 To change this template use
- * File | Settings | File Templates.
+ * User: GreenTea Date: 13.01.12 Time: 22:45
  */
 public final class ViewConstants
 {

@@ -1,11 +1,11 @@
 package com.greenteam.huntjumper.utils;
 
+import net.phys2d.math.ROVector2f;
 import net.phys2d.math.Vector2f;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
 /**
- * Created by IntelliJ IDEA. User: GreenTea Date: 01.01.11 Time: 18:11 To change this template useInternal
- * File | Settings | File Templates.
+ * User: GreenTea Date: 01.01.11 Time: 18:11
  */
 public class  Vector2D implements Cloneable
 {
@@ -198,7 +198,7 @@ public class  Vector2D implements Cloneable
       return resAngle;
    }
 
-   public Vector2f toPhysVector()
+   public Vector2f toVector2f()
    {
       return new Vector2f(x, y);
    }
@@ -231,11 +231,10 @@ public class  Vector2D implements Cloneable
                 Utils.equals(getY(),v.getY())).isEquals();
     }
 
-    public static Vector2D fromPhys(Vector2f phys)
+    public static Vector2D fromVector2f(ROVector2f phys)
     {
-      return new Vector2D(phys.x, phys.y);
+      return new Vector2D(phys.getX(), phys.getY());
     }
-
 
     public String toString()
     {

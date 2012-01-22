@@ -5,20 +5,16 @@ import com.greenteam.huntjumper.map.Map;
 import com.greenteam.huntjumper.map.MapGenerator;
 import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.utils.*;
-import com.greenteam.huntjumper.view.JumperView;
 import net.phys2d.math.Vector2f;
 import net.phys2d.raw.StaticBody;
 import net.phys2d.raw.World;
 import org.newdawn.slick.*;
-import org.newdawn.slick.fills.GradientFill;
-import org.newdawn.slick.geom.Polygon;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by IntelliJ IDEA. User: GreenTea Date: 13.01.12 Time: 22:44 To change this template use
- * File | Settings | File Templates.
+ * User: GreenTea Date: 13.01.12 Time: 22:44
  */
 public class HuntJumperGame implements Game
 {
@@ -26,7 +22,7 @@ public class HuntJumperGame implements Game
    
    private World world;
    private Map map;
-   private List<JumperView> jumpers;
+   private List<Jumper> jumpers;
    private Jumper myJumper;
    private TimeAccumulator timeAccumulator = new TimeAccumulator();
 
@@ -52,10 +48,12 @@ public class HuntJumperGame implements Game
       float x = v.getX();
       float y = v.getY();
 
-      myJumper = new Jumper("GreenTea", Color.red, new Point(x, y).toPhysVector());
+      myJumper = new Jumper("GreenTea", Color.red, new Point(x, y).toPhysVector(),
+              new MouseController(container));
 
-      jumpers = new ArrayList<JumperView>();
-      jumpers.add(new JumperView(myJumper).addController(new MouseController(container)));
+      jumpers = new ArrayList<Jumper>();
+      jumpers.add(myJumper);
+
       world.add(myJumper.getBody());
    }
 
@@ -93,9 +91,9 @@ public class HuntJumperGame implements Game
       {
          world.step(0.001f * TimeAccumulator.CYCLE_LENGTH);
          updateCamera();
-         for (JumperView j : jumpers)
+         for (Jumper j : jumpers)
          {
-            j.update(container, TimeAccumulator.CYCLE_LENGTH);
+            j.update(TimeAccumulator.CYCLE_LENGTH);
          }
       }
    }
@@ -103,7 +101,7 @@ public class HuntJumperGame implements Game
    public void render(GameContainer container, Graphics g) throws SlickException
    {
       map.draw(g);
-      for (JumperView j : jumpers)
+      for (Jumper j : jumpers)
       {
          j.draw(g);
       }
