@@ -27,11 +27,13 @@ public class MouseController extends AbstractJumperController
    }
 
    @Override
-   protected void makeMove()
+   protected Move makeMove(Jumper jumper)
    {
       Input input = container.getInput();
-      cursorPosition = new Point(input.getMouseX(), input.getMouseY());
+      Vector2D forceDirection = Utils.getPhysVectorToCursor(jumper.getBody(),
+              new Point(input.getMouseX(), input.getMouseY()), Camera.instance());
 
-      accumulating = container.getInput().isMouseButtonDown(MOUSE_LEFT_BUTTON);
+      boolean accumulating = container.getInput().isMouseButtonDown(MOUSE_LEFT_BUTTON);
+      return new Move(forceDirection, accumulating);
    }
 }

@@ -19,8 +19,6 @@ import static org.newdawn.slick.Input.MOUSE_LEFT_BUTTON;
 public abstract class AbstractJumperController implements IJumperController
 {
    private float accumulatedImpulse;
-   protected Point cursorPosition;
-   protected boolean accumulating;
 
    public float getAccumulatedImpulse()
    {
@@ -47,25 +45,20 @@ public abstract class AbstractJumperController implements IJumperController
       accumulatedImpulse = GameConstants.MIN_IMPULSE;
    }
 
-   /**
-    * In implementation of this method you should set 2 fields:
-    * <b>cursorPosition</b>, <b>accumulating</b>
-    */
-   protected abstract void makeMove();
+   protected abstract Move makeMove(Jumper jumper);
 
    public void update(Jumper jumper)
    {
-      makeMove();
+      Move move = makeMove(jumper);
+      Vector2D forceDirection = new Vector2D(move.forceDirection);
 
-      if (accumulating)
+      if (move.accumulating)
       {
          incrementImpulse();
          return;
       }
 
       final Body body = jumper.getBody();
-      Vector2D mouseVector = Utils.getPhysVectorToCursor(body, cursorPosition,
-              Camera.instance());
 
       float scale = DEFAULT_FORCE_SCALE;
       if (isImpulseSufficient())
@@ -73,13 +66,13 @@ public abstract class AbstractJumperController implements IJumperController
          scale *= getAccumulatedImpulse();
          System.out.println(format("Accumulated impulse is %s", getAccumulatedImpulse()));
          Vector2D velocity = Vector2D.fromVector2f(jumper.getBody().getVelocity());
-         float angle = Math.abs(velocity.angleToVector(mouseVector));
+         float angle = Math.abs(velocity.angleToVector(forceDirection));
          scale *= angle;
       }
 
       resetImpulse();
 
-      mouseVector.setLength(scale);
-      body.addForce(mouseVector.toVector2f());
+      forceDirection.setLength(scale);
+      body.addForce(forceDirection.toVector2f());
    }
 }
