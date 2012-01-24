@@ -28,12 +28,11 @@ public final class Utils
       return Math.abs(d1 - d2) < ERROR;
    }
 
-   public static Vector2D getPhysVectorToCursor(Body body, Input input, Camera camera)
+   public static Vector2D getPhysVectorToCursor(Body body, Point cursor, Camera camera)
    {
-      float mouseX = input.getMouseX();
-      float mouseY = input.getMouseY();
-      Point realPoint = camera.toPhys(new Point(mouseX, mouseY));
-      return new Vector2D(new Point(body.getPosition()), realPoint);
+      Point physPoint = camera != null ?
+              camera.toPhys(new Point(cursor.getX(), cursor.getY())) : cursor;
+      return new Vector2D(new Point(body.getPosition()), physPoint);
    }
 
    public static org.newdawn.slick.geom.Polygon toViewPolygon(StaticBody b)

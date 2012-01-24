@@ -48,7 +48,7 @@ public class HuntJumperGame implements Game
       float x = v.getX();
       float y = v.getY();
 
-      myJumper = new Jumper("GreenTea", Color.red, new Point(x, y).toPhysVector(),
+      myJumper = new Jumper("GreenTea", Color.green, new Point(x, y).toPhysVector(),
               new MouseController(container));
 
       jumpers = new ArrayList<Jumper>();
