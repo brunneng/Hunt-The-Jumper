@@ -39,7 +39,6 @@ public class Jumper implements IVisibleObject
    private JumperRole jumperRole = JumperRole.Hunting;
    private IJumperController controller;
 
-
    public Jumper(String playerName, Color color, ROVector2f startPos,
                  IJumperController controller)
    {

@@ -26,28 +26,12 @@ public class MouseController extends AbstractJumperController
       resetImpulse();
    }
 
-   public Point getCursorPosition()
+   @Override
+   protected void makeMove()
    {
       Input input = container.getInput();
-      return new Point(input.getMouseX(), input.getMouseY());
-   }
+      cursorPosition = new Point(input.getMouseX(), input.getMouseY());
 
-   protected boolean releasing()
-   {
-      boolean result = false;
-      if (!container.getInput().isMouseButtonDown(MOUSE_LEFT_BUTTON))
-      {
-         result = true;
-      }
-      return result;
-   }
-
-   protected boolean accumulating()
-   {
-      if (container.getInput().isMouseButtonDown(MOUSE_LEFT_BUTTON))
-      {
-         return true;
-      }
-      return false;
+      accumulating = container.getInput().isMouseButtonDown(MOUSE_LEFT_BUTTON);
    }
 }
