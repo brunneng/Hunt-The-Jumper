@@ -96,7 +96,7 @@ public class Jumper implements IVisibleObject
 
    public void update(int delta)
    {
-      controller.update(this, delta);
+      controller.update(this);
    }
 
    public void draw(Graphics g)
