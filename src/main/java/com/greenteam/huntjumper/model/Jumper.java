@@ -33,6 +33,7 @@ public class Jumper implements IVisibleObject
    private String playerName;
 
    private Color color;
+   private Color paintColor;
    private Circle bodyCircle;
    private Body body;
 
@@ -44,6 +45,8 @@ public class Jumper implements IVisibleObject
    {
       this.playerName = playerName;
       this.color = color;
+      this.paintColor = Utils.isBright(color) ? Color.black : Color.white;
+      
       bodyCircle = new Circle(GameConstants.JUMPER_RADIUS);
       body = new Body(playerName, bodyCircle, GameConstants.JUMPER_MASS);
       body.setMaxVelocity(GameConstants.MAX_VELOCITY, GameConstants.MAX_VELOCITY);
@@ -115,7 +118,7 @@ public class Jumper implements IVisibleObject
       g.setColor(ViewConstants.jumperBorderColor);
       g.draw(viewCircle);
 
-      g.setColor(Color.black);
+      g.setColor(paintColor);
       final int segmentsCount = 6;
       final float anglePerSegment = 360 / segmentsCount;
       Vector2D rotationDirection = fromRadianAngleAndLength(getBody().getRotation(), 0.9f*radius);

@@ -14,10 +14,7 @@ import net.phys2d.raw.StaticBody;
 import net.phys2d.raw.World;
 import org.newdawn.slick.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * User: GreenTea Date: 13.01.12 Time: 22:44
@@ -28,7 +25,9 @@ public class HuntJumperGame implements Game
    
    private World world;
    private Map map;
-   private List<Jumper> jumpers = new ArrayList<Jumper>();;
+   private List<Jumper> jumpers = new ArrayList<Jumper>();
+   private HashMap<Body, Jumper> bodyToJumpers = new HashMap<Body, Jumper>();
+   
    private Jumper myJumper;
    private TimeAccumulator timeAccumulator = new TimeAccumulator();
 
@@ -49,31 +48,27 @@ public class HuntJumperGame implements Game
    private Jumper addJumper(Point startPos, String name, Color color,
                             IJumperController jumperController, JumperRole role)
    {
-      Jumper jumper = new Jumper(name, color, startPos.toVector2f(),
-              jumperController, role);
+      Jumper jumper = new Jumper(name, color, startPos.toVector2f(), jumperController, role);
 
       jumpers.add(jumper);
       world.add(jumper.getBody());
+      bodyToJumpers.put(jumper.getBody(), jumper);
       return jumper;
    }
    
    private void initJumpers(GameContainer container)
    {
       float maxRandomRadius = GameConstants.DEFAULT_MAP_RING_RADIUS - GameConstants.JUMPER_RADIUS;
-      Vector2D v = new Vector2D(Utils.rand.nextFloat()*maxRandomRadius, 0);
-      v.rotate(Utils.rand.nextInt(360));
-      float x = v.getX();
-      float y = v.getY();
 
       List<Point> jumperPositions = Utils.getRotationPoints(
               new Point(0, 0), Utils.rand.nextFloat()*maxRandomRadius, Utils.rand.nextInt(360), 5);
       
-      myJumper = addJumper(jumperPositions.get(0), "GreenTea", Color.green,
+      myJumper = addJumper(jumperPositions.get(0), "GreenTea", Utils.randomColor(),
               new MouseController(container), JumperRole.Hunting);
       
       for (int i = 1; i < jumperPositions.size(); ++i)
       {
-         addJumper(jumperPositions.get(i), "bot" + i, Color.red,
+         addJumper(jumperPositions.get(i), "bot" + i, Utils.randomColor(),
                  new MouseController(container), JumperRole.Escaping);
       }
    }
@@ -123,16 +118,51 @@ public class HuntJumperGame implements Game
 
    public void updateCollisions()
    {
-      Set<Body> executedJumpers = new HashSet<Body>();
-
-      CollisionEvent[] collisions = world.getContacts(myJumper.getBody());
-      if (collisions != null && collisions.length > 0)
+      Set<Jumper> executedJumpers = new HashSet<Jumper>();
+      
+      for (Jumper j : jumpers)
       {
-         for (CollisionEvent e : collisions)
+         if (executedJumpers.contains(j))
          {
-            System.out.println(e);
+            continue;
+         }
+
+         CollisionEvent[] collisions = world.getContacts(j.getBody());
+         if (collisions != null && collisions.length > 0)
+         {
+            for (CollisionEvent e : collisions)
+            {
+               Body bodyA = e.getBodyA();
+               Body bodyB = e.getBodyB();
+
+               Jumper jumperA = bodyToJumpers.get(bodyA);
+               Jumper jumperB = bodyToJumpers.get(bodyB);
+
+               if (jumperA != null && jumperB != null)
+               {
+                  executedJumpers.add(jumperA);
+                  executedJumpers.add(jumperB);
+
+                  JumperRole roleA = jumperA.getJumperRole();
+                  JumperRole roleB = jumperB.getJumperRole();
+
+                  if (roleA.equals(JumperRole.Hunting) &&
+                          roleB.equals(JumperRole.Escaping))
+                  {
+                     jumperA.setJumperRole(JumperRole.Escaping);
+                     jumperB.setJumperRole(JumperRole.Hunting);
+                  }
+                  else if (roleB.equals(JumperRole.Hunting) &&
+                          roleA.equals(JumperRole.Escaping))
+                  {
+                     jumperB.setJumperRole(JumperRole.Escaping);
+                     jumperA.setJumperRole(JumperRole.Hunting);
+                  }
+               }
+            }
          }
       }
+
    }
 
    public void render(GameContainer container, Graphics g) throws SlickException

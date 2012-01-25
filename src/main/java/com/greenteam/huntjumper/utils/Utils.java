@@ -6,6 +6,7 @@ import net.phys2d.math.Vector2f;
 import net.phys2d.raw.Body;
 import net.phys2d.raw.StaticBody;
 import net.phys2d.raw.shapes.Polygon;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Input;
 
 import java.util.ArrayList;
@@ -60,7 +61,7 @@ public final class Utils
    {
       float angleStep = 360.0f / pointsCount;
 
-      Vector2D v = new Vector2D(new Point(0, 0), new Point(radius, 0));
+      Vector2D v = new Vector2D(center, new Point(center.getX() + radius, center.getY()));
       v.rotate(startAngle);
       
       List<Point> res = new ArrayList<Point>();
@@ -72,5 +73,16 @@ public final class Utils
       }
 
       return res;
+   }
+   
+   public static Color randomColor()
+   {
+      return new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
+   }
+
+   public static boolean isBright(Color color)
+   {
+      int total = color.getRed() + color.getGreen() + color.getBlue();
+      return total > 254;
    }
 }
