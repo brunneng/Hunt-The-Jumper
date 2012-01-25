@@ -76,7 +76,7 @@ public class Point implements Cloneable
       return (float)Math.sqrt(dx*dx + dy*dy);
    }
 
-   public Vector2f toPhysVector()
+   public Vector2f toVector2f()
    {
       return new Vector2f(x, y);
    }

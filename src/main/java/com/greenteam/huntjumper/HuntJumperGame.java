@@ -6,12 +6,16 @@ import com.greenteam.huntjumper.map.MapGenerator;
 import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.utils.*;
 import net.phys2d.math.Vector2f;
+import net.phys2d.raw.Body;
+import net.phys2d.raw.CollisionEvent;
 import net.phys2d.raw.StaticBody;
 import net.phys2d.raw.World;
 import org.newdawn.slick.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * User: GreenTea Date: 13.01.12 Time: 22:44
@@ -48,7 +52,7 @@ public class HuntJumperGame implements Game
       float x = v.getX();
       float y = v.getY();
 
-      myJumper = new Jumper("GreenTea", Color.green, new Point(x, y).toPhysVector(),
+      myJumper = new Jumper("GreenTea", Color.green, new Point(x, y).toVector2f(),
               new MouseController(container));
 
       jumpers = new ArrayList<Jumper>();
@@ -94,6 +98,22 @@ public class HuntJumperGame implements Game
          for (Jumper j : jumpers)
          {
             j.update(TimeAccumulator.CYCLE_LENGTH);
+         }
+
+         updateCollisions();
+      }
+   }
+
+   public void updateCollisions()
+   {
+      Set<Body> executedJumpers = new HashSet<Body>();
+
+      CollisionEvent[] collisions = world.getContacts(myJumper.getBody());
+      if (collisions != null && collisions.length > 0)
+      {
+         for (CollisionEvent e : collisions)
+         {
+            System.out.println(e);
          }
       }
    }

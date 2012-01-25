@@ -8,6 +8,8 @@ import net.phys2d.raw.StaticBody;
 import net.phys2d.raw.shapes.Polygon;
 import org.newdawn.slick.Input;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -51,5 +53,24 @@ public final class Utils
 
       return new org.newdawn.slick.geom.Polygon(
               viewVertices);
+   }
+   
+   public static List<Point> getRotationPoints(Point center, float radius, float startAngle,
+                                               int pointsCount)
+   {
+      float angleStep = 360.0f / pointsCount;
+
+      Vector2D v = new Vector2D(new Point(0, 0), new Point(radius, 0));
+      v.rotate(startAngle);
+      
+      List<Point> res = new ArrayList<Point>();
+      res.add(new Point(v.getX(), v.getY()));
+      for (int i = 0; i < pointsCount; ++i)
+      {
+         v.rotate(angleStep);
+         res.add(new Point(v.getX(), v.getY()));
+      }
+
+      return res;
    }
 }
