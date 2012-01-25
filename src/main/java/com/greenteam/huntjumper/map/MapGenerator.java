@@ -21,12 +21,7 @@ public class MapGenerator
       int anglesCount = GameConstants.DEFAULT_MAP_RING_ANGLES_COUNT;
 
       List<Point> rotationPoints = Utils.getRotationPoints(new Point(0, 0), radius, 0, anglesCount);
-      List<ROVector2f> points = new ArrayList<ROVector2f>();
-      
-      for (int i = 0; i < anglesCount; ++i)
-      {
-         points.add(rotationPoints.get(i).toVector2f());
-      }
+      List<ROVector2f> points = Point.toVector2f(rotationPoints);
 
       Polygon polygon = new Polygon(points.toArray(new ROVector2f[points.size()]));
       StaticBody innerBody = new StaticBody(polygon);
@@ -34,13 +29,8 @@ public class MapGenerator
 
       float biggerRadius = radius * 1.1f;
       rotationPoints = Utils.getRotationPoints(new Point(0, 0), biggerRadius, 0, anglesCount);
-      
-      points = new ArrayList<ROVector2f>();
-      for (int i = 0; i < anglesCount; ++i)
-      {
-         points.add(rotationPoints.get(i).toVector2f());
-      }
-      
+      points = Point.toVector2f(rotationPoints);
+
       polygon = new Polygon(points.toArray(new ROVector2f[points.size()]));
       StaticBody outerBody = new StaticBody(polygon);
       outerBody.setRestitution(1.0f);

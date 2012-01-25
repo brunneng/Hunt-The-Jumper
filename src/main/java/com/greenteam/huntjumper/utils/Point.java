@@ -4,6 +4,9 @@ import net.phys2d.math.ROVector2f;
 import net.phys2d.math.Vector2f;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * User: GreenTea Date: 01.01.11 Time: 17:40
@@ -14,6 +17,17 @@ public class Point implements Cloneable
    {
       Point res = new Point(p);
       return res.plus(v);
+   }
+
+   public static List<ROVector2f> toVector2f(Collection<Point> points)
+   {
+      List<ROVector2f> res = new ArrayList<ROVector2f>();
+      for (Point p : points)
+      {
+         res.add(p.toVector2f());
+      }
+
+      return res;
    }
 
    private float x;
