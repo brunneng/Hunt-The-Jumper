@@ -1,10 +1,12 @@
 package com.greenteam.huntjumper;
 
+import com.greenteam.huntjumper.contoller.BotController;
 import com.greenteam.huntjumper.contoller.IJumperController;
 import com.greenteam.huntjumper.contoller.MouseController;
 import com.greenteam.huntjumper.map.Map;
 import com.greenteam.huntjumper.map.MapGenerator;
 import com.greenteam.huntjumper.model.Jumper;
+import com.greenteam.huntjumper.model.JumperInfo;
 import com.greenteam.huntjumper.model.JumperRole;
 import com.greenteam.huntjumper.utils.*;
 import net.phys2d.math.Vector2f;
@@ -64,12 +66,32 @@ public class HuntJumperGame implements Game
               new Point(0, 0), Utils.rand.nextFloat()*maxRandomRadius, Utils.rand.nextInt(360), 5);
       
       myJumper = addJumper(jumperPositions.get(0), "GreenTea", Utils.randomColor(),
-              new MouseController(container), JumperRole.Hunting);
+              new MouseController(container), JumperRole.Escaping);
       
       for (int i = 1; i < jumperPositions.size(); ++i)
       {
          addJumper(jumperPositions.get(i), "bot" + i, Utils.randomColor(),
-                 new MouseController(container), JumperRole.Escaping);
+                 new BotController(new BotController.WorldInformationSource() {
+                    @Override
+                    public List<JumperInfo> getOpponents(Jumper jumper)
+                    {
+                       List<JumperInfo> jumperInfos = new ArrayList<JumperInfo>();
+                       for (Jumper j : jumpers)
+                       {
+                          if (!j.equals(jumper))
+                          {
+                             jumperInfos.add(new JumperInfo(j));
+                          }
+                       }
+                       return jumperInfos;
+                    }
+
+                    @Override
+                    public Map getMap()
+                    {
+                       return map;
+                    }
+                 }), JumperRole.Hunting);
       }
    }
 
