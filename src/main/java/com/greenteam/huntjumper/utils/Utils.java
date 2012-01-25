@@ -65,7 +65,7 @@ public final class Utils
       
       List<Point> res = new ArrayList<Point>();
       res.add(new Point(v.getX(), v.getY()));
-      for (int i = 0; i < pointsCount; ++i)
+      for (int i = 1; i < pointsCount; ++i)
       {
          v.rotate(angleStep);
          res.add(new Point(v.getX(), v.getY()));

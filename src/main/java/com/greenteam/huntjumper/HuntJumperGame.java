@@ -1,9 +1,11 @@
 package com.greenteam.huntjumper;
 
+import com.greenteam.huntjumper.contoller.IJumperController;
 import com.greenteam.huntjumper.contoller.MouseController;
 import com.greenteam.huntjumper.map.Map;
 import com.greenteam.huntjumper.map.MapGenerator;
 import com.greenteam.huntjumper.model.Jumper;
+import com.greenteam.huntjumper.model.JumperRole;
 import com.greenteam.huntjumper.utils.*;
 import net.phys2d.math.Vector2f;
 import net.phys2d.raw.Body;
@@ -26,7 +28,7 @@ public class HuntJumperGame implements Game
    
    private World world;
    private Map map;
-   private List<Jumper> jumpers;
+   private List<Jumper> jumpers = new ArrayList<Jumper>();;
    private Jumper myJumper;
    private TimeAccumulator timeAccumulator = new TimeAccumulator();
 
@@ -44,6 +46,17 @@ public class HuntJumperGame implements Game
       }
    }
 
+   private Jumper addJumper(Point startPos, String name, Color color,
+                            IJumperController jumperController, JumperRole role)
+   {
+      Jumper jumper = new Jumper(name, color, startPos.toVector2f(),
+              jumperController, role);
+
+      jumpers.add(jumper);
+      world.add(jumper.getBody());
+      return jumper;
+   }
+   
    private void initJumpers(GameContainer container)
    {
       float maxRandomRadius = GameConstants.DEFAULT_MAP_RING_RADIUS - GameConstants.JUMPER_RADIUS;
@@ -52,13 +65,17 @@ public class HuntJumperGame implements Game
       float x = v.getX();
       float y = v.getY();
 
-      myJumper = new Jumper("GreenTea", Color.green, new Point(x, y).toVector2f(),
-              new MouseController(container));
-
-      jumpers = new ArrayList<Jumper>();
-      jumpers.add(myJumper);
-
-      world.add(myJumper.getBody());
+      List<Point> jumperPositions = Utils.getRotationPoints(
+              new Point(0, 0), Utils.rand.nextFloat()*maxRandomRadius, Utils.rand.nextInt(360), 5);
+      
+      myJumper = addJumper(jumperPositions.get(0), "GreenTea", Color.green,
+              new MouseController(container), JumperRole.Hunting);
+      
+      for (int i = 1; i < jumperPositions.size(); ++i)
+      {
+         addJumper(jumperPositions.get(i), "bot" + i, Color.red,
+                 new MouseController(container), JumperRole.Escaping);
+      }
    }
 
    private void initCamera()

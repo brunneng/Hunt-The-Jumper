@@ -36,11 +36,11 @@ public class Jumper implements IVisibleObject
    private Circle bodyCircle;
    private Body body;
 
-   private JumperRole jumperRole = JumperRole.Hunting;
+   private JumperRole jumperRole;
    private IJumperController controller;
 
    public Jumper(String playerName, Color color, ROVector2f startPos,
-                 IJumperController controller)
+                 IJumperController controller, JumperRole jumperRole)
    {
       this.playerName = playerName;
       this.color = color;
@@ -49,6 +49,7 @@ public class Jumper implements IVisibleObject
       body.setMaxVelocity(GameConstants.MAX_VELOCITY, GameConstants.MAX_VELOCITY);
       body.setPosition(startPos.getX(), startPos.getY());
       body.setRestitution(1.0f);
+      this.jumperRole = jumperRole;
       this.controller = controller;
    }
 
