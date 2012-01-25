@@ -12,10 +12,10 @@ public final class GameConstants
    
    public static final float JUMPER_RADIUS = 10f;
    public static final float JUMPER_MASS = 10;
-   public static final float DEFAULT_FORCE_SCALE = 1000;
+   public static final float DEFAULT_FORCE_SCALE = 100;
 
    public static final float MIN_IMPULSE = 1.f;
-   public static final float IMPULSE_INC = 0.1f;
+   public static final float IMPULSE_MULTIPIER = 0.01f;
    public static final float MAX_IMPULSE = 10f;
 
    public static final float DEFAULT_MAP_RING_RADIUS = 600;

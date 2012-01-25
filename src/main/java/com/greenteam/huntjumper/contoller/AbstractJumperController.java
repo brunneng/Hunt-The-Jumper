@@ -1,17 +1,12 @@
 package com.greenteam.huntjumper.contoller;
 
-import com.greenteam.huntjumper.Camera;
 import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.utils.GameConstants;
-import com.greenteam.huntjumper.utils.Point;
-import com.greenteam.huntjumper.utils.Utils;
 import com.greenteam.huntjumper.utils.Vector2D;
 import net.phys2d.raw.Body;
-import org.newdawn.slick.Input;
 
 import static com.greenteam.huntjumper.utils.GameConstants.*;
 import static java.lang.String.format;
-import static org.newdawn.slick.Input.MOUSE_LEFT_BUTTON;
 
 /**
  * User: GreenTea Date: 22.01.12 Time: 12:07
@@ -30,9 +25,9 @@ public abstract class AbstractJumperController implements IJumperController
       return accumulatedImpulse > MIN_IMPULSE;
    }
 
-   private void incrementImpulse()
+   private void incrementImpulse(int delta)
    {
-      accumulatedImpulse += IMPULSE_INC;
+      accumulatedImpulse += delta * IMPULSE_MULTIPIER;
 
       if (accumulatedImpulse > MAX_IMPULSE)
       {
@@ -47,20 +42,20 @@ public abstract class AbstractJumperController implements IJumperController
 
    protected abstract Move makeMove(Jumper jumper);
 
-   public void update(Jumper jumper)
+   public void update(Jumper jumper, int delta)
    {
       Move move = makeMove(jumper);
       Vector2D forceDirection = new Vector2D(move.forceDirection);
 
       if (move.accumulating)
       {
-         incrementImpulse();
+         incrementImpulse(delta);
          return;
       }
 
       final Body body = jumper.getBody();
 
-      float scale = DEFAULT_FORCE_SCALE;
+      float scale = DEFAULT_FORCE_SCALE * delta;
       if (isImpulseSufficient())
       {
          scale *= getAccumulatedImpulse();
