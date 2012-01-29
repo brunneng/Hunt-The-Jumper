@@ -31,6 +31,11 @@ public final class Utils
       return Math.abs(d1 - d2) < ERROR;
    }
 
+   public static boolean equals(float f1, float f2)
+   {
+      return Math.abs(f1 - f2) < ERROR;
+   }
+
    public static Vector2D getPhysVectorToCursor(Body body, Point cursor, Camera camera)
    {
       Point physPoint = camera != null ?
@@ -82,7 +87,7 @@ public final class Utils
 
    public static boolean isBright(Color color)
    {
-      int total = color.getRed() + color.getGreen() + color.getBlue();
+      int total = color.getRed() + color.getGreen() + color.getBlue() / 2;
       return total > 254;
    }
 }

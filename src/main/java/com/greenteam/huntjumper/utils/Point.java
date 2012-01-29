@@ -101,6 +101,40 @@ public class Point implements Cloneable
       return new Point(this);
    }
 
+   @Override
+   public boolean equals(Object o)
+   {
+      if (this == o)
+      {
+         return true;
+      }
+      if (o == null || getClass() != o.getClass())
+      {
+         return false;
+      }
+
+      Point point = (Point) o;
+
+      if (!Utils.equals(point.x, x))
+      {
+         return false;
+      }
+      if (!Utils.equals(point.y, y))
+      {
+         return false;
+      }
+
+      return true;
+   }
+
+   @Override
+   public int hashCode()
+   {
+      int result = (x != +0.0f ? Float.floatToIntBits(x) : 0);
+      result = 31 * result + (y != +0.0f ? Float.floatToIntBits(y) : 0);
+      return result;
+   }
+
    public String toString()
    {
       return "[x=" + new DecimalFormat("#.##").format(x) + "][y=" +
