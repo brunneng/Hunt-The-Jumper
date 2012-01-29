@@ -94,7 +94,7 @@ final class MapGenerationUtils
             Point ip = lineSegment.intersectionWith(s);
             if (ip != null)
             {
-               iPoints.add(Math.round(ip.getX()));
+               iPoints.add((int)ip.getX());
             }
          }
          Collections.sort(iPoints);
