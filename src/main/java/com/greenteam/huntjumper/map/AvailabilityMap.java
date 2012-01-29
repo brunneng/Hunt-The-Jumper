@@ -9,16 +9,17 @@ import java.util.*;
 /**
  * User: GreenTea Date: 29.01.12 Time: 20:39
  */
-final class MapGenerationUtils
+public class AvailabilityMap
 {
-   public final byte FREE = 0;
-   public final byte WALL = 1;
-   
-   private MapGenerationUtils()
-   {
-   }
+   public static final byte FREE = 0;
+   public static final byte WALL = 1;
 
-   public byte[][] buildAvailabilityMap(Collection<Segment> segments)
+   int countX;
+   int countY;
+   private Vector2D translationVector;
+   private byte[][] map;
+
+   public AvailabilityMap(Collection<Segment> segments)
    {
       float minX = Integer.MAX_VALUE;
       float minY = Integer.MAX_VALUE;
@@ -72,16 +73,18 @@ final class MapGenerationUtils
 
       List<Segment> tSegments = new ArrayList<Segment>(segments.size());
       Vector2D tv = new Vector2D(-minX, -minY);
+      translationVector = tv;
+
       for (Segment s : segments)
       {
          tSegments.add(new Segment(
                  new Point(s.getEnd1()).plus(tv), new Point(s.getEnd2()).plus(tv)));
       }
 
-      int countX = (int)(maxX - minX) + 1;
-      int countY = (int)(maxY - minY) + 1;
+      countX = (int)(maxX - minX) + 1;
+      countY = (int)(maxY - minY) + 1;
 
-      byte[][] res = new byte[countY][countX];
+      map = new byte[countY][countX];
       List<Integer> iPoints = new ArrayList<Integer>();
 
       for (int yIndex = 0; yIndex < countY; ++yIndex)
@@ -113,7 +116,7 @@ final class MapGenerationUtils
                {
                   for (int xIndex = start; xIndex < end; ++xIndex)
                   {
-                     res[yIndex][xIndex] = WALL;
+                     map[yIndex][xIndex] = WALL;
                   }
                }
 
@@ -122,7 +125,20 @@ final class MapGenerationUtils
             }
          }
       }
+   }
 
-      return res;
+   public int getCountX()
+   {
+      return countX;
+   }
+
+   public int getCountY()
+   {
+      return countY;
+   }
+
+   public byte getValue(int x, int y)
+   {
+      return map[y][x];
    }
 }

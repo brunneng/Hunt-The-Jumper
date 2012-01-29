@@ -4,6 +4,9 @@ import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.Segment;
 import com.greenteam.huntjumper.utils.Vector2D;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * User: GreenTea Date: 29.01.12 Time: 15:07
  */
@@ -41,25 +44,12 @@ public class SnowflakeMapGenerator
       Point p2 = new Point(v1.getX(), v1.getY());
       Point p3 = new Point(v2.getX(), v2.getY());
 
-      Vector2D t1 = new Vector2D(p2.distanceTo(p2)/2, p2.getY());
-      p1.plus(t1);
-      p2.plus(t1);
-      p3.plus(t1);
-      Segment s1 = new Segment(p1, p2);
-      Segment s2 = new Segment(p1, p3);
+      List<Segment> segments = new ArrayList<Segment>();
+      segments.add(new Segment(p1, p2));
+      segments.add(new Segment(p1, p3));
+      segments.add(new Segment(p2, p3));
 
-      int maxX = (int)t1.getX()*2 + 1;
-      int maxY =  (int)t1.getY() + 1;
-      byte[][] templateMap = new byte[maxX][maxY];
-
-      for (int x = 0; x < maxX; ++x)
-      {
-         float xPos = x + 0.5f;
-         Segment lineSegment = new Segment(new Point(xPos, 0), new Point(xPos, maxY));
-         Point ip1 = lineSegment.intersectionWith(s1);
-         Point ip2 = lineSegment.intersectionWith(s2);
-      }
-
+      AvailabilityMap availabilityMap = new AvailabilityMap(segments);
 
       return null;
    }
