@@ -14,7 +14,7 @@ public class SegmentTest
       Segment s1 = new Segment(new Point(1, 0), new Point(1, 3));
       Segment s2 = new Segment(new Point(0, 1), new Point(3, 1));
       
-      Assert.assertEquals(new Point(1, 1), s1.findIntersection(s2));
+      Assert.assertEquals(new Point(1, 1), s1.intersectionWith(s2));
    }
 
    @Test
@@ -23,7 +23,7 @@ public class SegmentTest
       Segment s1 = new Segment(new Point(1, 0), new Point(1, 3));
       Segment s2 = new Segment(new Point(0, 0), new Point(2, 2));
 
-      Assert.assertEquals(new Point(1, 1), s1.findIntersection(s2));
+      Assert.assertEquals(new Point(1, 1), s1.intersectionWith(s2));
    }
 
    @Test
@@ -32,7 +32,7 @@ public class SegmentTest
       Segment s1 = new Segment(new Point(0, 0), new Point(5, 6));
       Segment s2 = new Segment(new Point(0, 0), new Point(-2, 5));
 
-      Assert.assertEquals(new Point(0, 0), s1.findIntersection(s2));
+      Assert.assertEquals(new Point(0, 0), s1.intersectionWith(s2));
    }
 
    @Test
@@ -41,7 +41,7 @@ public class SegmentTest
       Segment s1 = new Segment(new Point(4,  2), new Point(-2, 0));
       Segment s2 = new Segment(new Point(0, -2), new Point(2, 4));
 
-      Assert.assertEquals(new Point(1, 1), s1.findIntersection(s2));
+      Assert.assertEquals(new Point(1, 1), s1.intersectionWith(s2));
    }
 
    @Test
@@ -50,7 +50,7 @@ public class SegmentTest
       Segment s1 = new Segment(new Point(1, 0), new Point(1, 3));
       Segment s2 = new Segment(new Point(1, 0), new Point(1, 3));
 
-      Assert.assertEquals(null, s1.findIntersection(s2));
+      Assert.assertEquals(null, s1.intersectionWith(s2));
    }
 
    @Test
@@ -59,7 +59,7 @@ public class SegmentTest
       Segment s1 = new Segment(new Point(1, 0), new Point(1, 3));
       Segment s2 = new Segment(new Point(2, 0), new Point(2, 3));
 
-      Assert.assertEquals(null, s1.findIntersection(s2));
+      Assert.assertEquals(null, s1.intersectionWith(s2));
    }
 
    @Test
@@ -68,6 +68,6 @@ public class SegmentTest
       Segment s1 = new Segment(new Point(0, 0), new Point(3, 3));
       Segment s2 = new Segment(new Point(0, -2), new Point(1, 0));
 
-      Assert.assertEquals(null, s1.findIntersection(s2));
+      Assert.assertEquals(null, s1.intersectionWith(s2));
    }
 }
