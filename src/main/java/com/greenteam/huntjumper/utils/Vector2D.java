@@ -152,7 +152,7 @@ public class  Vector2D implements Cloneable
       x = -x;
       y = -y;
       
-      return this;
+      return new Vector2D(this);
    }
 
    /**

@@ -6,6 +6,8 @@ import com.greenteam.huntjumper.utils.Vector2D;
 import net.phys2d.raw.Body;
 
 import static com.greenteam.huntjumper.utils.GameConstants.*;
+import static com.greenteam.huntjumper.utils.Vector2D.fromVector2f;
+import static java.lang.Math.*;
 import static java.lang.String.format;
 
 /**
@@ -13,6 +15,9 @@ import static java.lang.String.format;
  */
 public abstract class AbstractJumperController implements IJumperController
 {
+
+   private static final String INFO ="Acceleration info \n Acceleration time - %s \n Angel coef - %s \n Speed coef - %s \n Scale - %s";
+
    private float accumulatedImpulse;
 
    public float getAccumulatedImpulse()
@@ -27,7 +32,7 @@ public abstract class AbstractJumperController implements IJumperController
 
    private void incrementImpulse(int delta)
    {
-      accumulatedImpulse += delta * IMPULSE_MULTIPIER;
+      accumulatedImpulse += delta * IMPULSE_MULTIPLIER;
 
       if (accumulatedImpulse > MAX_IMPULSE)
       {
@@ -58,11 +63,12 @@ public abstract class AbstractJumperController implements IJumperController
       float scale = DEFAULT_FORCE_SCALE * delta;
       if (isImpulseSufficient())
       {
-         scale *= getAccumulatedImpulse();
-         System.out.println(format("Accumulated impulse is %s", getAccumulatedImpulse()));
-         Vector2D velocity = Vector2D.fromVector2f(jumper.getBody().getVelocity());
-         float angle = Math.abs(velocity.angleToVector(forceDirection));
-         scale *= angle;
+         Vector2D velocity = fromVector2f(body.getVelocity());
+         float angleCoef = 1 + (max(30 , abs(velocity.angleToVector(forceDirection))) / 360);
+         float accumulatedTime = getAccumulatedImpulse();
+         float speedCoef = BASE_SPEED_MODIFIER + velocity.length() / SPEED_DIVISOR;
+         scale *= speedCoef * body.getMass() * accumulatedTime * accumulatedTime * angleCoef;      
+         System.out.println(format(INFO, accumulatedTime,  angleCoef, speedCoef, scale));
       }
 
       resetImpulse();
