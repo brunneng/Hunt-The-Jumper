@@ -41,31 +41,6 @@ public class Segment
       this.end2 = end2;
    }
 
-   public float getA()
-   {
-      return a;
-   }
-
-   public float getB()
-   {
-      return b;
-   }
-
-   public float getC()
-   {
-      return c;
-   }
-
-   public Range getXRange()
-   {
-      return xRange;
-   }
-
-   public Range getYRange()
-   {
-      return yRange;
-   }
-
    private void initLineEquation()
    {
       if (!needFindLineEquation)
@@ -114,7 +89,7 @@ public class Segment
       needFindLineEquation = false;
    }
 
-   public Point findIntersection(Segment other)
+   public Point intersectionWith(Segment other)
    {
       initLineEquation();
       other.initLineEquation();
