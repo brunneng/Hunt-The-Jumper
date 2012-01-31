@@ -1,5 +1,6 @@
 package com.greenteam.huntjumper;
 
+import com.greenteam.huntjumper.contoller.AbstractJumperController;
 import com.greenteam.huntjumper.contoller.BotController;
 import com.greenteam.huntjumper.contoller.IJumperController;
 import com.greenteam.huntjumper.contoller.MouseController;
@@ -48,7 +49,7 @@ public class HuntJumperGame implements Game
    }
 
    private Jumper addJumper(Point startPos, String name, Color color,
-                            IJumperController jumperController, JumperRole role)
+                            AbstractJumperController jumperController, JumperRole role)
    {
       Jumper jumper = new Jumper(name, color, startPos.toVector2f(), jumperController, role);
 

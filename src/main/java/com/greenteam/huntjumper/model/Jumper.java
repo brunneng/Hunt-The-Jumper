@@ -2,6 +2,7 @@ package com.greenteam.huntjumper.model;
 
 import com.greenteam.huntjumper.Camera;
 import com.greenteam.huntjumper.IVisibleObject;
+import com.greenteam.huntjumper.contoller.AbstractJumperController;
 import com.greenteam.huntjumper.contoller.IJumperController;
 import com.greenteam.huntjumper.utils.*;
 import net.phys2d.math.ROVector2f;
@@ -9,6 +10,7 @@ import net.phys2d.raw.Body;
 import net.phys2d.raw.shapes.Circle;
 import org.newdawn.slick.*;
 
+import static com.greenteam.huntjumper.utils.GameConstants.*;
 import static com.greenteam.huntjumper.utils.Vector2D.fromRadianAngleAndLength;
 
 /**
@@ -38,18 +40,18 @@ public class Jumper implements IVisibleObject
    private Body body;
 
    private JumperRole jumperRole;
-   private IJumperController controller;
+   private AbstractJumperController controller;
 
    public Jumper(String playerName, Color color, ROVector2f startPos,
-                 IJumperController controller, JumperRole jumperRole)
+                 AbstractJumperController controller, JumperRole jumperRole)
    {
       this.playerName = playerName;
       this.color = color;
       this.paintColor = Utils.isBright(color) ? Color.black : Color.white;
       
-      bodyCircle = new Circle(GameConstants.JUMPER_RADIUS);
-      body = new Body(playerName, bodyCircle, GameConstants.JUMPER_MASS);
-      body.setMaxVelocity(GameConstants.MAX_VELOCITY, GameConstants.MAX_VELOCITY);
+      bodyCircle = new Circle(JUMPER_RADIUS);
+      body = new Body(playerName, bodyCircle, JUMPER_MASS);
+      body.setMaxVelocity(MAX_VELOCITY, MAX_VELOCITY);
       body.setPosition(startPos.getX(), startPos.getY());
       body.setRestitution(1.0f);
       this.jumperRole = jumperRole;
@@ -132,5 +134,19 @@ public class Jumper implements IVisibleObject
          rotationDirection.rotate(anglePerSegment);
       }
 
+      renderAccelerationBar(g);
+   }
+
+   private void renderAccelerationBar(Graphics g) {
+      Point point = Camera.instance().toView(getBody().getPosition());
+
+      g.setLineWidth(2);
+
+      float leftX = point.getX() - JUMPER_RADIUS;
+      float rightX = leftX - (JUMPER_RADIUS) *
+              ((MAX_IMPULSE) / MAX_IMPULSE - controller.getAccumulatedImpulse());
+      float leftY, rightY;
+      leftY = rightY = point.getY() - JUMPER_RADIUS - JUMPER_RADIUS / 2;
+      g.drawGradientLine(leftX, leftY, Color.yellow, rightX, rightY, Color.red);
    }
 }
