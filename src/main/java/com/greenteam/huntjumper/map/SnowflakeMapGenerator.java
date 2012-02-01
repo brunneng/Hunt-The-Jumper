@@ -4,6 +4,11 @@ import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.Segment;
 import com.greenteam.huntjumper.utils.Vector2D;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +43,7 @@ public class SnowflakeMapGenerator
       Vector2D v2 = new Vector2D(r, 0);
 
       v1.rotate(270 - segmentAngle/2);
-      v1.rotate(270 + segmentAngle/2);
+      v2.rotate(270 + segmentAngle/2);
       
       Point p1 = new Point(0, 0);
       Point p2 = new Point(v1.getX(), v1.getY());
@@ -49,8 +54,51 @@ public class SnowflakeMapGenerator
       segments.add(new Segment(p1, p3));
       segments.add(new Segment(p2, p3));
 
-      AvailabilityMap availabilityMap = new AvailabilityMap(segments);
+      AvailabilityMap am = new AvailabilityMap(segments);
+      BufferedImage image = new BufferedImage(am.getCountX(), am.getCountY(),
+              BufferedImage.TYPE_INT_BGR);
+      
+      for (int i = 0; i < am.getCountX(); ++i)
+      {
+         for (int j = 0; j < am.getCountY(); ++j)
+         {
+            byte value = am.getValue(i, am.getCountY() - j - 1);
+            if (value == 0)
+            {
+               image.setRGB(i, j, Color.WHITE.getRGB());
+            }
+            else
+            {
+               image.setRGB(i, j, Color.BLACK.getRGB());
+            }
+         }
+      }
+      File outputfile = new File("saved.png");
+      try
+      {
+         ImageIO.write(image, "png", outputfile);
+      }
+      catch (IOException e)
+      {
+         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+      }
+
+//      try
+//      {
+//         Image image = new Image(am.getCountX(), am.getCountY());
+//
+//      }
+//      catch (SlickException e)
+//      {
+//         e.printStackTrace();
+//      }
 
       return null;
    }
+   
+   public static void main(String[] args)
+   {
+      generateMap(12);
+   }
+
 }

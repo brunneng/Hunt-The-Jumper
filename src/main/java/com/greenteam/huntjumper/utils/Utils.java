@@ -18,7 +18,7 @@ import java.util.Random;
  */
 public final class Utils
 {
-   public static double ERROR = 0.00002;
+   public static double ERROR = 0.00005;
    public static Random rand = new Random();
 
    private Utils()

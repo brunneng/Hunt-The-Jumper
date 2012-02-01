@@ -40,7 +40,7 @@ public class AvailabilityMap
          }
          if (x2 < minX)
          {
-            minX = x1;
+            minX = x2;
          }
 
          if (x1 > maxX)
@@ -49,7 +49,7 @@ public class AvailabilityMap
          }
          if (x2 > maxX)
          {
-            maxX = x1;
+            maxX = x2;
          }
 
          if (y1 < minY)
@@ -58,7 +58,7 @@ public class AvailabilityMap
          }
          if (y2 < minY)
          {
-            minY = y1;
+            minY = y2;
          }
 
          if (y1 > maxY)
@@ -67,7 +67,7 @@ public class AvailabilityMap
          }
          if (y2 > maxY)
          {
-            maxY = y1;
+            maxY = y2;
          }
       }
 
