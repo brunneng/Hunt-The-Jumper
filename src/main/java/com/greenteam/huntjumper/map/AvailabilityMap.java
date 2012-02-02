@@ -127,6 +127,30 @@ public class AvailabilityMap
       }
    }
 
+   public void drawFreeLine(Segment segment, float radius)
+   {
+      Segment tSegment = new Segment(
+              new Point(segment.getEnd1()).plus(translationVector), 
+              new Point(segment.getEnd2()).plus(translationVector));
+      
+      for (int y = 0; y < countY; ++y)
+      {
+         for (int x = 0; x < countX; ++x)
+         {
+            if (getValue(x, y) > 0)
+            {
+               Point p = new Point(x + 0.5f, y + 0.5f);
+               float dist = tSegment.distanceTo(p);
+//               System.out.println(dist);
+               if (dist < radius)
+               {
+                  setValue(x, y, (byte)0);
+               }
+            }
+         }
+      }
+   }
+
    public int getCountX()
    {
       return countX;
@@ -140,5 +164,10 @@ public class AvailabilityMap
    public byte getValue(int x, int y)
    {
       return map[y][x];
+   }
+
+   public byte setValue(int x, int y, byte value)
+   {
+      return map[y][x] = value;
    }
 }

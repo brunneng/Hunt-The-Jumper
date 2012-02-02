@@ -55,6 +55,16 @@ public class SnowflakeMapGenerator
       segments.add(new Segment(p2, p3));
 
       AvailabilityMap am = new AvailabilityMap(segments);
+      Segment l1 = new Segment(segments.get(0).getRandomPoint(), segments.get(1).getRandomPoint());
+      Segment l2 = new Segment(segments.get(0).getRandomPoint(), segments.get(1).getRandomPoint());
+      Segment l3 = new Segment(p1, segments.get(2).getRandomPoint());
+      float lineWidth = r / 20;
+      am.drawFreeLine(l1, lineWidth);
+      am.drawFreeLine(l2, lineWidth);
+      am.drawFreeLine(l3, lineWidth);
+//      Segment lx = new Segment(segments.get(0).getPoint(0.5f), segments.get(1).getPoint(0.5f));
+//      am.drawFreeLine(lx, lineWidth);
+
       BufferedImage image = new BufferedImage(am.getCountX(), am.getCountY(),
               BufferedImage.TYPE_INT_BGR);
       

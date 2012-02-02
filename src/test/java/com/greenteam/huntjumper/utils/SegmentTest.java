@@ -70,4 +70,85 @@ public class SegmentTest
 
       Assert.assertEquals(null, s1.intersectionWith(s2));
    }
+   
+   @Test
+   public void testDistanceInSegment1()
+   {
+      Segment s1 = new Segment(new Point(0, 0), new Point(5, 0));
+      float len = s1.distanceTo(new Point(1, 3));
+      
+      Assert.assertTrue(Utils.equals(len, 3));
+   }
+
+   @Test
+   public void testDistanceInSegment2()
+   {
+      Segment s1 = new Segment(new Point(0, 0), new Point(0, 5));
+      float len = s1.distanceTo(new Point(3, 1));
+
+      Assert.assertTrue(Utils.equals(len, 3));
+   }
+
+   @Test
+   public void testDistanceInSegment3()
+   {
+      Segment s1 = new Segment(new Point(0, 0), new Point(4, 2));
+      float len = s1.distanceTo(new Point(1, 3));
+
+      Assert.assertTrue(Utils.equals(len, Math.sqrt(5)));
+   }
+
+   @Test
+   public void testDistanceOutSegment1()
+   {
+      Segment s1 = new Segment(new Point(0, 0), new Point(5, 0));
+      float len = s1.distanceTo(new Point(-1, 3));
+
+      Assert.assertTrue(Utils.equals(len, Math.sqrt(10)));
+   }
+
+   @Test
+   public void testDistanceOutSegment2()
+   {
+      Segment s1 = new Segment(new Point(0, 0), new Point(0, 5));
+      float len = s1.distanceTo(new Point(3, -1));
+
+      Assert.assertTrue(Utils.equals(len, Math.sqrt(10)));
+   }
+
+   @Test
+   public void testDistanceOutSegment3()
+   {
+      Segment s1 = new Segment(new Point(0, 0), new Point(4, 2));
+      float len = s1.distanceTo(new Point(4, 4));
+
+      Assert.assertTrue(Utils.equals(len, 2));
+   }
+
+   @Test
+   public void testDistanceInBorderSegment1()
+   {
+      Segment s1 = new Segment(new Point(0, 0), new Point(5, 0));
+      float len = s1.distanceTo(new Point(0, 3));
+
+      Assert.assertTrue(Utils.equals(len, 3));
+   }
+
+   @Test
+   public void testDistanceInBorderSegment2()
+   {
+      Segment s1 = new Segment(new Point(0, 0), new Point(5, 0));
+      float len = s1.distanceTo(new Point(5, -3));
+
+      Assert.assertTrue(Utils.equals(len, 3));
+   }
+
+   @Test
+   public void testDistanceInBorderSegment3()
+   {
+      Segment s1 = new Segment(new Point(0, 0), new Point(5, 0));
+      float len = s1.distanceTo(new Point(-1, 0));
+
+      Assert.assertTrue(Utils.equals(len, 1));
+   }
 }
