@@ -40,6 +40,11 @@ public class Segment
    {
       this.end2 = end2;
    }
+   
+   public Segment plus(Vector2D vector)
+   {
+      return new Segment(new Point(end1).plus(vector), new Point(end2).plus(vector));
+   }
 
    private void initLineEquation()
    {

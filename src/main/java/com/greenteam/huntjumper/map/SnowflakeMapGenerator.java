@@ -58,10 +58,13 @@ public class SnowflakeMapGenerator
       Segment l1 = new Segment(segments.get(0).getRandomPoint(), segments.get(1).getRandomPoint());
       Segment l2 = new Segment(segments.get(0).getRandomPoint(), segments.get(1).getRandomPoint());
       Segment l3 = new Segment(p1, segments.get(2).getRandomPoint());
+      Segment l4 = new Segment(p2, p3);
       float lineWidth = r / 20;
       am.drawFreeLine(l1, lineWidth);
       am.drawFreeLine(l2, lineWidth);
       am.drawFreeLine(l3, lineWidth);
+      am.drawWall(l4, lineWidth / 5);
+      am.splitOnPolygons();
 //      Segment lx = new Segment(segments.get(0).getPoint(0.5f), segments.get(1).getPoint(0.5f));
 //      am.drawFreeLine(lx, lineWidth);
 
@@ -73,14 +76,21 @@ public class SnowflakeMapGenerator
          for (int j = 0; j < am.getCountY(); ++j)
          {
             byte value = am.getValue(i, am.getCountY() - j - 1);
-            if (value == 0)
+            Color c = Color.WHITE;
+            if (value == AvailabilityMap.WALL)
             {
-               image.setRGB(i, j, Color.WHITE.getRGB());
+               c = Color.BLACK;
             }
-            else
+            else if (value == AvailabilityMap.POLYGON)
             {
-               image.setRGB(i, j, Color.BLACK.getRGB());
+               c = Color.BLUE;
             }
+            else if (value == AvailabilityMap.POLYGON_BORDER)
+            {
+               c = Color.RED;
+            }
+
+            image.setRGB(i, j, c.getRGB());
          }
       }
       File outputfile = new File("saved.png");
