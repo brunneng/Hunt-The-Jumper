@@ -1,5 +1,7 @@
 package com.greenteam.huntjumper.utils;
 
+import java.util.List;
+
 /**
  * User: GreenTea Date: 29.01.12 Time: 15:23
  */
@@ -128,6 +130,23 @@ public class Segment
       return res;
    }
    
+   public Point findMostFarPoint(List<Point> points)
+   {
+      float maxDist = Integer.MIN_VALUE;
+      Point res = null;
+      
+      for (Point p : points)
+      {
+         float dist = distanceTo(p);
+         if (dist > maxDist)
+         {
+            maxDist = dist;
+            res = p;
+         }
+      }
+      return res;
+   }
+   
    public float distanceTo(Point p)
    {
       initLineEquation();
@@ -136,7 +155,7 @@ public class Segment
       boolean bNil = Utils.equals(b, 0);
 
       float res = -1;
-      if (!aNil && !bNil)
+      A: if (!aNil && !bNil)
       {
          float x = (c - b*p.getY()) / a;
          float y = (c - a*p.getX()) / b;
@@ -146,6 +165,12 @@ public class Segment
          
          float pToP1Len = p.distanceTo(p1);
          float pToP2Len = p.distanceTo(p2);
+         if (Utils.equals(pToP1Len, 0) || Utils.equals(pToP2Len, 0))
+         {
+            res = 0;
+            break A;
+         }
+         
          float p1ToP2Len = p1.distanceTo(p2);
          float l = pToP1Len * pToP2Len / p1ToP2Len;
          

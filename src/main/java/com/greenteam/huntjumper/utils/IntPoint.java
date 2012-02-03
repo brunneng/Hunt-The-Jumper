@@ -19,6 +19,23 @@ public class IntPoint
       return new IntPoint(x + d.dx, y + d.dy);
    }
 
+   public int distanceTo(IntPoint other)
+   {
+      return Math.abs(x - other.x) + Math.abs(y - other.y);
+   }
+
+   public int squareDistanceTo(IntPoint other)
+   {
+      int dx = x - other.x;
+      int dy = y - other.y;
+      return dx*dx + dy*dy;
+   }
+   
+   public Point toPoint()
+   {
+      return new Point(x + 0.5f, y + 0.5f);
+   }
+   
    @Override
    public boolean equals(Object o)
    {

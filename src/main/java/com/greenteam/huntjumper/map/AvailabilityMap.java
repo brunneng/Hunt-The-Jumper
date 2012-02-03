@@ -18,6 +18,9 @@ public class AvailabilityMap
    public static final byte WALL = 1;
    public static final byte POLYGON = 2;
    public static final byte POLYGON_BORDER = 3;
+   public static final byte POLYGON_BORDER_EXECUTED = 4;
+   public static final byte POLYGON_BORDER_CHECKPOINT = 5;
+   public static final byte MAKE_POLYGON_START_POINT = 6;
 
    int countX;
    int countY;
@@ -190,17 +193,22 @@ public class AvailabilityMap
    {
       return p.x >= 0 && p.x < countX && p.y >= 0 && p.y < countY;
    }
+
+   private boolean isFree(IntPoint p)
+   {
+      return !isValid(p) || getValue(p) == FREE;
+   }
    
    private void fillPolygon(IntPoint startPoint)
    {
-      List<IntPoint> notExecutedPoints = new ArrayList<IntPoint>();
-      notExecutedPoints.add(startPoint);
+      List<IntPoint> wavePoints = new ArrayList<IntPoint>();
+      wavePoints.add(startPoint);
 
-      while (notExecutedPoints.size() > 0)
+      while (wavePoints.size() > 0)
       {
-         List<IntPoint> newNotExecutedPoints = new ArrayList<IntPoint>();
+         List<IntPoint> newWavePoints = new ArrayList<IntPoint>();
 
-         for (IntPoint p : notExecutedPoints)
+         for (IntPoint p : wavePoints)
          {
             for (Direction d : Direction.values)
             {
@@ -212,7 +220,7 @@ public class AvailabilityMap
                   for (Direction dToNear : Direction.values)
                   {
                      IntPoint nearPoint = next.plus(dToNear);
-                     if (!isValid(nearPoint) || getValue(nearPoint) == FREE)
+                     if (isFree(nearPoint))
                      {
                         borderPoint = true;
                         break;
@@ -220,18 +228,158 @@ public class AvailabilityMap
                   }
 
                   setValue(next, borderPoint ? POLYGON_BORDER : POLYGON);
-                  newNotExecutedPoints.add(next);
+                  newWavePoints.add(next);
                }
             }
          }
 
-         notExecutedPoints = newNotExecutedPoints;
+         wavePoints = newWavePoints;
       }
+   }
+   
+   private List<IntPoint> findFreePoints(IntPoint p)
+   {
+      List<IntPoint> res = new ArrayList<IntPoint>();
+      for (Direction d : Direction.values())
+      {
+         IntPoint next = p.plus(d);
+         if (isFree(next))
+         {
+            res.add(next);
+         }
+      }
+      return res;
+   }
+   
+   private int findMinSquareDistance(List<IntPoint> points1, List<IntPoint> points2)
+   {
+      int min = Integer.MAX_VALUE;
+      for (IntPoint p1 : points1)
+      {
+         for (IntPoint p2 : points2)
+         {
+            int dist = p1.squareDistanceTo(p2);
+            if (dist < min)
+            {
+               min = dist;
+            }
+         }
+      }
+      return min;
+   }
+   
+   private IntPoint findNearestBorderByFreePoint(IntPoint start)
+   {
+      List<IntPoint> nearFreePoints = findFreePoints(start);
+      
+      Set<IntPoint> executedPoints = new HashSet<IntPoint>();
+      List<IntPoint> wavePoints = new ArrayList<IntPoint>();
+      wavePoints.add(start);
+
+      IntPoint nearest = null;
+      int minDist = Integer.MAX_VALUE;
+      while (wavePoints.size() > 0 && nearest == null)
+      {
+         List<IntPoint> newWavePoints = new ArrayList<IntPoint>();
+
+         for (IntPoint p : wavePoints)
+         {
+            for (Direction d : Direction.values)
+            {
+               IntPoint next = p.plus(d);
+
+               if (isValid(next) && getValue(next) != FREE && !executedPoints.contains(next))
+               {
+                  if (getValue(next) == POLYGON_BORDER)
+                  {
+                     List<IntPoint> nextFreePoints = findFreePoints(next);
+                     int dist = findMinSquareDistance(nearFreePoints, nextFreePoints);
+                     
+                     if (dist < minDist)
+                     {
+                        minDist = dist;
+                        nearest = next;
+                     }
+                  }
+
+                  executedPoints.add(next);
+                  newWavePoints.add(next);
+               }
+            }
+         }
+
+         wavePoints = newWavePoints;
+      }
+      
+      return nearest;
    }
 
    private Polygon makePolygon(IntPoint startPoint)
    {
-      return null;
+      final float minDistToPrev = 1.0f;
+      List<Segment> segments = new ArrayList<Segment>();
+      setValue(startPoint, MAKE_POLYGON_START_POINT);
+      
+      IntPoint curr = startPoint;
+      Point currP = startPoint.toPoint();
+      
+      IntPoint end1 = curr;
+      Point end1P = end1.toPoint();
+      
+      List<IntPoint> prevList = new ArrayList<IntPoint>();
+      List<Point> prevPList = new ArrayList<Point>();
+      
+      while (true)
+      {
+         IntPoint next = findNearestBorderByFreePoint(curr);
+
+         if (next == null)
+         {
+            setValue(end1, POLYGON_BORDER_CHECKPOINT);
+            segments.add(new Segment(end1P, startPoint.toPoint()));
+            break;
+         }
+         Point nextP = next.toPoint();
+
+         Segment s = new Segment(end1P, nextP);
+         Point mostFarPrevP = s.findMostFarPoint(prevPList);
+         if (mostFarPrevP != null)
+         {
+            int i = prevPList.indexOf(mostFarPrevP);
+            IntPoint prev = prevList.get(i);
+            Point prevP = prevPList.get(i);
+            
+            float dist = s.distanceTo(prevP);
+            if (dist > minDistToPrev)
+            {
+               segments.add(new Segment(end1P, prevP));
+               
+               if (getValue(end1) != MAKE_POLYGON_START_POINT)
+               {
+                  setValue(end1, POLYGON_BORDER_CHECKPOINT);
+               }
+               
+               end1 = prev;
+               end1P = prevP;
+
+               prevList = new ArrayList<IntPoint>(prevList.subList(i+1, prevList.size()));
+               prevPList = new ArrayList<Point>(prevPList.subList(i+1, prevPList.size()));
+            }
+         }
+
+         if (getValue(curr) == POLYGON_BORDER)
+         {
+            setValue(curr, POLYGON_BORDER_EXECUTED);
+         }
+
+         prevList.add(curr);
+         prevPList.add(currP);
+
+         curr = next;
+         currP = nextP;
+      }
+      
+      return new Polygon(segments);
    }
    
    public List<Polygon> splitOnPolygons()

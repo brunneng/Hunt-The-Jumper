@@ -64,9 +64,9 @@ public class SnowflakeMapGenerator
       am.drawFreeLine(l2, lineWidth);
       am.drawFreeLine(l3, lineWidth);
       am.drawWall(l4, lineWidth / 5);
-      am.splitOnPolygons();
 //      Segment lx = new Segment(segments.get(0).getPoint(0.5f), segments.get(1).getPoint(0.5f));
 //      am.drawFreeLine(lx, lineWidth);
+      am.splitOnPolygons();
 
       BufferedImage image = new BufferedImage(am.getCountX(), am.getCountY(),
               BufferedImage.TYPE_INT_BGR);
@@ -83,11 +83,23 @@ public class SnowflakeMapGenerator
             }
             else if (value == AvailabilityMap.POLYGON)
             {
-               c = Color.BLUE;
+               c = Color.GRAY;
             }
             else if (value == AvailabilityMap.POLYGON_BORDER)
             {
                c = Color.RED;
+            }
+            else if (value == AvailabilityMap.POLYGON_BORDER_EXECUTED)
+            {
+               c = Color.GREEN;
+            }
+            else if (value == AvailabilityMap.POLYGON_BORDER_CHECKPOINT)
+            {
+               c = Color.RED;
+            }
+            else if (value == AvailabilityMap.MAKE_POLYGON_START_POINT)
+            {
+               c = Color.ORANGE;
             }
 
             image.setRGB(i, j, c.getRGB());
