@@ -316,6 +316,7 @@ public class AvailabilityMap
 
    private Polygon makePolygon(IntPoint startPoint)
    {
+      Vector2D tv = new Vector2D(translationVector).negate();
       final float minDistToPrev = 1.0f;
       List<Segment> segments = new ArrayList<Segment>();
       setValue(startPoint, MAKE_POLYGON_START_POINT);
@@ -336,7 +337,7 @@ public class AvailabilityMap
          if (next == null)
          {
             setValue(end1, POLYGON_BORDER_CHECKPOINT);
-            segments.add(new Segment(end1P, startPoint.toPoint()));
+            segments.add(new Segment(end1P, startPoint.toPoint()).plus(tv));
             break;
          }
          Point nextP = next.toPoint();
@@ -352,7 +353,7 @@ public class AvailabilityMap
             float dist = s.distanceTo(prevP);
             if (dist > minDistToPrev)
             {
-               segments.add(new Segment(end1P, prevP));
+               segments.add(new Segment(end1P, prevP).plus(tv));
                
                if (getValue(end1) != MAKE_POLYGON_START_POINT)
                {
@@ -405,6 +406,35 @@ public class AvailabilityMap
       });
 
       return res;
+   }
+
+   public void removeSingleFreePoints()
+   {
+      processAllPoints(new IPointProcessor()
+      {
+         @Override
+         public void process(int x, int y)
+         {
+            IntPoint curr = new IntPoint(x, y);
+            if (isFree(curr))
+            {
+               int notFreePointsCount = 0;
+               for (Direction d : Direction.values())
+               {
+                  IntPoint next = curr.plus(d);
+                  if (!isFree(next))
+                  {
+                     notFreePointsCount++;
+                  }
+               }
+               
+               if (notFreePointsCount > 2)
+               {
+                  setValue(curr, WALL);
+               }
+            }
+         }
+      });
    }
 
 

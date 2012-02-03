@@ -1,16 +1,10 @@
 package com.greenteam.huntjumper.map;
 
-import com.greenteam.huntjumper.Camera;
 import com.greenteam.huntjumper.IVisibleObject;
-import com.greenteam.huntjumper.utils.CircleGradient;
-import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.Utils;
 import com.greenteam.huntjumper.utils.ViewConstants;
-import net.phys2d.math.ROVector2f;
 import net.phys2d.raw.StaticBody;
-import net.phys2d.raw.shapes.Polygon;
 import net.phys2d.raw.shapes.Shape;
-import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
 import java.util.ArrayList;

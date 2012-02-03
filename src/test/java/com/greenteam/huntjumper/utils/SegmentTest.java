@@ -151,4 +151,40 @@ public class SegmentTest
 
       Assert.assertTrue(Utils.equals(len, 1));
    }
+
+   @Test
+   public void testPerpendicular1()
+   {
+      Segment s1 = new Segment(new Point(0, 0), new Point(5, 0));
+      Vector2D res = s1.perpendicularToLine(new Point(1, 1));
+
+      Assert.assertEquals(new Vector2D(0f, -1f), res);
+   }
+
+   @Test
+   public void testPerpendicular2()
+   {
+      Segment s1 = new Segment(new Point(0, 0), new Point(0, 5));
+      Vector2D res = s1.perpendicularToLine(new Point(1, 1));
+
+      Assert.assertEquals(new Vector2D(-1f, 0f), res);
+   }
+
+   @Test
+   public void testPerpendicular3()
+   {
+      Segment s1 = new Segment(new Point(0, 0), new Point(0, 5));
+      Vector2D res = s1.perpendicularToLine(new Point(1, 10));
+
+      Assert.assertEquals(new Vector2D(-1f, 0f), res);
+   }
+
+   @Test
+   public void testPerpendicular4()
+   {
+      Segment s1 = new Segment(new Point(0, 3), new Point(3, 2));
+      Vector2D res = s1.perpendicularToLine(new Point(2, -1));
+
+      Assert.assertEquals(new Vector2D(1f, 3f), res);
+   }
 }

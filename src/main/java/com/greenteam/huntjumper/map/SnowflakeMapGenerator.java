@@ -1,6 +1,7 @@
 package com.greenteam.huntjumper.map;
 
 import com.greenteam.huntjumper.utils.Point;
+import com.greenteam.huntjumper.utils.Polygon;
 import com.greenteam.huntjumper.utils.Segment;
 import com.greenteam.huntjumper.utils.Vector2D;
 
@@ -42,6 +43,7 @@ public class SnowflakeMapGenerator
       Vector2D v1 = new Vector2D(r, 0);
       Vector2D v2 = new Vector2D(r, 0);
 
+      Vector2D vertical = new Vector2D(r, 0).rotate(270);
       v1.rotate(270 - segmentAngle/2);
       v2.rotate(270 + segmentAngle/2);
       
@@ -66,7 +68,32 @@ public class SnowflakeMapGenerator
       am.drawWall(l4, lineWidth / 5);
 //      Segment lx = new Segment(segments.get(0).getPoint(0.5f), segments.get(1).getPoint(0.5f));
 //      am.drawFreeLine(lx, lineWidth);
-      am.splitOnPolygons();
+      List<Polygon> polygons = am.splitOnPolygons();
+      List<Polygon> allPolygons = new ArrayList<Polygon>(polygons);
+
+      for (int i = 1; i < segmentsCount; ++i)
+      {
+         float rotationAngle = segmentAngle*i;
+         for (Polygon p : polygons)
+         {
+            Polygon next = p.rotate(p1, rotationAngle);
+            if (i % 2 == 1)
+            {
+               Vector2D rotatedV = new Vector2D(vertical).rotate(rotationAngle);
+               Segment line = new Segment(p1, new Point(p1).plus(rotatedV));
+               next = next.turnOverLine(line);
+            }
+            allPolygons.add(next);
+         }
+      }
+      
+      List<Segment> allSegments = new ArrayList<Segment>();
+      for (Polygon p : allPolygons)
+      {
+         allSegments.addAll(p.getSegments());
+      }
+      am = new AvailabilityMap(allSegments);
+      am.removeSingleFreePoints();
 
       BufferedImage image = new BufferedImage(am.getCountX(), am.getCountY(),
               BufferedImage.TYPE_INT_BGR);

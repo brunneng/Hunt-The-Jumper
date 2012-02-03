@@ -211,6 +211,23 @@ public class Segment
 
       return res;
    }
+   
+   public Vector2D perpendicularToLine(Point p)
+   {
+      initLineEquation();
+
+      float a2 = end2.getX() - end1.getX();
+      float b2 = end2.getY() - end1.getY();
+      float c2 = p.getX()*a2 + p.getY()*b2;
+      
+      float d = a*b2 - a2*b;
+      float dx = c*b2 - c2*b;
+      float dy = a*c2 - a2*c;
+      
+      float x = dx / d;
+      float y = dy / d;
+      return new Vector2D(x - p.getX(), y - p.getY());
+   }
 
    public Point getPoint(float partOfLenPercent)
    {
