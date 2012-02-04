@@ -13,22 +13,8 @@ public class AvailabilityMap
    {
       void process(int x, int y);
    }
-
-   public static final byte FREE = 0;
-   public static final byte WALL = 1;
-   public static final byte POLYGON = 2;
-   public static final byte POLYGON_BORDER = 3;
-   public static final byte POLYGON_BORDER_EXECUTED = 4;
-   public static final byte POLYGON_BORDER_CHECKPOINT = 5;
-   public static final byte MAKE_POLYGON_START_POINT = 6;
-   public static final byte GEL = 7;
-
-   int countX;
-   int countY;
-   private Vector2D translationVector;
-   private byte[][] map;
-
-   public AvailabilityMap(Collection<Segment> segments)
+   
+   private static float[] findMinXYMaxXY(Collection<Segment> segments)
    {
       float minX = Integer.MAX_VALUE;
       float minY = Integer.MAX_VALUE;
@@ -79,9 +65,36 @@ public class AvailabilityMap
             maxY = y2;
          }
       }
+      
+      return new float[] {minX, minY, maxX, maxY};
+   }
+
+   public static final byte FREE = 0;
+   public static final byte WALL = 1;
+   public static final byte POLYGON = 2;
+   public static final byte POLYGON_BORDER = 3;
+   public static final byte POLYGON_BORDER_EXECUTED = 4;
+   public static final byte POLYGON_BORDER_CHECKPOINT = 5;
+   public static final byte MAKE_POLYGON_START_POINT = 6;
+   public static final byte GEL = 7;
+
+   float maxXdist;
+   float maxYdist;
+   int countX;
+   int countY;
+   private Vector2D translationVector;
+   private byte[][] map;
+
+   public AvailabilityMap(Collection<Segment> segments)
+   {
+      float[] minXYmaxXY = findMinXYMaxXY(segments);
+      float minX = minXYmaxXY[0];
+      float minY = minXYmaxXY[1];
+      float maxX = minXYmaxXY[2];
+      float maxY = minXYmaxXY[3];
 
       List<Segment> tSegments = new ArrayList<Segment>(segments.size());
-      Vector2D tv = new Vector2D(-minX, -minY);
+      Vector2D tv = new Vector2D(-minX + 0.5f, -minY + 0.5f);
       translationVector = tv;
 
       for (Segment s : segments)
@@ -89,8 +102,10 @@ public class AvailabilityMap
          tSegments.add(s.plus(tv));
       }
 
-      countX = (int)(maxX - minX);
-      countY = (int)(maxY - minY);
+      maxXdist = maxX - minX;
+      maxYdist = maxY - minY;
+      countX = (int)maxXdist;
+      countY = (int)maxYdist;
 
       map = new byte[countY][countX];
       List<Integer> iPoints = new ArrayList<Integer>();
@@ -399,7 +414,7 @@ public class AvailabilityMap
    
    public List<Polygon> splitOnPolygons()
    {
-      final List<Polygon> res = new ArrayList<Polygon>();
+      final List<Polygon> polygons = new ArrayList<Polygon>();
       
       processAllPoints(new IPointProcessor()
       {
@@ -413,11 +428,20 @@ public class AvailabilityMap
                Polygon polygon = makePolygon(p);
                if (polygon != null)
                {
-                  res.add(polygon);
+                  polygons.add(polygon);
                }
             }
          }
       });
+
+      float xFactor = this.maxXdist / countX;
+      float yFactor = this.maxYdist / countY;
+
+      List<Polygon> res = new ArrayList<Polygon>();
+      for (Polygon p : polygons)
+      {
+         res.add(p.multiply(xFactor, yFactor));
+      }
 
       return res;
    }
@@ -518,18 +542,30 @@ public class AvailabilityMap
             IntPoint p = new IntPoint(x, y);
             IntPoint above = new IntPoint(x, y + 1);
             IntPoint bottom = new IntPoint(x, y - 1);
+            IntPoint left = new IntPoint(x - 1, y);
+            IntPoint right = new IntPoint(x + 1, y);
             
-            if (isValid(above) && isValid(bottom))
+            if (isValid(above) && isValid(bottom) && isValid(left) && isValid(right))
             {
                byte v = getValue(p);
                byte vAbove = getValue(above);
                byte vBottom = getValue(bottom);
+               byte vLeft = getValue(left);
+               byte vRight = getValue(right);
                
                if (v == FREE && vAbove == WALL && vBottom == WALL)
                {
                   setValue(p, WALL);
                }
                else if (v == WALL && vAbove == FREE && vBottom == FREE)
+               {
+                  setValue(p, FREE);
+               }
+               else if (v == FREE && vLeft == WALL && vRight == WALL)
+               {
+                  setValue(p, WALL);
+               }
+               else if (v == WALL && vLeft == FREE && vRight == FREE)
                {
                   setValue(p, FREE);
                }

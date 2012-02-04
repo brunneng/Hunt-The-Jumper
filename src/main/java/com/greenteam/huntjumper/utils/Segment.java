@@ -62,6 +62,13 @@ public class Segment
               new Point(end2).plus(vector), include2);
    }
 
+   public Segment multiply(float xFactor, float yFactor)
+   {
+      Point p1 = new Point(end1.getX()*xFactor, end1.getY()*yFactor);
+      Point p2 = new Point(end2.getX()*xFactor, end2.getY()*yFactor);
+      return new Segment(p1, include1, p2, include2);
+   }
+
    private void initLineEquation()
    {
       if (!needFindLineEquation)

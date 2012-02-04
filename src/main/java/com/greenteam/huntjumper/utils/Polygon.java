@@ -50,4 +50,15 @@ public class Polygon
       
       return new Polygon(res);
    }
+   
+   public Polygon multiply(float xFactor, float yFactor)
+   {
+      List<Segment> tSegments = new ArrayList<Segment>();
+      for (Segment s : getSegments())
+      {
+         tSegments.add(s.multiply(xFactor, yFactor));
+      }
+
+      return new Polygon(tSegments);
+   }
 }
