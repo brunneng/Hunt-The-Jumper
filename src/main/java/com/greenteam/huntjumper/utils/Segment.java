@@ -180,61 +180,15 @@ public class Segment
    public float distanceTo(Point p)
    {
       initLineEquation();
-      
-      boolean aNil = Utils.equals(a, 0);
-      boolean bNil = Utils.equals(b, 0);
+      Vector2D pv = perpendicularToLine(p);
+      Point pointOnLine = new Point(p).plus(pv);
 
-      float res = -1;
-      A: if (!aNil && !bNil)
+      float res = 0;
+      if (xRange.contains(pointOnLine.getX()) && yRange.contains(pointOnLine.getY()))
       {
-         float x = (c - b*p.getY()) / a;
-         float y = (c - a*p.getX()) / b;
-         
-         Point p1 = new Point(p.getX(), y);
-         Point p2 = new Point(x, p.getY());
-         
-         float pToP1Len = p.distanceTo(p1);
-         float pToP2Len = p.distanceTo(p2);
-         if (Utils.equals(pToP1Len, 0) || Utils.equals(pToP2Len, 0))
-         {
-            res = 0;
-            break A;
-         }
-         
-         float p1ToP2Len = p1.distanceTo(p2);
-         float l = pToP1Len * pToP2Len / p1ToP2Len;
-         
-         float pToEnd1Len = p.distanceTo(getEnd1());
-         float l1 = (float)Math.sqrt(pToEnd1Len*pToEnd1Len - l*l);
-         Vector2D end1ToEnd2 = new Vector2D(getEnd1(), getEnd2()).setLength(l1);
-         Point target = new Point(getEnd1()).plus(end1ToEnd2);
-
-         float pToTargetLen = p.distanceTo(target);
-         if (Utils.equals(pToTargetLen, l) &&
-                 xRange.contains(target.getX()) && yRange.contains(target.getY()))
-         {
-            res = l;
-         }
+         res = pv.length();
       }
-      else if (aNil && !bNil)
-      {
-         if (xRange.contains(p.getX()))
-         {
-            float y = c / b;
-            res = Math.abs(p.getY() - y);
-         }
-      }
-      else if (!aNil && bNil)
-      {
-         if (yRange.contains(p.getY()))
-         {
-            float x = c / a;
-            res = Math.abs(p.getX() - x);
-         }
-      }
-
-      
-      if (res < 0)
+      else
       {
          res = Math.min(p.distanceTo(getEnd1()), p.distanceTo(getEnd2()));
       }
@@ -269,6 +223,11 @@ public class Segment
    {
       Vector2D v = new Vector2D(end1, end2);
       return new Point(end1).plus(v.setLength(Utils.rand.nextFloat()*v.length()));
+   }
+
+   public float length()
+   {
+      return end1.distanceTo(end2);
    }
 
 }

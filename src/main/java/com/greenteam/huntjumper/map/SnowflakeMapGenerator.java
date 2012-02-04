@@ -83,7 +83,7 @@ public class SnowflakeMapGenerator
                Segment line = new Segment(p1, new Point(p1).plus(rotatedV));
                next = next.turnOverLine(line);
             }
-            allPolygons.add(next.multiply(1, 1));
+            allPolygons.add(next.multiply(5, 5));
          }
       }
 
@@ -162,7 +162,7 @@ public class SnowflakeMapGenerator
    
    public static void main(String[] args)
    {
-      generateMap(4);
+      generateMap(12);
    }
 
 }

@@ -99,6 +99,15 @@ public class SegmentTest
    }
 
    @Test
+   public void testDistanceInSegment4()
+   {
+      Segment s1 = new Segment(new Point(1245.5f, 3769.5f), new Point(1265.5f, 3780.5f));
+      float len = s1.distanceTo(new Point(1255.5f,3774.5f));
+
+      Assert.assertTrue(len < 10);
+   }
+
+   @Test
    public void testDistanceOutSegment1()
    {
       Segment s1 = new Segment(new Point(0, 0), new Point(5, 0));

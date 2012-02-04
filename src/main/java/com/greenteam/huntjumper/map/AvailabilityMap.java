@@ -9,6 +9,11 @@ import java.util.*;
  */
 public class AvailabilityMap
 {
+
+   public static final double GEL_WIDTH_FACTOR = 0.004;
+   public static final float HALF_CELL = 0.5f;
+   public static final float MAKE_POLYGON_MIN_DISTANCE = 1.0f;
+
    private static interface IPointProcessor
    {
       void process(int x, int y);
@@ -94,7 +99,7 @@ public class AvailabilityMap
       float maxY = minXYmaxXY[3];
 
       List<Segment> tSegments = new ArrayList<Segment>(segments.size());
-      Vector2D tv = new Vector2D(-minX + 0.5f, -minY + 0.5f);
+      Vector2D tv = new Vector2D(-minX + HALF_CELL, -minY + HALF_CELL);
       translationVector = tv;
 
       for (Segment s : segments)
@@ -112,7 +117,7 @@ public class AvailabilityMap
 
       for (int yIndex = 0; yIndex < countY; ++yIndex)
       {
-         float y = yIndex + 0.5f;
+         float y = yIndex + HALF_CELL;
          Segment lineSegment = new Segment(new Point(0, y), new Point(countX, y));
          iPoints.clear();
          for (Segment s : tSegments)
@@ -174,7 +179,7 @@ public class AvailabilityMap
          {
             if (getValue(x, y) != FREE)
             {
-               Point p = new Point(x + 0.5f, y + 0.5f);
+               Point p = new Point(x + HALF_CELL, y + HALF_CELL);
                float dist = tSegment.distanceTo(p);
                if (dist < radius)
                {
@@ -196,7 +201,7 @@ public class AvailabilityMap
          {
             if (getValue(x, y) == FREE)
             {
-               Point p = new Point(x + 0.5f, y + 0.5f);
+               Point p = new Point(x + HALF_CELL, y + HALF_CELL);
                float dist = tSegment.distanceTo(p);
                if (dist < radius)
                {
@@ -346,7 +351,7 @@ public class AvailabilityMap
    private Polygon makePolygon(IntPoint startPoint)
    {
       Vector2D tv = new Vector2D(translationVector).negate();
-      final float minDistToPrev = 1.0f;
+      final float minDistToPrev = MAKE_POLYGON_MIN_DISTANCE;
       List<Segment> segments = new ArrayList<Segment>();
       setValue(startPoint, MAKE_POLYGON_START_POINT);
       
@@ -588,7 +593,7 @@ public class AvailabilityMap
 
    public void removeIsolatedFreePoints()
    {
-      final int linesOfGel = 3;
+      final int linesOfGel = (int)(Math.max(countX, countY) * GEL_WIDTH_FACTOR);
       for (int i = 0; i < linesOfGel; ++i)
       {
          putOneLineOfGel();
