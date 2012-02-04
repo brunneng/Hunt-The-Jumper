@@ -415,7 +415,7 @@ public class AvailabilityMap
    public List<Polygon> splitOnPolygons()
    {
       final List<Polygon> polygons = new ArrayList<Polygon>();
-      
+
       processAllPoints(new IPointProcessor()
       {
          @Override
@@ -425,6 +425,18 @@ public class AvailabilityMap
             {
                IntPoint p = new IntPoint(x, y);
                fillPolygon(p);
+            }
+         }
+      });
+
+      processAllPoints(new IPointProcessor()
+      {
+         @Override
+         public void process(int x, int y)
+         {
+            if (getValue(x, y) == POLYGON_BORDER)
+            {
+               IntPoint p = new IntPoint(x, y);
                Polygon polygon = makePolygon(p);
                if (polygon != null)
                {

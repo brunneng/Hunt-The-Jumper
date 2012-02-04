@@ -69,9 +69,9 @@ public class SnowflakeMapGenerator
 //      Segment lx = new Segment(segments.get(0).getPoint(0.5f), segments.get(1).getPoint(0.5f));
 //      am.drawFreeLine(lx, lineWidth);
       List<Polygon> polygons = am.splitOnPolygons();
-      List<Polygon> allPolygons = new ArrayList<Polygon>(polygons);
+      List<Polygon> allPolygons = new ArrayList<Polygon>();
 
-      for (int i = 1; i < segmentsCount; ++i)
+      for (int i = 0; i < segmentsCount; ++i)
       {
          float rotationAngle = segmentAngle*i;
          for (Polygon p : polygons)
@@ -83,7 +83,7 @@ public class SnowflakeMapGenerator
                Segment line = new Segment(p1, new Point(p1).plus(rotatedV));
                next = next.turnOverLine(line);
             }
-            allPolygons.add(next);
+            allPolygons.add(next.multiply(1, 1));
          }
       }
 
@@ -115,7 +115,7 @@ public class SnowflakeMapGenerator
             }
             else if (value == AvailabilityMap.POLYGON_BORDER)
             {
-               c = Color.RED;
+               c = Color.PINK;
             }
             else if (value == AvailabilityMap.POLYGON_BORDER_EXECUTED)
             {
@@ -162,7 +162,7 @@ public class SnowflakeMapGenerator
    
    public static void main(String[] args)
    {
-      generateMap(12);
+      generateMap(4);
    }
 
 }
