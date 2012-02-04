@@ -21,6 +21,7 @@ public class AvailabilityMap
    public static final byte POLYGON_BORDER_EXECUTED = 4;
    public static final byte POLYGON_BORDER_CHECKPOINT = 5;
    public static final byte MAKE_POLYGON_START_POINT = 6;
+   public static final byte GEL = 7;
 
    int countX;
    int countY;
@@ -132,6 +133,8 @@ public class AvailabilityMap
             }
          }
       }
+
+      fixErrors();
    }
 
    private void processAllPoints(IPointProcessor processor)
@@ -278,32 +281,43 @@ public class AvailabilityMap
 
       IntPoint nearest = null;
       int minDist = Integer.MAX_VALUE;
+      List<List<Direction>> directionsWithDiagonals = Direction.getDirectionsWithDiagonals();
       while (wavePoints.size() > 0 && nearest == null)
       {
          List<IntPoint> newWavePoints = new ArrayList<IntPoint>();
 
          for (IntPoint p : wavePoints)
          {
-            for (Direction d : Direction.values)
+            for (List<Direction> directions : directionsWithDiagonals)
             {
-               IntPoint next = p.plus(d);
-
-               if (isValid(next) && getValue(next) != FREE && !executedPoints.contains(next))
+               IntPoint next = p;
+               for (Direction d : directions)
                {
-                  if (getValue(next) == POLYGON_BORDER)
-                  {
-                     List<IntPoint> nextFreePoints = findFreePoints(next);
-                     int dist = findMinSquareDistance(nearFreePoints, nextFreePoints);
-                     
-                     if (dist < minDist)
-                     {
-                        minDist = dist;
-                        nearest = next;
-                     }
-                  }
+                  next = next.plus(d);
+               }
 
-                  executedPoints.add(next);
-                  newWavePoints.add(next);
+               if (isValid(next))
+               {
+                  byte value = getValue(next);
+                  if ((value == POLYGON_BORDER || value == POLYGON_BORDER_EXECUTED ||
+                     value == POLYGON_BORDER_CHECKPOINT)
+                          && !executedPoints.contains(next))
+                  {
+                     if (getValue(next) == POLYGON_BORDER)
+                     {
+                        List<IntPoint> nextFreePoints = findFreePoints(next);
+                        int dist = findMinSquareDistance(nearFreePoints, nextFreePoints);
+
+                        if (dist < minDist)
+                        {
+                           minDist = dist;
+                           nearest = next;
+                        }
+                     }
+
+                     executedPoints.add(next);
+                     newWavePoints.add(next);
+                  }
                }
             }
          }
@@ -337,7 +351,7 @@ public class AvailabilityMap
          if (next == null)
          {
             setValue(end1, POLYGON_BORDER_CHECKPOINT);
-            segments.add(new Segment(end1P, startPoint.toPoint()).plus(tv));
+            segments.add(new Segment(end1P, true, startPoint.toPoint(), false).plus(tv));
             break;
          }
          Point nextP = next.toPoint();
@@ -353,7 +367,7 @@ public class AvailabilityMap
             float dist = s.distanceTo(prevP);
             if (dist > minDistToPrev)
             {
-               segments.add(new Segment(end1P, prevP).plus(tv));
+               segments.add(new Segment(end1P, true, prevP, false).plus(tv));
                
                if (getValue(end1) != MAKE_POLYGON_START_POINT)
                {
@@ -408,33 +422,136 @@ public class AvailabilityMap
       return res;
    }
 
-   public void removeSingleFreePoints()
+   private void putOneLineOfGel()
+   {
+      final List<IntPoint> newGelPoints = new ArrayList<IntPoint>();
+      processAllPoints(new IPointProcessor()
+      {
+         @Override
+         public void process(int x, int y)
+         {
+            IntPoint p = new IntPoint(x, y);
+            if (getValue(p) == FREE)
+            {
+               int notFreePointsCount = 0;
+               for (Direction d : Direction.values())
+               {
+                  IntPoint next = p.plus(d);
+                  if (isValid(next) && getValue(next) != FREE)
+                  {
+                     notFreePointsCount++;
+                  }
+               }
+
+               if (notFreePointsCount > 0)
+               {
+                  newGelPoints.add(p);
+               }
+            }
+         }
+      });
+
+      for (IntPoint p : newGelPoints)
+      {
+         setValue(p, GEL);
+      }
+   }
+
+   private void removeOneLineOfGel()
+   {
+      final List<IntPoint> newFreePoints = new ArrayList<IntPoint>();
+      processAllPoints(new IPointProcessor()
+      {
+         @Override
+         public void process(int x, int y)
+         {
+            IntPoint p = new IntPoint(x, y);
+            if (getValue(p) == GEL)
+            {
+               int freePointsCount = 0;
+               for (Direction d : Direction.values())
+               {
+                  IntPoint next = p.plus(d);
+                  if (isValid(next) && getValue(next) == FREE)
+                  {
+                     freePointsCount++;
+                  }
+               }
+
+               if (freePointsCount > 0)
+               {
+                  newFreePoints.add(p);
+               }
+            }
+         }
+      });
+      
+      for (IntPoint p : newFreePoints)
+      {
+         setValue(p, FREE);
+      }
+   }
+
+   private void gelBecomeHard()
    {
       processAllPoints(new IPointProcessor()
       {
          @Override
          public void process(int x, int y)
          {
-            IntPoint curr = new IntPoint(x, y);
-            if (isFree(curr))
+            IntPoint p = new IntPoint(x, y);
+            if (getValue(p) == GEL)
             {
-               int notFreePointsCount = 0;
-               for (Direction d : Direction.values())
-               {
-                  IntPoint next = curr.plus(d);
-                  if (!isFree(next))
-                  {
-                     notFreePointsCount++;
-                  }
-               }
+               setValue(p, WALL);
+            }
+         }
+      });
+   }
+
+   private void fixErrors()
+   {
+      processAllPoints(new IPointProcessor()
+      {
+         @Override
+         public void process(int x, int y)
+         {
+            IntPoint p = new IntPoint(x, y);
+            IntPoint above = new IntPoint(x, y + 1);
+            IntPoint bottom = new IntPoint(x, y - 1);
+            
+            if (isValid(above) && isValid(bottom))
+            {
+               byte v = getValue(p);
+               byte vAbove = getValue(above);
+               byte vBottom = getValue(bottom);
                
-               if (notFreePointsCount > 2)
+               if (v == FREE && vAbove == WALL && vBottom == WALL)
                {
-                  setValue(curr, WALL);
+                  setValue(p, WALL);
+               }
+               else if (v == WALL && vAbove == FREE && vBottom == FREE)
+               {
+                  setValue(p, FREE);
                }
             }
          }
       });
+   }
+
+   public void removeIsolatedFreePoints()
+   {
+      final int linesOfGel = 3;
+      for (int i = 0; i < linesOfGel; ++i)
+      {
+         putOneLineOfGel();
+      }
+
+      for (int i = 0; i < linesOfGel; ++i)
+      {
+         removeOneLineOfGel();
+      }
+
+      gelBecomeHard();
    }
 
 

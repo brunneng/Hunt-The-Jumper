@@ -43,6 +43,20 @@ public enum Direction
       res.addAll(directions.subList(0, shift));
       return res;
    }
+   
+   public static List<List<Direction>> getDirectionsWithDiagonals()
+   {
+      List<List<Direction>> res = new ArrayList<List<Direction>>();
+      res.add(Arrays.asList(UP));
+      res.add(Arrays.asList(UP, RIGHT));
+      res.add(Arrays.asList(RIGHT));
+      res.add(Arrays.asList(RIGHT, DOWN));
+      res.add(Arrays.asList(DOWN));
+      res.add(Arrays.asList(DOWN, LEFT));
+      res.add(Arrays.asList(LEFT));
+      res.add(Arrays.asList(LEFT, UP));
+      return res;
+   }
 
    static
    {

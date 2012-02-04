@@ -86,14 +86,15 @@ public class SnowflakeMapGenerator
             allPolygons.add(next);
          }
       }
-      
+
       List<Segment> allSegments = new ArrayList<Segment>();
       for (Polygon p : allPolygons)
       {
          allSegments.addAll(p.getSegments());
       }
       am = new AvailabilityMap(allSegments);
-      am.removeSingleFreePoints();
+      am.removeIsolatedFreePoints();
+      am.splitOnPolygons();
 
       BufferedImage image = new BufferedImage(am.getCountX(), am.getCountY(),
               BufferedImage.TYPE_INT_BGR);
@@ -126,7 +127,11 @@ public class SnowflakeMapGenerator
             }
             else if (value == AvailabilityMap.MAKE_POLYGON_START_POINT)
             {
-               c = Color.ORANGE;
+               c = Color.MAGENTA;
+            }
+            else if (value == AvailabilityMap.GEL)
+            {
+               c = Color.YELLOW;
             }
 
             image.setRGB(i, j, c.getRGB());
