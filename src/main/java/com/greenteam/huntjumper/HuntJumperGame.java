@@ -2,10 +2,9 @@ package com.greenteam.huntjumper;
 
 import com.greenteam.huntjumper.contoller.AbstractJumperController;
 import com.greenteam.huntjumper.contoller.BotController;
-import com.greenteam.huntjumper.contoller.IJumperController;
 import com.greenteam.huntjumper.contoller.MouseController;
+import com.greenteam.huntjumper.map.AvailabilityMap;
 import com.greenteam.huntjumper.map.Map;
-import com.greenteam.huntjumper.map.MapGenerator;
 import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.model.JumperInfo;
 import com.greenteam.huntjumper.model.JumperRole;
@@ -17,6 +16,7 @@ import net.phys2d.raw.StaticBody;
 import net.phys2d.raw.World;
 import org.newdawn.slick.*;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -41,7 +41,16 @@ public class HuntJumperGame implements Game
    
    private void initMap()
    {
-      map = MapGenerator.generateRingMap(GameConstants.DEFAULT_MAP_RING_RADIUS);
+      //map = MapGenerator.generateRingMap(GameConstants.DEFAULT_MAP_RING_RADIUS);
+      try
+      {
+         map = new Map(new AvailabilityMap("maps/1.png"));
+      }
+      catch (IOException e)
+      {
+         throw new RuntimeException(e);
+      }
+
       for (StaticBody body : map.getAllPolygons())
       {
          world.add(body);

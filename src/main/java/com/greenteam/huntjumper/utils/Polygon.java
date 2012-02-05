@@ -8,6 +8,17 @@ import java.util.List;
  */
 public class Polygon
 {
+   public static List<Segment> getAllSegments(List<Polygon> polygons)
+   {
+      List<Segment> res = new ArrayList<Segment>();
+      for (Polygon p : polygons)
+      {
+         res.addAll(p.getSegments());
+      }
+
+      return res;
+   }
+   
    private List<Segment> segments;
 
    public Polygon(List<Segment> segments)

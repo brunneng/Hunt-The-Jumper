@@ -1,8 +1,16 @@
 package com.greenteam.huntjumper.map;
 
 import com.greenteam.huntjumper.utils.*;
+import com.greenteam.huntjumper.utils.Point;
+import com.greenteam.huntjumper.utils.Polygon;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
+import java.util.List;
 
 /**
  * User: GreenTea Date: 29.01.12 Time: 20:39
@@ -90,6 +98,38 @@ public class AvailabilityMap
    private Vector2D translationVector;
    private byte[][] map;
 
+   public AvailabilityMap(String imageFileName) throws IOException
+   {
+      File file = new File(imageFileName);
+      BufferedImage image = ImageIO.read(file);
+      countX = image.getWidth();
+      countY = image.getHeight();
+      maxXdist = countX;
+      maxYdist = countY;
+      translationVector = new Vector2D(maxXdist / 2, maxYdist / 2);
+
+      map = new byte[countY][countX];
+      for (int x = 0; x < getCountX(); ++x)
+      {
+         for (int y = 0; y < getCountY(); ++y)
+         {
+            Color c = new Color(image.getRGB(x, y));
+            byte value = FREE;
+            if (c.equals(Color.BLACK))
+            {
+               value = WALL;
+            }
+
+            setValue(x, getCountY() - y - 1, value);
+         }
+      }
+   }
+
+   public AvailabilityMap(List<Polygon> polygons)
+   {
+      this(Polygon.getAllSegments(polygons));
+   }
+   
    public AvailabilityMap(Collection<Segment> segments)
    {
       float[] minXYmaxXY = findMinXYMaxXY(segments);
@@ -606,6 +646,38 @@ public class AvailabilityMap
 
       gelBecomeHard();
    }
+   
+   public void saveToFile(String fileName)
+   {
+      BufferedImage image = new BufferedImage(getCountX(), getCountY(),
+              BufferedImage.TYPE_INT_BGR);
+
+      for (int x = 0; x < getCountX(); ++x)
+      {
+         for (int y = 0; y < getCountY(); ++y)
+         {
+            byte value = getValue(x, getCountY() - y - 1);
+            Color c = Color.WHITE;
+            if (value != AvailabilityMap.FREE)
+            {
+               c = Color.BLACK;
+            }
+
+            image.setRGB(x, y, c.getRGB());
+         }
+      }
+
+      String fileExtension = fileName.substring(fileName.lastIndexOf('.') + 1);
+      File outputFile = new File(fileName);
+      try
+      {
+         ImageIO.write(image, fileExtension, outputFile);
+      }
+      catch (IOException e)
+      {
+         e.printStackTrace();
+      }
+   }
 
 
    public int getCountX()
@@ -636,5 +708,10 @@ public class AvailabilityMap
    public byte setValue(IntPoint p, byte value)
    {
       return map[p.y][p.x] = value;
+   }
+
+   public Vector2D getTranslationVector()
+   {
+      return translationVector;
    }
 }

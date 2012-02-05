@@ -33,7 +33,7 @@ public class SnowflakeMapGenerator
       }
    }
 
-   public static Map generateMap(int segmentsCount)
+   public static void generateMap(int segmentsCount, String imageFileName) throws IOException
    {
       validateArgs(segmentsCount);
 
@@ -87,82 +87,69 @@ public class SnowflakeMapGenerator
          }
       }
 
-      List<Segment> allSegments = new ArrayList<Segment>();
-      for (Polygon p : allPolygons)
-      {
-         allSegments.addAll(p.getSegments());
-      }
-      am = new AvailabilityMap(allSegments);
+      am = new AvailabilityMap(allPolygons);
       am.removeIsolatedFreePoints();
       am.splitOnPolygons();
+      am.saveToFile(imageFileName);
 
-      BufferedImage image = new BufferedImage(am.getCountX(), am.getCountY(),
-              BufferedImage.TYPE_INT_BGR);
-      
-      for (int i = 0; i < am.getCountX(); ++i)
-      {
-         for (int j = 0; j < am.getCountY(); ++j)
-         {
-            byte value = am.getValue(i, am.getCountY() - j - 1);
-            Color c = Color.WHITE;
-            if (value == AvailabilityMap.WALL)
-            {
-               c = Color.BLACK;
-            }
-            else if (value == AvailabilityMap.POLYGON)
-            {
-               c = Color.GRAY;
-            }
-            else if (value == AvailabilityMap.POLYGON_BORDER)
-            {
-               c = Color.PINK;
-            }
-            else if (value == AvailabilityMap.POLYGON_BORDER_EXECUTED)
-            {
-               c = Color.GREEN;
-            }
-            else if (value == AvailabilityMap.POLYGON_BORDER_CHECKPOINT)
-            {
-               c = Color.RED;
-            }
-            else if (value == AvailabilityMap.MAKE_POLYGON_START_POINT)
-            {
-               c = Color.MAGENTA;
-            }
-            else if (value == AvailabilityMap.GEL)
-            {
-               c = Color.YELLOW;
-            }
+//      am = new AvailabilityMap("saved.png");
+//      am.saveToFile("saved2.png");
 
-            image.setRGB(i, j, c.getRGB());
-         }
-      }
-      File outputfile = new File("saved.png");
-      try
-      {
-         ImageIO.write(image, "png", outputfile);
-      }
-      catch (IOException e)
-      {
-         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-      }
-
+//      BufferedImage image = new BufferedImage(am.getCountX(), am.getCountY(),
+//              BufferedImage.TYPE_INT_BGR);
+//
+//      for (int i = 0; i < am.getCountX(); ++i)
+//      {
+//         for (int j = 0; j < am.getCountY(); ++j)
+//         {
+//            byte value = am.getValue(i, am.getCountY() - j - 1);
+//            Color c = Color.WHITE;
+//            if (value == AvailabilityMap.WALL)
+//            {
+//               c = Color.BLACK;
+//            }
+//            else if (value == AvailabilityMap.POLYGON)
+//            {
+//               c = Color.GRAY;
+//            }
+//            else if (value == AvailabilityMap.POLYGON_BORDER)
+//            {
+//               c = Color.PINK;
+//            }
+//            else if (value == AvailabilityMap.POLYGON_BORDER_EXECUTED)
+//            {
+//               c = Color.GREEN;
+//            }
+//            else if (value == AvailabilityMap.POLYGON_BORDER_CHECKPOINT)
+//            {
+//               c = Color.RED;
+//            }
+//            else if (value == AvailabilityMap.MAKE_POLYGON_START_POINT)
+//            {
+//               c = Color.MAGENTA;
+//            }
+//            else if (value == AvailabilityMap.GEL)
+//            {
+//               c = Color.YELLOW;
+//            }
+//
+//            image.setRGB(i, j, c.getRGB());
+//         }
+//      }
+//      File outputfile = new File("saved.png");
 //      try
 //      {
-//         Image image = new Image(am.getCountX(), am.getCountY());
-//
+//         ImageIO.write(image, "png", outputfile);
 //      }
-//      catch (SlickException e)
+//      catch (IOException e)
 //      {
-//         e.printStackTrace();
+//         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
 //      }
-
-      return null;
    }
    
-   public static void main(String[] args)
+   public static void main(String[] args) throws IOException
    {
-      generateMap(12);
+      generateMap(12, "saved.png");
    }
 
 }
