@@ -32,13 +32,18 @@ public class Map implements IVisibleObject
       for (Polygon p : polygons)
       {
          ROVector2f[] physPoints = new ROVector2f[p.getSegments().size()];
+         if (physPoints.length < 3)
+         {
+            continue;
+         }
+
          for (int i = 0; i < physPoints.length; ++i)
          {
             physPoints[i] = p.getSegments().get(i).getEnd1().toVector2f();
          }
          net.phys2d.raw.shapes.Polygon physP = new net.phys2d.raw.shapes.Polygon(physPoints);
          StaticBody body = new StaticBody(physP);
-         body.setRestitution(1.0f);
+         body.setRestitution(0.95f);
          allPolygons.add(body);
       }
 
