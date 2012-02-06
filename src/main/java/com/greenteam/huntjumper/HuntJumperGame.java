@@ -24,8 +24,6 @@ import java.util.*;
  */
 public class HuntJumperGame implements Game
 {
-   boolean exitGame = false;
-   
    private World world;
    private Map map;
    private List<Jumper> jumpers = new ArrayList<Jumper>();
@@ -70,6 +68,7 @@ public class HuntJumperGame implements Game
    
    private void initJumpers(GameContainer container)
    {
+      container.setForceExit(false);
       float maxRandomRadius = GameConstants.DEFAULT_MAP_RING_RADIUS - GameConstants.JUMPER_RADIUS;
 
       List<Point> jumperPositions = Utils.getRotationPoints(
@@ -209,7 +208,7 @@ public class HuntJumperGame implements Game
 
    public boolean closeRequested()
    {
-      return exitGame;
+      return true;
    }
 
    public String getTitle()

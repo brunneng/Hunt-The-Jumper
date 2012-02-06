@@ -48,8 +48,8 @@ public class Map implements IVisibleObject
          Graphics g = mapImage.getGraphics();
 
          g.setColor(ViewConstants.defaultGroundColor);
-         g.draw(new Rectangle(0, 0, map.countX, map.countY));
-         
+         g.fill(new Rectangle(0, 0, map.countX, map.countY));
+
          for (int x = 0; x < map.countX; ++x)
          {
             for (int y = 0; y < map.countY; ++y)
@@ -60,11 +60,11 @@ public class Map implements IVisibleObject
                   g.setColor(ViewConstants.defaultMapColor);
                   g.draw(new Rectangle(x, y, 2, 2));
                }
-               else
-               {
-                  g.setColor(ViewConstants.defaultGroundColor);
-                  g.draw(new Rectangle(x, y, 2, 2));
-               }
+//               else
+//               {
+//                  g.setColor(ViewConstants.defaultGroundColor);
+//                  g.draw(new Rectangle(x, y, 2, 2));
+//               }
             }
          }
          g.flush();

@@ -109,18 +109,17 @@ public class AvailabilityMap
       translationVector = new Vector2D(maxXdist / 2, maxYdist / 2);
 
       map = new byte[countY][countX];
-      for (int x = 0; x < getCountX(); ++x)
-      {
-         for (int y = 0; y < getCountY(); ++y)
-         {
-            Color c = new Color(image.getRGB(x, y));
-            byte value = FREE;
-            if (c.equals(Color.BLACK))
-            {
-               value = WALL;
-            }
+      int blackColorRgb = Color.black.getRGB();
 
-            setValue(x, getCountY() - y - 1, value);
+      for (int x = 0; x < countX; ++x)
+      {
+         for (int y = 0; y < countY; ++y)
+         {
+            int colorRgb = image.getRGB(x, y);
+            if (blackColorRgb == colorRgb)
+            {
+               setValue(x, countY - y - 1, WALL);
+            }
          }
       }
    }
@@ -269,7 +268,7 @@ public class AvailabilityMap
 
       while (wavePoints.size() > 0)
       {
-         List<IntPoint> newWavePoints = new ArrayList<IntPoint>();
+         List<IntPoint> newWavePoints = new ArrayList<IntPoint>(wavePoints.size());
 
          for (IntPoint p : wavePoints)
          {
@@ -341,14 +340,13 @@ public class AvailabilityMap
 
       IntPoint nearest = null;
       int minDist = Integer.MAX_VALUE;
-      List<List<Direction>> directionsWithDiagonals = Direction.getDirectionsWithDiagonals();
       while (wavePoints.size() > 0 && nearest == null)
       {
          List<IntPoint> newWavePoints = new ArrayList<IntPoint>();
 
          for (IntPoint p : wavePoints)
          {
-            for (List<Direction> directions : directionsWithDiagonals)
+            for (List<Direction> directions : Direction.directionsWithDiagonals)
             {
                IntPoint next = p;
                for (Direction d : directions)
@@ -420,14 +418,13 @@ public class AvailabilityMap
          Point mostFarPrevP = s.findMostFarPoint(prevPList);
          if (mostFarPrevP != null)
          {
-            int i = prevPList.indexOf(mostFarPrevP);
-            IntPoint prev = prevList.get(i);
-            Point prevP = prevPList.get(i);
-            
-            float dist = s.distanceTo(prevP);
+            float dist = s.distanceTo(mostFarPrevP);
             if (dist > minDistToPrev)
             {
-               segments.add(new Segment(end1P, true, prevP, false).plus(tv));
+               int i = prevPList.indexOf(mostFarPrevP);
+               IntPoint prev = prevList.get(i);
+
+               segments.add(new Segment(end1P, true, mostFarPrevP, false).plus(tv));
                
                if (getValue(end1) != MAKE_POLYGON_START_POINT)
                {
@@ -435,7 +432,7 @@ public class AvailabilityMap
                }
                
                end1 = prev;
-               end1P = prevP;
+               end1P = mostFarPrevP;
 
                prevList = new ArrayList<IntPoint>(prevList.subList(i+1, prevList.size()));
                prevPList = new ArrayList<Point>(prevPList.subList(i+1, prevPList.size()));
@@ -503,39 +500,57 @@ public class AvailabilityMap
       return res;
    }
 
-   private void putOneLineOfGel()
+   private Collection<IntPoint> putOneLineOfGel(Collection<IntPoint> oldGelPoints)
    {
-      final List<IntPoint> newGelPoints = new ArrayList<IntPoint>();
-      processAllPoints(new IPointProcessor()
+      final Set<IntPoint> newGelPoints = new HashSet<IntPoint>();
+      if (oldGelPoints == null)
       {
-         @Override
-         public void process(int x, int y)
+         processAllPoints(new IPointProcessor()
          {
-            IntPoint p = new IntPoint(x, y);
-            if (getValue(p) == FREE)
+            @Override
+            public void process(int x, int y)
             {
-               int notFreePointsCount = 0;
-               for (Direction d : Direction.values())
+               IntPoint p = new IntPoint(x, y);
+               byte value = getValue(p);
+               if (value == WALL || value == GEL)
                {
-                  IntPoint next = p.plus(d);
-                  if (isValid(next) && getValue(next) != FREE)
+                  for (Direction d : Direction.values)
                   {
-                     notFreePointsCount++;
+                     IntPoint next = p.plus(d);
+                     if (isValid(next) && getValue(next) == FREE)
+                     {
+                        newGelPoints.add(next);
+                     }
                   }
                }
-
-               if (notFreePointsCount > 0)
+            }
+         });
+      }
+      else
+      {
+         for (IntPoint p : oldGelPoints)
+         {
+            byte value = getValue(p);
+            if (value == WALL || value == GEL)
+            {
+               for (Direction d : Direction.values)
                {
-                  newGelPoints.add(p);
+                  IntPoint next = p.plus(d);
+                  if (isValid(next) && getValue(next) == FREE)
+                  {
+                     newGelPoints.add(next);
+                  }
                }
             }
          }
-      });
+      }
 
       for (IntPoint p : newGelPoints)
       {
          setValue(p, GEL);
       }
+
+      return newGelPoints;
    }
 
    private void removeOneLineOfGel()
@@ -549,24 +564,19 @@ public class AvailabilityMap
             IntPoint p = new IntPoint(x, y);
             if (getValue(p) == GEL)
             {
-               int freePointsCount = 0;
-               for (Direction d : Direction.values())
+               for (Direction d : Direction.values)
                {
                   IntPoint next = p.plus(d);
                   if (isValid(next) && getValue(next) == FREE)
                   {
-                     freePointsCount++;
+                     newFreePoints.add(p);
+                     break;
                   }
-               }
-
-               if (freePointsCount > 0)
-               {
-                  newFreePoints.add(p);
                }
             }
          }
       });
-      
+
       for (IntPoint p : newFreePoints)
       {
          setValue(p, FREE);
@@ -634,9 +644,11 @@ public class AvailabilityMap
    public void removeIsolatedFreePoints()
    {
       final int linesOfGel = (int)(Math.max(countX, countY) * GEL_WIDTH_FACTOR);
+
+      Collection<IntPoint> gelPoints = null;
       for (int i = 0; i < linesOfGel; ++i)
       {
-         putOneLineOfGel();
+         gelPoints = putOneLineOfGel(gelPoints);
       }
 
       for (int i = 0; i < linesOfGel; ++i)

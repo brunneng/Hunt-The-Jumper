@@ -19,6 +19,20 @@ public enum Direction
          values.add(d);
       }
    }
+   public static final List<List<Direction>> directionsWithDiagonals;
+   static
+   {
+      List<List<Direction>> res = new ArrayList<List<Direction>>();
+      res.add(Arrays.asList(UP));
+      res.add(Arrays.asList(UP, RIGHT));
+      res.add(Arrays.asList(RIGHT));
+      res.add(Arrays.asList(RIGHT, DOWN));
+      res.add(Arrays.asList(DOWN));
+      res.add(Arrays.asList(DOWN, LEFT));
+      res.add(Arrays.asList(LEFT));
+      res.add(Arrays.asList(LEFT, UP));
+      directionsWithDiagonals = res;
+   }
 
    private static final Map<Direction, Direction> rightLookup =
            new EnumMap<Direction, Direction>(Direction.class);
@@ -44,20 +58,6 @@ public enum Direction
       return res;
    }
    
-   public static List<List<Direction>> getDirectionsWithDiagonals()
-   {
-      List<List<Direction>> res = new ArrayList<List<Direction>>();
-      res.add(Arrays.asList(UP));
-      res.add(Arrays.asList(UP, RIGHT));
-      res.add(Arrays.asList(RIGHT));
-      res.add(Arrays.asList(RIGHT, DOWN));
-      res.add(Arrays.asList(DOWN));
-      res.add(Arrays.asList(DOWN, LEFT));
-      res.add(Arrays.asList(LEFT));
-      res.add(Arrays.asList(LEFT, UP));
-      return res;
-   }
-
    static
    {
       rightLookup.put(UP, RIGHT);
