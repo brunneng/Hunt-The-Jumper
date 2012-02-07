@@ -39,10 +39,9 @@ public class HuntJumperGame implements Game
    
    private void initMap()
    {
-      //map = MapGenerator.generateRingMap(GameConstants.DEFAULT_MAP_RING_RADIUS);
       try
       {
-         map = new Map(new AvailabilityMap("maps/1.png"));
+         map = new Map(new AvailabilityMap("maps/2.png"));
       }
       catch (IOException e)
       {
@@ -66,6 +65,50 @@ public class HuntJumperGame implements Game
       return jumper;
    }
    
+   private boolean isStartPointFree(Point p, List<Point> resultJumperPositions,
+                                    int currentJumperIndex)
+   {
+      if (!map.isPointFree(p))
+      {
+         return false;
+      }
+      
+      List<Point> rotationPoints = Utils.getRotationPoints(p, GameConstants.JUMPER_RADIUS, 0, 4);
+      for (Point rp : rotationPoints)
+      {
+         if (!map.isPointFree(rp))
+         {
+            return false;
+         }
+      }
+      
+      return p.inRange(resultJumperPositions.subList(0, currentJumperIndex),
+              GameConstants.JUMPER_RADIUS*2).size() == 0;
+   }
+   
+   private List<Point> getJumperPositionsOnFreePoints(List<Point> initialJumperPositions)
+   {
+      List<Point> res = new ArrayList<Point>();
+
+      float randomStep = GameConstants.JUMPER_RADIUS*5;
+
+      Random rand = Utils.rand;
+      for (int i = 0; i < initialJumperPositions.size(); ++i)
+      {
+         Point p = initialJumperPositions.get(i);
+         while(!isStartPointFree(p, res, i))
+         {
+            Vector2D tv = new Vector2D(rand.nextFloat()*randomStep, rand.nextFloat()* randomStep);
+            p = new Point(p).plus(tv);
+
+         }
+
+         res.add(p);
+      }
+
+      return res;
+   }
+   
    private void initJumpers(GameContainer container)
    {
       container.setForceExit(false);
@@ -73,6 +116,7 @@ public class HuntJumperGame implements Game
 
       List<Point> jumperPositions = Utils.getRotationPoints(
               new Point(0, 0), Utils.rand.nextFloat()*maxRandomRadius, Utils.rand.nextInt(360), 5);
+      jumperPositions = getJumperPositionsOnFreePoints(jumperPositions);
       
       myJumper = addJumper(jumperPositions.get(0), "GreenTea", Utils.randomColor(),
               new MouseController(container), JumperRole.Escaping);

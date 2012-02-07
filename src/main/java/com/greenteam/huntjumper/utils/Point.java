@@ -29,7 +29,7 @@ public class Point implements Cloneable
 
       return res;
    }
-
+   
    private float x;
    private float y;
 
@@ -125,6 +125,19 @@ public class Point implements Cloneable
       }
 
       return true;
+   }
+   
+   public List<Point> inRange(List<Point> otherPoints, float range)
+   {
+      List<Point> res = new ArrayList<Point>();
+      for (Point p : otherPoints)
+      {
+         if (distanceTo(p) < range)
+         {
+            res.add(p);
+         }
+      }
+      return res;
    }
 
    @Override

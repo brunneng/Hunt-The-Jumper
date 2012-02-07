@@ -21,11 +21,11 @@ public class Map implements IVisibleObject
 {
    private List<StaticBody> allPolygons;
    private Image mapImage;
-   private Vector2D translationVector;
+   private AvailabilityMap map;
    
    public Map(AvailabilityMap map)
    {
-      translationVector = map.getTranslationVector();
+      this.map = map;
       List<Polygon> polygons = map.splitOnPolygons();
       allPolygons = new ArrayList<StaticBody>();
 
@@ -79,11 +79,18 @@ public class Map implements IVisibleObject
          throw new RuntimeException(e);
       }
    }
+   
+   public boolean isPointFree(Point p)
+   {
+      Point tp = new Point(p).plus(map.getTranslationVector());
+      return map.getValue((int)tp.getX(), (int)tp.getY()) == AvailabilityMap.FREE;
+   }
 
    @Override
    public void draw(Graphics g)
    {
-      Point p = new Point(-translationVector.getX(), -translationVector.getY());
+      Vector2D tv = map.getTranslationVector();
+      Point p = new Point(-tv.getX(), -tv.getY());
       Point viewPoint = Camera.instance().toView(p);
       g.drawImage(mapImage, viewPoint.getX(), viewPoint.getY(), Color.white);
 
