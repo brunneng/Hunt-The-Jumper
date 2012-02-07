@@ -11,9 +11,9 @@ public class Segment
    private Point end2;
 
    private boolean needFindLineEquation = true;
-   private float a;
-   private float b;
-   private float c;
+   private double a;
+   private double b;
+   private double c;
    private Range xRange;
    private Range yRange;
 
@@ -68,13 +68,13 @@ public class Segment
          return;
       }
 
-      float x1 = end1.getX();
-      float x2 = end2.getX();
-      float y1 = end1.getY();
-      float y2 = end2.getY();
+      double x1 = end1.getX();
+      double x2 = end2.getX();
+      double y1 = end1.getY();
+      double y2 = end2.getY();
 
-      xRange = new Range(Math.min(x1, x2), Math.max(x1, x2));
-      yRange = new Range(Math.min(y1, y2), Math.max(y1, y2));
+      xRange = new Range((float)Math.min(x1, x2), (float)Math.max(x1, x2));
+      yRange = new Range((float)Math.min(y1, y2), (float)Math.max(y1, y2));
 
       boolean xEq = Utils.equals(x1, x2);
       boolean yEq = Utils.equals(y1, y2);
@@ -99,9 +99,9 @@ public class Segment
       else
       {
          b = 1;
-         float d = x2 - x1;
-         float da = y1 - y2;
-         float dc = x2*y1 - x1*y2;
+         double d = x2 - x1;
+         double da = y1 - y2;
+         double dc = x2*y1 - x1*y2;
          a = da / d;
          c = dc / d;
       }
@@ -114,30 +114,31 @@ public class Segment
       initLineEquation();
       other.initLineEquation();
 
-      float a1 = a;
-      float b1 = b;
-      float c1 = c;
-      float a2 = other.a;
-      float b2 = other.b;
-      float c2 = other.c;
+      double a1 = a;
+      double b1 = b;
+      double c1 = c;
+      double a2 = other.a;
+      double b2 = other.b;
+      double c2 = other.c;
 
-      float d = a1*b2 - a2*b1;
+      double d = a1*b2 - a2*b1;
+
       if (Utils.equals(d, 0)) // lines are parallel
       {
          return null;
       }
 
-      float dx = c1*b2 - c2*b1;
-      float x = dx / d;
-      
-      float dy = a1*c2 - a2*c1;
-      float y = dy / d;
+      double dx = c1*b2 - c2*b1;
+      double x = dx / d;
+
+      double dy = a1*c2 - a2*c1;
+      double y = dy / d;
       
       Point res = null;
-      if (xRange.contains(x) && other.xRange.contains(x) &&
-          yRange.contains(y) && other.yRange.contains(y))
+      if (xRange.contains((float)x) && other.xRange.contains((float)x) &&
+          yRange.contains((float)y) && other.yRange.contains((float)y))
       {
-         res = new Point(x, y);
+         res = new Point((float)x, (float)y);
       }
 
       return res;
@@ -145,12 +146,12 @@ public class Segment
    
    public Point findMostFarPoint(List<Point> points)
    {
-      float maxDist = Integer.MIN_VALUE;
+      double maxDist = Integer.MIN_VALUE;
       Point res = null;
       
       for (Point p : points)
       {
-         float dist = distanceTo(p);
+         double dist = distanceTo(p);
          if (dist > maxDist)
          {
             maxDist = dist;
@@ -166,7 +167,7 @@ public class Segment
       Vector2D pv = perpendicularToLine(p);
       Point pointOnLine = new Point(p).plus(pv);
 
-      float res = 0;
+      double res = 0;
       if (xRange.contains(pointOnLine.getX()) && yRange.contains(pointOnLine.getY()))
       {
          res = pv.length();
@@ -176,30 +177,30 @@ public class Segment
          res = Math.min(p.distanceTo(getEnd1()), p.distanceTo(getEnd2()));
       }
 
-      return res;
+      return (float)res;
    }
    
    public Vector2D perpendicularToLine(Point p)
    {
       initLineEquation();
 
-      float a2 = end2.getX() - end1.getX();
-      float b2 = end2.getY() - end1.getY();
-      float c2 = p.getX()*a2 + p.getY()*b2;
+      double a2 = end2.getX() - end1.getX();
+      double b2 = end2.getY() - end1.getY();
+      double c2 = p.getX()*a2 + p.getY()*b2;
       
-      float d = a*b2 - a2*b;
-      float dx = c*b2 - c2*b;
-      float dy = a*c2 - a2*c;
+      double d = a*b2 - a2*b;
+      double dx = c*b2 - c2*b;
+      double dy = a*c2 - a2*c;
       
-      float x = dx / d;
-      float y = dy / d;
-      return new Vector2D(x - p.getX(), y - p.getY());
+      double x = dx / d;
+      double y = dy / d;
+      return new Vector2D((float)x - p.getX(), (float)y - p.getY());
    }
 
-   public Point getPoint(float partOfLenPercent)
+   public Point getPoint(double partOfLenPercent)
    {
       Vector2D v = new Vector2D(end1, end2);
-      return new Point(end1).plus(v.setLength(partOfLenPercent*v.length()));
+      return new Point(end1).plus(v.setLength((float)partOfLenPercent*v.length()));
    }
 
    public Point getRandomPoint()
@@ -208,7 +209,7 @@ public class Segment
       return new Point(end1).plus(v.setLength(Utils.rand.nextFloat()*v.length()));
    }
 
-   public float length()
+   public double length()
    {
       return end1.distanceTo(end2);
    }

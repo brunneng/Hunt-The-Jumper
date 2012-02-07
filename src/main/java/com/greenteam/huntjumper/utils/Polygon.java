@@ -21,8 +21,35 @@ public class Polygon
    
    private List<Segment> segments;
 
+   private void validate(List<Segment> segments)
+   {
+      boolean invalid = false;
+      for (int i = 1; i < segments.size(); ++i)
+      {
+         Segment prev = segments.get(i - 1);
+         Segment curr = segments.get(i);
+
+         if (!prev.getEnd2().equals(curr.getEnd1()))
+         {
+            invalid = true;
+            break;
+         }
+      }
+      
+      if (!segments.get(0).getEnd1().equals(segments.get(segments.size() - 1).getEnd2()))
+      {
+         invalid = true;
+      }
+      
+      if (invalid)
+      {
+         System.out.println("Polygon is invalid!!!");
+      }
+   }
+   
    public Polygon(List<Segment> segments)
    {
+      validate(segments);
       this.segments = segments;
    }
 

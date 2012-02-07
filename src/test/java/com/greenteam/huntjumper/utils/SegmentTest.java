@@ -44,6 +44,16 @@ public class SegmentTest
       Assert.assertEquals(new Point(1, 1), s1.intersectionWith(s2));
    }
 
+
+   @Test
+   public void testIntersection5()
+   {
+      Segment s1 = new Segment(new Point(0,  3750.5f), new Point(3800, 3750.5f));
+      Segment s2 = new Segment(new Point(1700.61f, 0), new Point(1700.61f, 3800));
+
+      Assert.assertEquals(new Point(1700.61f, 3750.5f), s1.intersectionWith(s2));
+   }
+
    @Test
    public void testNoIntersection1()
    {
