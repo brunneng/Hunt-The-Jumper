@@ -9,8 +9,6 @@ public class Segment
 {
    private Point end1;
    private Point end2;
-   private boolean include1;
-   private boolean include2;
 
    private boolean needFindLineEquation = true;
    private float a;
@@ -28,12 +26,6 @@ public class Segment
    {
       this.end1 = end1;
       this.end2 = end2;
-      this.include1 = include1;
-      this.include2 = include2;
-
-      // some strange bugs if this values are not true.
-      this.include1 = true;
-      this.include2 = true;
    }
 
    public Point getEnd1()
@@ -58,15 +50,15 @@ public class Segment
    
    public Segment plus(Vector2D vector)
    {
-      return new Segment(new Point(end1).plus(vector), include1,
-              new Point(end2).plus(vector), include2);
+      return new Segment(new Point(end1).plus(vector),
+              new Point(end2).plus(vector));
    }
 
    public Segment multiply(float xFactor, float yFactor)
    {
       Point p1 = new Point(end1.getX()*xFactor, end1.getY()*yFactor);
       Point p2 = new Point(end2.getX()*xFactor, end2.getY()*yFactor);
-      return new Segment(p1, include1, p2, include2);
+      return new Segment(p1, p2);
    }
 
    private void initLineEquation()
@@ -81,17 +73,8 @@ public class Segment
       float y1 = end1.getY();
       float y2 = end2.getY();
 
-      float rXstart = Math.min(x1, x2);
-      boolean rXincludeStart = Utils.equals(rXstart, x1) ? include1 : include2;
-      float rXend = Math.max(x1, x2);
-      boolean rXincludeEnd = Utils.equals(rXend, x1) ? include1 : include2;
-      xRange = new Range(rXstart, rXincludeStart, rXend, rXincludeEnd);
-
-      float rYstart = Math.min(y1, y2);
-      boolean rYincludeStart = Utils.equals(rYstart, y1) ? include1 : include2;
-      float rYend = Math.max(y1, y2);
-      boolean rYincludeEnd = Utils.equals(rYend, y1) ? include1 : include2;
-      yRange = new Range(rYstart, rYincludeStart, rYend, rYincludeEnd);
+      xRange = new Range(Math.min(x1, x2), Math.max(x1, x2));
+      yRange = new Range(Math.min(y1, y2), Math.max(y1, y2));
 
       boolean xEq = Utils.equals(x1, x2);
       boolean yEq = Utils.equals(y1, y2);
