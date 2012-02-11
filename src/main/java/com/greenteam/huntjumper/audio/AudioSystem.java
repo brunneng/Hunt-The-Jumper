@@ -18,7 +18,8 @@ public final class AudioSystem
 {
    private static final float NORMAL_SOUND_VOLUME = 0.08f;
    public static final String COLLISION_SOUND = "COLLISION_SOUND";
-   public static final String CHANGE_ROLE_SOUND = "CHANGE_ROLE_SOUND";
+   public static final String HUNTING_SOUND = "HUNTING_SOUND";
+   public static final String ESCAPING_SOUND = "ESCAPING_SOUND";
 
    private static AudioSystem system;
 
@@ -50,8 +51,13 @@ public final class AudioSystem
          
          in = new BufferedInputStream(
                  ClassLoader.getSystemResourceAsStream("sounds/sound98.wav"));
-         wavEffects.put(CHANGE_ROLE_SOUND, AudioLoader.getAudio("WAV", in));
-         wavEffectsVolume.put(CHANGE_ROLE_SOUND, 2.5f*NORMAL_SOUND_VOLUME);
+         wavEffects.put(HUNTING_SOUND, AudioLoader.getAudio("WAV", in));
+         wavEffectsVolume.put(HUNTING_SOUND, 2.5f*NORMAL_SOUND_VOLUME);
+
+         in = new BufferedInputStream(
+                 ClassLoader.getSystemResourceAsStream("sounds/beep21.wav"));
+         wavEffects.put(ESCAPING_SOUND, AudioLoader.getAudio("WAV", in));
+         wavEffectsVolume.put(ESCAPING_SOUND, NORMAL_SOUND_VOLUME);
 
          SoundStore.get().setMaxSources(5);
          SoundStore.get().setSoundVolume(NORMAL_SOUND_VOLUME);

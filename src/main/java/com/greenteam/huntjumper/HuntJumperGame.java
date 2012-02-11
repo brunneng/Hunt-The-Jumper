@@ -198,6 +198,7 @@ public class HuntJumperGame implements Game
       Set<Jumper> executedJumpers = new HashSet<Jumper>();
       float collisionDist = -1;
       boolean hasChangeRole = false;
+      boolean myJumperEscaping = false;
 
       for (Jumper j : jumpers)
       {
@@ -233,6 +234,7 @@ public class HuntJumperGame implements Game
                      jumperA.setJumperRole(JumperRole.Escaping);
                      jumperB.setJumperRole(JumperRole.Hunting);
                      hasChangeRole = true;
+                     myJumperEscaping = myJumper.equals(jumperA);
                   }
                   else if (roleB.equals(JumperRole.Hunting) &&
                           roleA.equals(JumperRole.Escaping))
@@ -240,6 +242,7 @@ public class HuntJumperGame implements Game
                      jumperB.setJumperRole(JumperRole.Escaping);
                      jumperA.setJumperRole(JumperRole.Hunting);
                      hasChangeRole = true;
+                     myJumperEscaping = myJumper.equals(jumperB);
                   }
                }
             }
@@ -253,7 +256,7 @@ public class HuntJumperGame implements Game
          String sound = AudioSystem.COLLISION_SOUND;
          if (hasChangeRole)
          {
-            sound = AudioSystem.CHANGE_ROLE_SOUND;
+            sound = myJumperEscaping ? AudioSystem.ESCAPING_SOUND : AudioSystem.HUNTING_SOUND;
          }
 
          AudioSystem.getInstance().playSound(sound, volumePercent);
