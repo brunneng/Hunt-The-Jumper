@@ -70,11 +70,11 @@ public final class Utils
       v.rotate(startAngle);
       
       List<Point> res = new ArrayList<Point>();
-      res.add(new Point(v.getX(), v.getY()));
+      res.add(new Point(center).plus(v));
       for (int i = 1; i < pointsCount; ++i)
       {
          v.rotate(angleStep);
-         res.add(new Point(v.getX(), v.getY()));
+         res.add(new Point(center).plus(v));
       }
 
       return res;

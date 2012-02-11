@@ -7,6 +7,41 @@ import java.util.List;
  */
 public class Segment
 {
+   public static Point findIntersection(Segment s1, boolean s1IsLine, Segment s2, boolean s2IsLine)
+   {
+      s1.initLineEquation();
+      s2.initLineEquation();
+
+      double a1 = s1.a;
+      double b1 = s1.b;
+      double c1 = s1.c;
+      double a2 = s2.a;
+      double b2 = s2.b;
+      double c2 = s2.c;
+
+      double d = a1*b2 - a2*b1;
+
+      if (Utils.equals(d, 0)) // lines are parallel
+      {
+         return null;
+      }
+
+      double dx = c1*b2 - c2*b1;
+      double x = dx / d;
+
+      double dy = a1*c2 - a2*c1;
+      double y = dy / d;
+
+      Point res = null;
+      if ((s1IsLine || (s1.xRange.contains((float)x) && s1.yRange.contains((float)y))) &&
+          (s2IsLine || (s2.xRange.contains((float)x) && s2.yRange.contains((float)y))))
+      {
+         res = new Point((float)x, (float)y);
+      }
+
+      return res;
+   }
+
    private Point end1;
    private Point end2;
 
@@ -111,37 +146,7 @@ public class Segment
 
    public Point intersectionWith(Segment other)
    {
-      initLineEquation();
-      other.initLineEquation();
-
-      double a1 = a;
-      double b1 = b;
-      double c1 = c;
-      double a2 = other.a;
-      double b2 = other.b;
-      double c2 = other.c;
-
-      double d = a1*b2 - a2*b1;
-
-      if (Utils.equals(d, 0)) // lines are parallel
-      {
-         return null;
-      }
-
-      double dx = c1*b2 - c2*b1;
-      double x = dx / d;
-
-      double dy = a1*c2 - a2*c1;
-      double y = dy / d;
-      
-      Point res = null;
-      if (xRange.contains((float)x) && other.xRange.contains((float)x) &&
-          yRange.contains((float)y) && other.yRange.contains((float)y))
-      {
-         res = new Point((float)x, (float)y);
-      }
-
-      return res;
+      return findIntersection(this, false, other, false);
    }
    
    public Point findMostFarPoint(List<Point> points)

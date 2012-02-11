@@ -41,7 +41,7 @@ public class HuntJumperGame implements Game
    {
       try
       {
-         map = new Map(new AvailabilityMap("maps/2.png"));
+         map = new Map(new AvailabilityMap("maps/1.png"));
       }
       catch (IOException e)
       {

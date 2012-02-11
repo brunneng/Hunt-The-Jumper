@@ -250,8 +250,13 @@ public class AvailabilityMap
          }
       });
    }
-   
-   private boolean isValid(IntPoint p)
+
+   public boolean isValid(int x, int y)
+   {
+      return x >= 0 && x < countX && y >= 0 && y < countY;
+   }
+
+   public boolean isValid(IntPoint p)
    {
       return p.x >= 0 && p.x < countX && p.y >= 0 && p.y < countY;
    }

@@ -83,7 +83,8 @@ public class Map implements IVisibleObject
    public boolean isPointFree(Point p)
    {
       Point tp = new Point(p).plus(map.getTranslationVector());
-      return map.getValue((int)tp.getX(), (int)tp.getY()) == AvailabilityMap.FREE;
+      return map.isValid((int)tp.getX(), (int)tp.getY()) &&
+              map.getValue((int)tp.getX(), (int)tp.getY()) == AvailabilityMap.FREE;
    }
 
    @Override

@@ -1,9 +1,8 @@
 package com.greenteam.huntjumper.map;
 
+import com.greenteam.huntjumper.utils.*;
 import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.Polygon;
-import com.greenteam.huntjumper.utils.Segment;
-import com.greenteam.huntjumper.utils.Vector2D;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -12,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * User: GreenTea Date: 29.01.12 Time: 15:07
@@ -32,6 +32,46 @@ public class SnowflakeMapGenerator
                  minSegmentsCount);
       }
    }
+   
+   private static void drawHorizontalLines(AvailabilityMap am, Segment s1, Segment s2, 
+                                           float minWidth, float maxWidth, float totalWidth,
+                                           float maxAngleAv, float maxAngleDeviation,
+                                           int minChangeDirectionCount)
+   {
+      Random rand = Utils.rand;
+      float dw = maxWidth - minWidth;
+
+      while (totalWidth > 0)
+      {
+         float w = minWidth + rand.nextFloat()*dw;
+         totalWidth -= w;
+
+         Segment l0 = new Segment(s1.getRandomPoint(), s2.getRandomPoint());
+         float subSegmentLength = (float)l0.length() / minChangeDirectionCount;
+         float maxLen = 1.5f*(float)l0.length();
+         float currLen = 0;
+         Point start = l0.getEnd1();
+
+         float angleChangeAv = rand.nextFloat()*maxAngleAv;
+         Vector2D currVector = new Vector2D(l0.getEnd1(), l0.getEnd2()).setLength(subSegmentLength);
+         Segment currSegment = null;
+
+
+         while (currSegment == null || currLen < maxLen)
+         {
+            currSegment = new Segment(start, new Point(start).plus(currVector));
+            currLen += subSegmentLength;
+            am.drawFreeLine(currSegment, w);
+
+            float angleChangeDeviation = rand.nextFloat()*maxAngleDeviation;
+            float angleChange = angleChangeAv + angleChangeDeviation;
+            currVector = new Vector2D(currVector).rotate(angleChange);
+            start = currSegment.getEnd2();
+         }
+      }
+      
+   }
+   
 
    public static void generateMap(int segmentsCount, String imageFileName) throws IOException
    {
@@ -57,17 +97,12 @@ public class SnowflakeMapGenerator
       segments.add(new Segment(p2, p3));
 
       AvailabilityMap am = new AvailabilityMap(segments);
-      Segment l1 = new Segment(segments.get(0).getRandomPoint(), segments.get(1).getRandomPoint());
-      Segment l2 = new Segment(segments.get(0).getRandomPoint(), segments.get(1).getRandomPoint());
-      Segment l3 = new Segment(p1, segments.get(2).getRandomPoint());
       Segment l4 = new Segment(p2, p3);
-      float lineWidth = r / 20;
-      am.drawFreeLine(l1, lineWidth);
-      am.drawFreeLine(l2, lineWidth);
-      am.drawFreeLine(l3, lineWidth);
-      am.drawWall(l4, lineWidth / 5);
-//      Segment lx = new Segment(segments.get(0).getPoint(0.5f), segments.get(1).getPoint(0.5f));
-//      am.drawFreeLine(lx, lineWidth);
+
+      drawHorizontalLines(am, segments.get(0), segments.get(1), r / 40, r / 30, r / 5, 10f, 3f, 3);
+      am.drawFreeLine(new Segment(p1, p1), r / 20);
+      am.drawWall(l4, r / 100);
+
       List<Polygon> polygons = am.splitOnPolygons();
       List<Polygon> allPolygons = new ArrayList<Polygon>();
 
@@ -91,9 +126,6 @@ public class SnowflakeMapGenerator
       am.removeIsolatedFreePoints();
       am.splitOnPolygons();
       am.saveToFile(imageFileName);
-
-//      am = new AvailabilityMap("saved.png");
-//      am.saveToFile("saved2.png");
 
 //      BufferedImage image = new BufferedImage(am.getCountX(), am.getCountY(),
 //              BufferedImage.TYPE_INT_BGR);
