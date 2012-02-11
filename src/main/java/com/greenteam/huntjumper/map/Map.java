@@ -13,6 +13,7 @@ import org.newdawn.slick.geom.Rectangle;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * User: GreenTea Date: 05.02.12 Time: 19:36
@@ -29,6 +30,8 @@ public class Map implements IVisibleObject
       List<Polygon> polygons = map.splitOnPolygons();
       allPolygons = new ArrayList<StaticBody>();
 
+      Random rand = Utils.rand;
+      
       for (Polygon p : polygons)
       {
          ROVector2f[] physPoints = new ROVector2f[p.getSegments().size()];
@@ -62,14 +65,12 @@ public class Map implements IVisibleObject
                byte value = map.getValue(x, y);
                if (value != AvailabilityMap.FREE)
                {
-                  g.setColor(ViewConstants.defaultMapColor);
+                  float scale = 0.2f * (rand.nextFloat() - 0.5f);
+                  Color c = ViewConstants.defaultMapColor.brighter(scale);
+                  g.setColor(c);
+
                   g.draw(new Rectangle(x, y, 2, 2));
                }
-//               else
-//               {
-//                  g.setColor(ViewConstants.defaultGroundColor);
-//                  g.draw(new Rectangle(x, y, 2, 2));
-//               }
             }
          }
          g.flush();
