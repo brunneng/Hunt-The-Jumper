@@ -18,10 +18,12 @@ public final class AudioSystem
 {
    private static final float NORMAL_SOUND_VOLUME = 0.08f;
    public static final String COLLISION_SOUND = "COLLISION_SOUND";
+   public static final String CHANGE_ROLE_SOUND = "CHANGE_ROLE_SOUND";
 
    private static AudioSystem system;
 
    private Map<String, Audio> wavEffects = new HashMap<String, Audio>();
+   private Map<String, Float> wavEffectsVolume = new HashMap<String, Float>();
 
    public static AudioSystem getInstance()
    {
@@ -44,6 +46,12 @@ public final class AudioSystem
          InputStream in = new BufferedInputStream(
                  ClassLoader.getSystemResourceAsStream("sounds/sound60.wav"));
          wavEffects.put(COLLISION_SOUND, AudioLoader.getAudio("WAV", in));
+         wavEffectsVolume.put(COLLISION_SOUND, NORMAL_SOUND_VOLUME);
+         
+         in = new BufferedInputStream(
+                 ClassLoader.getSystemResourceAsStream("sounds/sound98.wav"));
+         wavEffects.put(CHANGE_ROLE_SOUND, AudioLoader.getAudio("WAV", in));
+         wavEffectsVolume.put(CHANGE_ROLE_SOUND, 2.5f*NORMAL_SOUND_VOLUME);
 
          SoundStore.get().setMaxSources(5);
          SoundStore.get().setSoundVolume(NORMAL_SOUND_VOLUME);
@@ -63,7 +71,7 @@ public final class AudioSystem
 
    public void playSound(String name, float volumePercent)
    {
-      float volume = NORMAL_SOUND_VOLUME * volumePercent;
+      float volume = wavEffectsVolume.get(name) * volumePercent;
       SoundStore.get().setSoundVolume(volume);
       Audio s = wavEffects.get(name);
       s.playAsSoundEffect(1.0f, 1.0f, false);

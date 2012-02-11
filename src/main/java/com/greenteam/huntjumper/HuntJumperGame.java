@@ -196,7 +196,9 @@ public class HuntJumperGame implements Game
    public void updateCollisions()
    {
       Set<Jumper> executedJumpers = new HashSet<Jumper>();
-      
+      float collisionDist = -1;
+      boolean hasChangeRole = false;
+
       for (Jumper j : jumpers)
       {
          if (executedJumpers.contains(j))
@@ -215,9 +217,7 @@ public class HuntJumperGame implements Game
                Jumper jumperA = bodyToJumpers.get(bodyA);
                Jumper jumperB = bodyToJumpers.get(bodyB);
 
-               float dist = myJumper.getBody().getPosition().distance(e.getPoint());
-               float volumePercent = Math.max(1 - dist/GameConstants.MAX_SOUNDS_DIST, 0f);
-               AudioSystem.getInstance().playSound(AudioSystem.COLLISION_SOUND, volumePercent);
+               collisionDist = myJumper.getBody().getPosition().distance(e.getPoint());
                
                if (jumperA != null && jumperB != null)
                {
@@ -232,16 +232,31 @@ public class HuntJumperGame implements Game
                   {
                      jumperA.setJumperRole(JumperRole.Escaping);
                      jumperB.setJumperRole(JumperRole.Hunting);
+                     hasChangeRole = true;
                   }
                   else if (roleB.equals(JumperRole.Hunting) &&
                           roleA.equals(JumperRole.Escaping))
                   {
                      jumperB.setJumperRole(JumperRole.Escaping);
                      jumperA.setJumperRole(JumperRole.Hunting);
+                     hasChangeRole = true;
                   }
                }
             }
          }
+      }
+      
+      if (collisionDist >= 0)
+      {
+         float volumePercent = Math.max(1 - collisionDist/GameConstants.MAX_SOUNDS_DIST, 0f);
+         
+         String sound = AudioSystem.COLLISION_SOUND;
+         if (hasChangeRole)
+         {
+            sound = AudioSystem.CHANGE_ROLE_SOUND;
+         }
+
+         AudioSystem.getInstance().playSound(sound, volumePercent);
       }
 
    }
