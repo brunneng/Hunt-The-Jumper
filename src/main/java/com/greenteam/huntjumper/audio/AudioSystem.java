@@ -47,21 +47,20 @@ public final class AudioSystem
          InputStream in = new BufferedInputStream(
                  ClassLoader.getSystemResourceAsStream("sounds/sound60.wav"));
          wavEffects.put(COLLISION_SOUND, AudioLoader.getAudio("WAV", in));
-         wavEffectsVolume.put(COLLISION_SOUND, NORMAL_SOUND_VOLUME);
+         wavEffectsVolume.put(COLLISION_SOUND, 1f);
          
          in = new BufferedInputStream(
                  ClassLoader.getSystemResourceAsStream("sounds/sound98.wav"));
          wavEffects.put(HUNTING_SOUND, AudioLoader.getAudio("WAV", in));
-         wavEffectsVolume.put(HUNTING_SOUND, 2.5f*NORMAL_SOUND_VOLUME);
+         wavEffectsVolume.put(HUNTING_SOUND, 2.5f);
 
          in = new BufferedInputStream(
                  ClassLoader.getSystemResourceAsStream("sounds/beep21.wav"));
          wavEffects.put(ESCAPING_SOUND, AudioLoader.getAudio("WAV", in));
-         wavEffectsVolume.put(ESCAPING_SOUND, NORMAL_SOUND_VOLUME);
+         wavEffectsVolume.put(ESCAPING_SOUND, 1f);
 
          SoundStore.get().setMaxSources(5);
          SoundStore.get().setSoundVolume(NORMAL_SOUND_VOLUME);
-
       }
       catch (IOException e)
       {
@@ -78,8 +77,7 @@ public final class AudioSystem
    public void playSound(String name, float volumePercent)
    {
       float volume = wavEffectsVolume.get(name) * volumePercent;
-      SoundStore.get().setSoundVolume(volume);
       Audio s = wavEffects.get(name);
-      s.playAsSoundEffect(1.0f, 1.0f, false);
+      s.playAsSoundEffect(1.0f, volume, false);
    }
 }
