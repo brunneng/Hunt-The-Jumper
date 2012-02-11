@@ -1,5 +1,6 @@
 package com.greenteam.huntjumper;
 
+import com.greenteam.huntjumper.audio.AudioSystem;
 import com.greenteam.huntjumper.contoller.AbstractJumperController;
 import com.greenteam.huntjumper.contoller.BotController;
 import com.greenteam.huntjumper.contoller.MouseController;
@@ -189,6 +190,7 @@ public class HuntJumperGame implements Game
 
          updateCollisions();
       }
+      AudioSystem.getInstance().update(delta);
    }
 
    public void updateCollisions()
@@ -213,6 +215,10 @@ public class HuntJumperGame implements Game
                Jumper jumperA = bodyToJumpers.get(bodyA);
                Jumper jumperB = bodyToJumpers.get(bodyB);
 
+               float dist = myJumper.getBody().getPosition().distance(e.getPoint());
+               float volumePercent = Math.max(1 - dist/GameConstants.MAX_SOUNDS_DIST, 0f);
+               AudioSystem.getInstance().playSound(AudioSystem.COLLISION_SOUND, volumePercent);
+               
                if (jumperA != null && jumperB != null)
                {
                   executedJumpers.add(jumperA);
