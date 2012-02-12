@@ -80,7 +80,7 @@ public class Point implements Cloneable
    {
       x += vector.getX();
       y += vector.getY();
-      return this;
+      return new Point(x, y);
    }
 
    public float distanceTo(Point other)

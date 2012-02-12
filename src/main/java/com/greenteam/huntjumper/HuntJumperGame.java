@@ -4,6 +4,7 @@ import com.greenteam.huntjumper.audio.AudioSystem;
 import com.greenteam.huntjumper.contoller.AbstractJumperController;
 import com.greenteam.huntjumper.contoller.BotController;
 import com.greenteam.huntjumper.contoller.MouseController;
+import com.greenteam.huntjumper.manager.ArrowManager;
 import com.greenteam.huntjumper.map.AvailabilityMap;
 import com.greenteam.huntjumper.map.Map;
 import com.greenteam.huntjumper.model.Jumper;
@@ -32,6 +33,7 @@ public class HuntJumperGame implements Game
    
    private Jumper myJumper;
    private TimeAccumulator timeAccumulator = new TimeAccumulator();
+   private ArrowManager arrowManager;
 
    private void initWorld()
    {
@@ -147,6 +149,8 @@ public class HuntJumperGame implements Game
                     }
                  }), JumperRole.Hunting);
       }
+
+      arrowManager = new ArrowManager(jumpers);
    }
 
    private void initCamera()
@@ -257,11 +261,10 @@ public class HuntJumperGame implements Game
          if (hasChangeRole)
          {
             sound = myJumperEscaping ? AudioSystem.ESCAPING_SOUND : AudioSystem.HUNTING_SOUND;
+            AudioSystem.getInstance().playSound(sound, volumePercent);
          }
 
-         AudioSystem.getInstance().playSound(sound, volumePercent);
       }
-
    }
 
    public void render(GameContainer container, Graphics g) throws SlickException
@@ -271,7 +274,7 @@ public class HuntJumperGame implements Game
       {
          j.draw(g);
       }
-
+      arrowManager.draw(g);
    }
 
    public boolean closeRequested()

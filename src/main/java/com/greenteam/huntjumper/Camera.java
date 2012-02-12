@@ -1,5 +1,6 @@
 package com.greenteam.huntjumper;
 
+import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.ViewConstants;
 import net.phys2d.math.ROVector2f;
@@ -79,5 +80,12 @@ public class Camera
    public Point toPhys(Point viewPoint)
    {
       return new Point(viewPoint.getX() + minX, viewPoint.getY() + minY);
+   }
+
+   public boolean contains(ROVector2f p)
+   {
+      Point point = new Point(p);
+      return (point.getX() < (viewWidth + minX) || point.getX() > minX)
+              && (point.getY() < (viewHeight + minY) || point.getY() > minY);
    }
 }

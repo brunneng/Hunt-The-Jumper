@@ -72,6 +72,11 @@ public class  Vector2D implements Cloneable
       this.y = other.getY();
    }
 
+   public Vector2D(ROVector2f start, ROVector2f end) 
+   {
+      this(new Point(start), new Point(end));
+   }
+
    public Vector2D(Point start, Point end)
    {
       this.x = end.getX() - start.getX();

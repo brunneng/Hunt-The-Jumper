@@ -4,6 +4,7 @@ import com.greenteam.huntjumper.Camera;
 import com.greenteam.huntjumper.IVisibleObject;
 import com.greenteam.huntjumper.contoller.AbstractJumperController;
 import com.greenteam.huntjumper.contoller.IJumperController;
+import com.greenteam.huntjumper.contoller.MouseController;
 import com.greenteam.huntjumper.utils.*;
 import net.phys2d.math.ROVector2f;
 import net.phys2d.raw.Body;
@@ -58,6 +59,16 @@ public class Jumper implements IVisibleObject
       this.controller = controller;
    }
 
+   public Vector2D vectorTo(Jumper j)
+   {
+      return new Vector2D(getBody().getPosition(), j.getBody().getPosition());
+   }
+
+   public boolean locallyControlled()
+   {
+      return controller instanceof MouseController;  
+   }
+
    public Body getBody()
    {
       return body;
@@ -77,7 +88,6 @@ public class Jumper implements IVisibleObject
    {
       return playerName;
    }
-
 
    public Color getColor()
    {
