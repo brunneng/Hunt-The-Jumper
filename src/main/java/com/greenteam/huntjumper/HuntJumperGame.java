@@ -261,9 +261,9 @@ public class HuntJumperGame implements Game
          if (hasChangeRole)
          {
             sound = myJumperEscaping ? AudioSystem.ESCAPING_SOUND : AudioSystem.HUNTING_SOUND;
-            AudioSystem.getInstance().playSound(sound, volumePercent);
          }
 
+         AudioSystem.getInstance().playSound(sound, volumePercent);
       }
    }
 
