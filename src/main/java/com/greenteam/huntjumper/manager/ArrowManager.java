@@ -5,6 +5,7 @@ import com.greenteam.huntjumper.IVisibleObject;
 import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.Vector2D;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
@@ -40,10 +41,11 @@ public class ArrowManager implements IVisibleObject {
 
       try
       {
-         arrowImage = new Image("arrow.png");
+         arrowImage = new Image("arrow.png", Color.white);
       }
       catch (SlickException e) {
       }
+
    }
 
    public void draw(Graphics g)
@@ -54,8 +56,8 @@ public class ArrowManager implements IVisibleObject {
          {
             public boolean apply(Jumper jumper)
             {
-               return instance().contains(jumper.getBody().getPosition()) &&
-                       jumper.getJumperRole() == Escaping;
+               return jumper.getJumperRole() == Escaping &&
+                       !instance().contains(jumper.getBody().getPosition());
             }
          }), g);
       }
@@ -66,9 +68,10 @@ public class ArrowManager implements IVisibleObject {
       for (Jumper j: jumpers)
       {
          float angle = local.vectorTo(j).angle();
-         Point positionOnScreen = instance().toView(local.getBody().getPosition()).plus(fromAngleAndLength(angle, 50));
+         Point positionOnScreen = instance().toView(local.getBody().getPosition()).plus(fromAngleAndLength(angle, 100));
          arrowImage.setRotation(angle - 90);
-         g.drawImage(arrowImage, positionOnScreen.getX(), positionOnScreen.getY());
+         arrowImage.setAlpha(j.getColor().getAlpha());
+         arrowImage.drawCentered(positionOnScreen.getX(), positionOnScreen.getY());
       }
    }
 

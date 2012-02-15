@@ -85,7 +85,8 @@ public class Camera
    public boolean contains(ROVector2f p)
    {
       Point point = new Point(p);
-      return (point.getX() < (viewWidth + minX) || point.getX() > minX)
-              && (point.getY() < (viewHeight + minY) || point.getY() > minY);
+      System.out.println("Point" + p.toString() + " View" + viewCenter.toString());
+      return !((point.getX() < (viewCenter.getX() + viewWidth / 2) || point.getX() > (viewCenter.getX() - viewWidth / 2))
+              && (point.getY() < (viewCenter.getY() - viewHeight / 2) || point.getY() > (viewCenter.getY() + viewHeight / 2)));
    }
 }
