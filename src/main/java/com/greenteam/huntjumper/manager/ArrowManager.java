@@ -1,8 +1,10 @@
 package com.greenteam.huntjumper.manager;
 
 import com.google.common.base.Predicate;
+import com.greenteam.huntjumper.Camera;
 import com.greenteam.huntjumper.IVisibleObject;
 import com.greenteam.huntjumper.model.Jumper;
+import com.greenteam.huntjumper.utils.GameConstants;
 import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.Vector2D;
 import org.newdawn.slick.Color;
@@ -61,6 +63,17 @@ public class ArrowManager implements IVisibleObject {
             }
          }), g);
       }
+      if (Escaping == local.getJumperRole())
+      {
+         drawArrowTo(filter(jumpers, new Predicate<Jumper>()
+         {
+            public boolean apply(Jumper jumper)
+            {
+               return jumper.getJumperRole() == Hunting &&
+                       !instance().contains(jumper.getBody().getPosition());
+            }
+         }), g);
+      }
    }
 
    private void drawArrowTo(Collection<Jumper> jumpers, Graphics g)
@@ -68,9 +81,9 @@ public class ArrowManager implements IVisibleObject {
       for (Jumper j: jumpers)
       {
          float angle = local.vectorTo(j).angle();
-         Point positionOnScreen = instance().toView(local.getBody().getPosition()).plus(fromAngleAndLength(angle, 100));
+         Point positionOnScreen = instance().toView(local.getBody().getPosition())
+                 .plus(fromAngleAndLength(angle, instance().getViewWidth() / 2 - GameConstants.CAMERA_MAX_DIST));
          arrowImage.setRotation(angle - 90);
-         arrowImage.setAlpha(j.getColor().getAlpha());
          arrowImage.drawCentered(positionOnScreen.getX(), positionOnScreen.getY());
       }
    }
