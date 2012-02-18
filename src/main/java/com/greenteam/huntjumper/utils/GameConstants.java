@@ -35,5 +35,6 @@ public final class GameConstants
 
    public static final int PATH_FINDING_MAP_TEST_POINTS_IN_CELL = 12;
    public static final int PATH_FINDING_MAP_CELL_SIZE = 40;
-   public static final boolean PATH_FINDING_DEBUG = false;
+   public static final boolean PATH_FINDING_DEBUG = true;
+   public static final float FREE_LINE_TEST_STEP = 5f;
 }

@@ -4,6 +4,7 @@ import com.greenteam.huntjumper.map.Map;
 import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.model.JumperInfo;
 import com.greenteam.huntjumper.model.JumperRole;
+import com.greenteam.huntjumper.utils.GameConstants;
 import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.Vector2D;
 
@@ -27,6 +28,49 @@ public class BotController extends AbstractJumperController
       this.infoSource = infoSource;
    }
    
+   private boolean isLineFree(Point start, Point end, float step)
+   {
+      float dist = end.distanceTo(start);
+      if (dist < step)
+      {
+         return true;
+      }
+
+      Vector2D v = new Vector2D(start, end);
+      float currLen = step;
+
+      boolean res = true;
+      while (currLen < dist)
+      {
+         v.setLength(currLen);
+         Point testPoint = start.plus(v);
+         if (!infoSource.getMap().isPointFree(testPoint))
+         {
+            res = false;
+            break;
+         }
+
+         currLen += step;
+      }
+      
+      return res;
+   }
+   
+   private Point findMostFarPointInFreeLine(Point current, List<Point> shortestPath)
+   {
+      Point mostFarPoint = null;
+      for (Point p : shortestPath)
+      {
+         if (!isLineFree(current, p, GameConstants.FREE_LINE_TEST_STEP))
+         {
+            break;
+         }
+         mostFarPoint = p;
+      }
+
+      return mostFarPoint;
+   }
+   
    @Override
    protected Move makeMove(Jumper jumper)
    {
@@ -48,9 +92,13 @@ public class BotController extends AbstractJumperController
                List<Point> shortestPath = infoSource.getMap().findShortestPath(
                        current.position, info.position);
                Point target = info.position;
-               if (shortestPath != null && shortestPath.size() > 1)
+               if (shortestPath != null && shortestPath.size() > 0)
                {
-                  target = shortestPath.get(1);
+                  Point newTarget = findMostFarPointInFreeLine(current.position, shortestPath);
+                  if (newTarget != null)
+                  {
+                     target = newTarget;
+                  }
                   lastShortestPath = shortestPath;
                }
 
