@@ -11,6 +11,8 @@ import net.phys2d.raw.Body;
 import net.phys2d.raw.shapes.Circle;
 import org.newdawn.slick.*;
 
+import java.util.List;
+
 import static com.greenteam.huntjumper.utils.GameConstants.*;
 import static com.greenteam.huntjumper.utils.Vector2D.fromRadianAngleAndLength;
 
@@ -137,11 +139,32 @@ public class Jumper implements IVisibleObject
       for (int i = 0; i < segmentsCount; ++i)
       {
          Vector2D vectorFromCenter = new Vector2D(rotationDirection);
-         vectorFromCenter.plus(new Vector2D(viewCenter));
+         vectorFromCenter = vectorFromCenter.plus(new Vector2D(viewCenter));
 
          g.drawLine(viewCenter.getX(), viewCenter.getY(),
                  vectorFromCenter.getX(), vectorFromCenter.getY());
-         rotationDirection.rotate(anglePerSegment);
+         rotationDirection = rotationDirection.rotate(anglePerSegment);
+      }
+
+      if (GameConstants.PATH_FINDING_DEBUG)
+      {
+         Color c = new Color(1f, 0f, 0f, 0.2f);
+         g.setColor(c);
+         List<Point> lastShortestPath = controller.lastShortestPath;
+         if (lastShortestPath != null)
+         {
+            for (int i = 0; i < lastShortestPath.size() - 1; ++i)
+            {
+               Point p1 = lastShortestPath.get(i);
+               Point p2 = lastShortestPath.get(i + 1);
+               
+               Point tP1 = Camera.instance().toView(p1);
+               Point tP2 = Camera.instance().toView(p2);
+   
+               g.drawLine(tP1.getX(), tP1.getY(),
+                       tP2.getX(), tP2.getY());
+            }
+         }
       }
 
       renderAccelerationBar(g);

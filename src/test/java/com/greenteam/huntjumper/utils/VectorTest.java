@@ -14,16 +14,16 @@ public class VectorTest
    {
       Vector2D v = new Vector2D(100, 0);
 
-      v.rotate(90);
+      v = v.rotate(90);
       Assert.assertTrue(Utils.equals(v.angle(), 90.0f));
 
-      v.rotate(90);
+      v = v.rotate(90);
       Assert.assertTrue(Utils.equals(v.angle(), 180.0f));
 
-      v.rotate(90);
+      v = v.rotate(90);
       Assert.assertTrue(Utils.equals(v.angle(), 270.0f));
 
-      v.rotate(90);
+      v = v.rotate(90);
       Assert.assertTrue(Utils.equals(v.angle(), 0.0f));
    }
 }

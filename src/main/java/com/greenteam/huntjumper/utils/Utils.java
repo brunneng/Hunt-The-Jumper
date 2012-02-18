@@ -67,14 +67,14 @@ public final class Utils
       float angleStep = 360.0f / pointsCount;
 
       Vector2D v = new Vector2D(center, new Point(center.getX() + radius, center.getY()));
-      v.rotate(startAngle);
+      v = v.rotate(startAngle);
       
       List<Point> res = new ArrayList<Point>();
-      res.add(new Point(center).plus(v));
+      res.add(center.plus(v));
       for (int i = 1; i < pointsCount; ++i)
       {
-         v.rotate(angleStep);
-         res.add(new Point(center).plus(v));
+         v = v.rotate(angleStep);
+         res.add(center.plus(v));
       }
 
       return res;

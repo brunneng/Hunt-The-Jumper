@@ -3,6 +3,7 @@ package com.greenteam.huntjumper.map;
 import com.greenteam.huntjumper.Camera;
 import com.greenteam.huntjumper.IVisibleObject;
 import com.greenteam.huntjumper.utils.*;
+import com.greenteam.huntjumper.utils.pathfinding.PathFinder;
 import net.phys2d.math.ROVector2f;
 import net.phys2d.raw.StaticBody;
 import org.newdawn.slick.Color;
@@ -23,6 +24,9 @@ public class Map implements IVisibleObject
    private List<StaticBody> allPolygons;
    private Image mapImage;
    private AvailabilityMap map;
+
+   private int cellSize;
+   private PathFinder pathFinder;
    
    public Map(AvailabilityMap map)
    {
@@ -79,11 +83,100 @@ public class Map implements IVisibleObject
       {
          throw new RuntimeException(e);
       }
+
+      initPathFinder();
+   }
+
+   private void initPathFinder()
+   {
+      cellSize = GameConstants.PATH_FINDING_MAP_CELL_SIZE;
+      int countX = (map.countX / cellSize) + 1;
+      int countY = (map.countY / cellSize) + 1;
+
+      byte[][] pathFindingMap = new byte[countY][countX];
+      for (int x = 0; x < countX; ++x)
+      {
+         for (int y = 0; y < countX; ++y)
+         {
+            byte cell = PathFinder.FREE;
+            if (!isCellFree(x*cellSize, y*cellSize, cellSize))
+            {
+               cell = PathFinder.WALL;
+            }
+            pathFindingMap[y][x] = cell;
+         }
+      }
+
+      pathFinder = new PathFinder(pathFindingMap);
+   }
+
+   private boolean isNotFree(IntPoint p)
+   {
+      return map.isValid(p) && map.getValue(p) != AvailabilityMap.FREE;
    }
    
+   private boolean isCellFree(int x, int y, int size)
+   {
+      int centerX = x + size/2;
+      int centerY = y + size/2;
+      int radius = size/2 - 3;
+      List<Point> points = Utils.getRotationPoints(new Point(centerX, centerY), radius, 0, 
+              GameConstants.PATH_FINDING_MAP_TEST_POINTS_IN_CELL);
+      boolean free = true;
+      for (Point p : points)
+      {
+         IntPoint testPoint = new IntPoint((int)p.getX(), (int)p.getY());
+         if (isNotFree(testPoint))
+         {
+            free = false;
+            break;
+         }
+      }
+      
+      return free;
+   }
+   
+   private IntPoint toPathFindingCell(Point objectPos)
+   {
+      Point tPos = objectPos.plus(map.getTranslationVector());
+      IntPoint p = new IntPoint((int)(tPos.getX() / cellSize), (int)(tPos.getY() / cellSize));
+      return p;
+   }
+
+   private Point toMapPoint(IntPoint pathFindingCell)
+   {
+      Point p = new Point(
+              pathFindingCell.x * cellSize + cellSize/2,
+              pathFindingCell.y * cellSize + cellSize/2);
+      
+      return p.plus(map.getTranslationVector().negate());
+   }
+
+   public List<Point> findShortestPath(Point start, Point end)
+   {
+      List<Point> res = null;
+
+      IntPoint startCell = toPathFindingCell(start);
+      List<Direction> shortestPath = pathFinder.findShortestPath(
+              startCell, toPathFindingCell(end));
+      if (shortestPath != null)
+      {
+         res = new ArrayList<Point>();
+         
+         IntPoint currentCell = startCell;
+         for (Direction d : shortestPath)
+         {
+            currentCell = currentCell.plus(d);
+            res.add(toMapPoint(currentCell));
+         }
+      }
+
+      return res;
+   }
+
    public boolean isPointFree(Point p)
    {
-      Point tp = new Point(p).plus(map.getTranslationVector());
+      Point tp = p.plus(map.getTranslationVector());
       return map.isValid((int)tp.getX(), (int)tp.getY()) &&
               map.getValue((int)tp.getX(), (int)tp.getY()) == AvailabilityMap.FREE;
    }

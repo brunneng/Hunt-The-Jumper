@@ -27,10 +27,13 @@ public final class GameConstants
 
 
    public static final float DEFAULT_MAP_RING_RADIUS = 600;
-   public static final int DEFAULT_MAP_RING_ANGLES_COUNT = 36;
 
    public static final float MAX_VELOCITY = 600;
 
    public static final float CAMERA_MAX_DIST = 100;
    public static final float MAX_SOUNDS_DIST = JUMPER_RADIUS*50;
+
+   public static final int PATH_FINDING_MAP_TEST_POINTS_IN_CELL = 12;
+   public static final int PATH_FINDING_MAP_CELL_SIZE = 40;
+   public static final boolean PATH_FINDING_DEBUG = false;
 }

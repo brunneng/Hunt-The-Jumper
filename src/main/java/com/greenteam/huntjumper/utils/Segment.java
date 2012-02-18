@@ -85,8 +85,7 @@ public class Segment
    
    public Segment plus(Vector2D vector)
    {
-      return new Segment(new Point(end1).plus(vector),
-              new Point(end2).plus(vector));
+      return new Segment(end1.plus(vector), end2.plus(vector));
    }
 
    public Segment multiply(float xFactor, float yFactor)
@@ -170,7 +169,7 @@ public class Segment
    {
       initLineEquation();
       Vector2D pv = perpendicularToLine(p);
-      Point pointOnLine = new Point(p).plus(pv);
+      Point pointOnLine = p.plus(pv);
 
       double res = 0;
       if (xRange.contains(pointOnLine.getX()) && yRange.contains(pointOnLine.getY()))
@@ -205,13 +204,13 @@ public class Segment
    public Point getPoint(double partOfLenPercent)
    {
       Vector2D v = new Vector2D(end1, end2);
-      return new Point(end1).plus(v.setLength((float)partOfLenPercent*v.length()));
+      return end1.plus(v.setLength((float)partOfLenPercent*v.length()));
    }
 
    public Point getRandomPoint()
    {
       Vector2D v = new Vector2D(end1, end2);
-      return new Point(end1).plus(v.setLength(Utils.rand.nextFloat()*v.length()));
+      return end1.plus(v.setLength(Utils.rand.nextFloat()*v.length()));
    }
 
    public double length()

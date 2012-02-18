@@ -9,26 +9,6 @@ import org.apache.commons.lang.builder.EqualsBuilder;
  */
 public class  Vector2D implements Cloneable
 {
-   public static Vector2D plus(Vector2D v1, Vector2D v2)
-   {
-      return new Vector2D(v1).plus(v2);
-   }
-
-   public static Vector2D minus(Vector2D v1, Vector2D v2)
-   {
-      return new Vector2D(v1).minus(v2);
-   }
-
-   public static Vector2D multiply(Vector2D v, float scale)
-   {
-      return new Vector2D(v).multiply(scale);
-   }
-
-   public static Vector2D rotate(Vector2D v, float angle)
-   {
-      return new Vector2D(v).rotate(angle);
-   }
-
    public static Vector2D fromAngleAndLength(float angle, float length)
    {
       float angleInRadians = (float)Math.toRadians(angle);
@@ -111,7 +91,10 @@ public class  Vector2D implements Cloneable
 
    public Vector2D setLength(float length)
    {
-      return unit().multiply(length);
+      Vector2D res = unit().multiply(length);
+      x = res.x;
+      y = res.y;
+      return res;
    }
 
    public float length()
@@ -122,42 +105,27 @@ public class  Vector2D implements Cloneable
    public Vector2D unit()
    {
       float length = length();
-      x /= length;
-      y /= length;
-
-      return this;
+      return new Vector2D(x / length, y / length);
    }
 
    public Vector2D multiply(float scale)
    {
-      x *= scale;
-      y *= scale;
-
-      return this;
+      return new Vector2D(x * scale, y * scale);
    }
 
    public Vector2D plus(Vector2D other)
    {
-      x += other.x;
-      y += other.y;
-
-      return this;
+      return new Vector2D(x + other.x, y + other.y);
    }
 
    public Vector2D minus(Vector2D other)
    {
-      x -= other.x;
-      y -= other.y;
-
-      return this;
+      return this.plus(other.negate());
    }
 
    public Vector2D negate()
    {
-      x = -x;
-      y = -y;
-      
-      return new Vector2D(this);
+      return new Vector2D(-x, -y);
    }
 
    /**
@@ -217,11 +185,7 @@ public class  Vector2D implements Cloneable
    public Vector2D rotate(float dAngle)
    {
       float newAngle = angle() + dAngle;
-      Vector2D rotated = fromAngleAndLength(newAngle, length());
-
-      x = rotated.x;
-      y = rotated.y;
-      return this;
+      return fromAngleAndLength(newAngle, length());
    }
 
    @Override

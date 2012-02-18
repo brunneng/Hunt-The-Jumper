@@ -4,6 +4,7 @@ import com.greenteam.huntjumper.map.Map;
 import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.model.JumperInfo;
 import com.greenteam.huntjumper.model.JumperRole;
+import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.Vector2D;
 
 import java.util.List;
@@ -29,6 +30,7 @@ public class BotController extends AbstractJumperController
    @Override
    protected Move makeMove(Jumper jumper)
    {
+      lastShortestPath = null;
       JumperInfo current = new JumperInfo(jumper);
       List<JumperInfo> jumperInfos = infoSource.getOpponents(jumper);
       Move res = null;
@@ -43,7 +45,16 @@ public class BotController extends AbstractJumperController
          {
             if (info.jumperRole.equals(JumperRole.Escaping))
             {
-               res = new Move(new Vector2D(current.position, info.position), false);
+               List<Point> shortestPath = infoSource.getMap().findShortestPath(
+                       current.position, info.position);
+               Point target = info.position;
+               if (shortestPath != null && shortestPath.size() > 1)
+               {
+                  target = shortestPath.get(1);
+                  lastShortestPath = shortestPath;
+               }
+
+               res = new Move(new Vector2D(current.position, target), false);
                break;
             }
          }

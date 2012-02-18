@@ -78,9 +78,7 @@ public class Point implements Cloneable
 
    public Point plus(Vector2D vector)
    {
-      x += vector.getX();
-      y += vector.getY();
-      return new Point(x, y);
+      return new Point(x + vector.getX(), y + vector.getY());
    }
 
    public float distanceTo(Point other)

@@ -65,7 +65,7 @@ public class SnowflakeMapGenerator
 
             float angleChangeDeviation = rand.nextFloat()*maxAngleDeviation;
             float angleChange = angleChangeAv + angleChangeDeviation;
-            currVector = new Vector2D(currVector).rotate(angleChange);
+            currVector = currVector.rotate(angleChange);
             start = currSegment.getEnd2();
          }
       }
@@ -84,8 +84,8 @@ public class SnowflakeMapGenerator
       Vector2D v2 = new Vector2D(r, 0);
 
       Vector2D vertical = new Vector2D(r, 0).rotate(270);
-      v1.rotate(270 - segmentAngle/2);
-      v2.rotate(270 + segmentAngle/2);
+      v1 = v1.rotate(270 - segmentAngle/2);
+      v2 = v2.rotate(270 + segmentAngle/2);
       
       Point p1 = new Point(0, 0);
       Point p2 = new Point(v1.getX(), v1.getY());
@@ -114,7 +114,7 @@ public class SnowflakeMapGenerator
             Polygon next = p.rotate(p1, rotationAngle);
             if (i % 2 == 1)
             {
-               Vector2D rotatedV = new Vector2D(vertical).rotate(rotationAngle);
+               Vector2D rotatedV = vertical.rotate(rotationAngle);
                Segment line = new Segment(p1, new Point(p1).plus(rotatedV));
                next = next.turnOverLine(line);
             }

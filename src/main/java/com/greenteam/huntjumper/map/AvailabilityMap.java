@@ -91,10 +91,10 @@ public class AvailabilityMap
    public static final byte MAKE_POLYGON_START_POINT = 6;
    public static final byte GEL = 7;
 
-   float maxXdist;
-   float maxYdist;
-   int countX;
-   int countY;
+   private final float maxXdist;
+   private final float maxYdist;
+   public final int countX;
+   public final int countY;
    private Vector2D translationVector;
    private byte[][] map;
 
@@ -393,7 +393,7 @@ public class AvailabilityMap
 
    private Polygon makePolygon(IntPoint startPoint)
    {
-      Vector2D tv = new Vector2D(translationVector).negate();
+      Vector2D tv = translationVector.negate();
       final float minDistToPrev = MAKE_POLYGON_MIN_DISTANCE;
       List<Segment> segments = new ArrayList<Segment>();
       setValue(startPoint, MAKE_POLYGON_START_POINT);

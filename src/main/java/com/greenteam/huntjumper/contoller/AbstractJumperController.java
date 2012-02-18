@@ -2,8 +2,11 @@ package com.greenteam.huntjumper.contoller;
 
 import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.utils.GameConstants;
+import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.Vector2D;
 import net.phys2d.raw.Body;
+
+import java.util.List;
 
 import static com.greenteam.huntjumper.utils.GameConstants.*;
 import static com.greenteam.huntjumper.utils.Vector2D.fromVector2f;
@@ -19,6 +22,7 @@ public abstract class AbstractJumperController implements IJumperController
    private static final String INFO ="Acceleration info \n Acceleration time - %s \n Angel coef - %s \n Speed coef - %s \n Scale - %s";
 
    private float accumulatedImpulse;
+   public List<Point> lastShortestPath = null;
 
    public float getAccumulatedImpulse()
    {

@@ -65,8 +65,8 @@ public class Polygon
       {
          Vector2D v1 = new Vector2D(center, s.getEnd1());
          Vector2D v2 = new Vector2D(center, s.getEnd2());
-         v1.rotate(angle);
-         v2.rotate(angle);
+         v1 = v1.rotate(angle);
+         v2 = v2.rotate(angle);
 
          Segment ts = new Segment(new Point(center).plus(v1), new Point(center).plus(v2));
          res.add(ts);

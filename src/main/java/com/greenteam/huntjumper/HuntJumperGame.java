@@ -102,7 +102,7 @@ public class HuntJumperGame implements Game
          while(!isStartPointFree(p, res, i))
          {
             Vector2D tv = new Vector2D(rand.nextFloat()*randomStep, rand.nextFloat()* randomStep);
-            p = new Point(p).plus(tv);
+            p = p.plus(tv);
 
          }
 

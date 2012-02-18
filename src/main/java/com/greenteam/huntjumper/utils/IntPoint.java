@@ -19,9 +19,16 @@ public class IntPoint
       return new IntPoint(x + d.dx, y + d.dy);
    }
 
-   public int distanceTo(IntPoint other)
+   public int distanceToInCells(IntPoint other)
    {
       return Math.abs(x - other.x) + Math.abs(y - other.y);
+   }
+
+   public double distanceTo(IntPoint other)
+   {
+      int dx = Math.abs(x - other.x);
+      int dy = Math.abs(y - other.y);
+      return Math.sqrt(dx*dx + dy*dy);
    }
 
    public int squareDistanceTo(IntPoint other)
