@@ -1,6 +1,7 @@
 package com.greenteam.huntjumper.model;
 
 import com.greenteam.huntjumper.Camera;
+import com.greenteam.huntjumper.HuntJumperGame;
 import com.greenteam.huntjumper.IVisibleObject;
 import com.greenteam.huntjumper.contoller.AbstractJumperController;
 import com.greenteam.huntjumper.contoller.IJumperController;
@@ -168,6 +169,23 @@ public class Jumper implements IVisibleObject
       }
 
       renderAccelerationBar(g);
+      drawName(g, viewCenter, radius);
+   }
+
+   private void drawName(Graphics g, Point viewCenter, float radius)
+   {
+      Input input = HuntJumperGame.getInstance().getGameContainer().getInput();
+      Point cursorPos = new Point(input.getMouseX(), input.getMouseY());
+      float distToCursor = Utils.getPhysVectorToCursor(getBody(), cursorPos, Camera.instance()).length();
+      if (distToCursor < ViewConstants.DRAW_NAME_MAX_RADIUS)
+      {
+         float a = 1f - distToCursor/ViewConstants.DRAW_NAME_MAX_RADIUS;
+         Color c = new Color(1f, 1f, 1f, a);
+         TextUtils.drawText(viewCenter.plus(new Vector2D(0, radius*3)), playerName, c, g);
+
+         c = new Color(0f, 0f, 0f, a);
+         TextUtils.drawText(viewCenter.plus(new Vector2D(-2, radius*3 - 2)), playerName, c, g);
+      }
    }
 
    private void renderAccelerationBar(Graphics g) {
@@ -182,4 +200,5 @@ public class Jumper implements IVisibleObject
       leftY = rightY = point.getY() - JUMPER_RADIUS - JUMPER_RADIUS / 2;
       g.drawGradientLine(leftX, leftY, Color.yellow, rightX, rightY, Color.red);
    }
+
 }

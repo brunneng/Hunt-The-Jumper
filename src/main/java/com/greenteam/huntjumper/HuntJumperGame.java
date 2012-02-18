@@ -26,6 +26,12 @@ import java.util.*;
  */
 public class HuntJumperGame implements Game
 {
+   private static HuntJumperGame game;
+   public static final HuntJumperGame getInstance()
+   {
+      return game;
+   }
+
    private World world;
    private Map map;
    private List<Jumper> jumpers = new ArrayList<Jumper>();
@@ -34,6 +40,7 @@ public class HuntJumperGame implements Game
    private Jumper myJumper;
    private TimeAccumulator timeAccumulator = new TimeAccumulator();
    private ArrowManager arrowManager;
+   private GameContainer gameContainer;
 
    private void initWorld()
    {
@@ -44,7 +51,7 @@ public class HuntJumperGame implements Game
    {
       try
       {
-         map = new Map(new AvailabilityMap("maps/1.png"));
+         map = new Map(new AvailabilityMap("maps/4.png"));
       }
       catch (IOException e)
       {
@@ -112,17 +119,17 @@ public class HuntJumperGame implements Game
       return res;
    }
    
-   private void initJumpers(GameContainer container)
+   private void initJumpers()
    {
-      container.setForceExit(false);
-      float maxRandomRadius = GameConstants.DEFAULT_MAP_RING_RADIUS - GameConstants.JUMPER_RADIUS;
+      gameContainer.setForceExit(false);
+      float maxRandomRadius = GameConstants.JUMPERS_START_RADIUS - GameConstants.JUMPER_RADIUS;
 
       List<Point> jumperPositions = Utils.getRotationPoints(
               new Point(0, 0), Utils.rand.nextFloat()*maxRandomRadius, Utils.rand.nextInt(360), 5);
       jumperPositions = getJumperPositionsOnFreePoints(jumperPositions);
       
       myJumper = addJumper(jumperPositions.get(0), "GreenTea", Utils.randomColor(),
-              new MouseController(container), JumperRole.Escaping);
+              new MouseController(), JumperRole.Escaping);
       
       for (int i = 1; i < jumperPositions.size(); ++i)
       {
@@ -161,9 +168,11 @@ public class HuntJumperGame implements Game
 
    public void init(GameContainer container) throws SlickException
    {
+      game = this;
+      gameContainer = container;
       initWorld();
       initMap();
-      initJumpers(container);
+      initJumpers();
       initCamera();
    }
 
@@ -285,5 +294,10 @@ public class HuntJumperGame implements Game
    public String getTitle()
    {
       return ViewConstants.GAME_NAME;
+   }
+
+   public GameContainer getGameContainer()
+   {
+      return gameContainer;
    }
 }

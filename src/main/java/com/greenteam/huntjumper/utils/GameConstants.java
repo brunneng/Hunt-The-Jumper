@@ -26,7 +26,7 @@ public final class GameConstants
    public static final float BASE_SPEED_MODIFIER = 3.0f;
 
 
-   public static final float DEFAULT_MAP_RING_RADIUS = 600;
+   public static final float JUMPERS_START_RADIUS = 600;
 
    public static final float MAX_VELOCITY = 600;
 

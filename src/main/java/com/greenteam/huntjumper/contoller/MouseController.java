@@ -1,6 +1,7 @@
 package com.greenteam.huntjumper.contoller;
 
 import com.greenteam.huntjumper.Camera;
+import com.greenteam.huntjumper.HuntJumperGame;
 import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.Utils;
@@ -18,17 +19,15 @@ import static org.newdawn.slick.Input.*;
  */
 public class MouseController extends AbstractJumperController
 {
-   private GameContainer container;
-
-   public MouseController(GameContainer container)
+   public MouseController()
    {
-      this.container = container;
       resetImpulse();
    }
 
    @Override
    protected Move makeMove(Jumper jumper)
    {
+      GameContainer container = HuntJumperGame.getInstance().getGameContainer();
       Input input = container.getInput();
       Vector2D forceDirection = Utils.getPhysVectorToCursor(jumper.getBody(),
               new Point(input.getMouseX(), input.getMouseY()), Camera.instance());
