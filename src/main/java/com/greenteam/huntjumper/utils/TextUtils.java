@@ -1,20 +1,39 @@
 package com.greenteam.huntjumper.utils;
 
-import org.newdawn.slick.Color;
-import org.newdawn.slick.Graphics;
+import org.newdawn.slick.*;
 
 /**
  * User: GreenTea Date: 18.02.12 Time: 22:50
  */
 public final class TextUtils
 {
+   public static Font ArialFont;
+
+   static
+   {
+      try
+      {
+         ArialFont = new AngelCodeFont("fonts/arial/Arial.fnt", "fonts/arial/Arial_0.png");
+      }
+      catch (SlickException e)
+      {
+         e.printStackTrace();
+      }
+   }
+
    private TextUtils()
    {
       
    }
    
-   public static void drawText(Point center, String text, Color color, Graphics g)
+   public static void drawText(Point center, String text, Color color, Font font, Graphics g)
    {
+      Font defaultFont = g.getFont();
+      if (font != null)
+      {
+         g.setFont(font);
+      }
+      
       float w = g.getFont().getWidth(text);
       float h = g.getFont().getHeight(text);
 
@@ -26,5 +45,6 @@ public final class TextUtils
          g.setColor(color);
       }
       g.drawString(text, x, y);
+      g.setFont(defaultFont);
    }
 }
