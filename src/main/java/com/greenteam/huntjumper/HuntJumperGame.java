@@ -41,6 +41,7 @@ public class HuntJumperGame implements Game
    private TimeAccumulator timeAccumulator = new TimeAccumulator();
    private ArrowManager arrowManager;
    private GameContainer gameContainer;
+   private ScoresManager scoresManager;
 
    private void initWorld()
    {
@@ -158,6 +159,7 @@ public class HuntJumperGame implements Game
       }
 
       arrowManager = new ArrowManager(jumpers);
+      scoresManager = new ScoresManager(jumpers);
    }
 
    private void initCamera()
@@ -194,14 +196,15 @@ public class HuntJumperGame implements Game
       int cycles = timeAccumulator.cycles(delta);
       for (int i = 0; i < cycles; i++) 
       {
-         world.step(0.001f * TimeAccumulator.CYCLE_LENGTH);
+         world.step(0.001f * timeAccumulator.getCycleLength());
          updateCamera();
          for (Jumper j : jumpers)
          {
-            j.update(TimeAccumulator.CYCLE_LENGTH);
+            j.update(timeAccumulator.getCycleLength());
          }
 
          updateCollisions();
+         scoresManager.updateScores(timeAccumulator.getCycleLength());
       }
       AudioSystem.getInstance().update(delta);
    }

@@ -37,4 +37,7 @@ public final class GameConstants
    public static final int PATH_FINDING_MAP_CELL_SIZE = 40;
    public static final boolean PATH_FINDING_DEBUG = false;
    public static final float FREE_LINE_TEST_STEP = 5f;
+
+   public static final float SCORES_GROWTH_MULTIPLIER_PER_MINUTE = 0.2f;
+   public static final float SCORES_FOR_ESCAPING_PER_SEC = 5f;
 }

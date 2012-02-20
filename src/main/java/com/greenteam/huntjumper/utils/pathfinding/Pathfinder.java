@@ -205,8 +205,6 @@ public class PathFinder
             continue;
          }
 
-         int dist = start.distanceToInCells(next);
-
          byte nextPointType = getValue(next);
          if (next.equals(end) || nextPointType == FREE)
          {
