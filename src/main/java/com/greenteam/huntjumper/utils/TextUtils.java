@@ -26,7 +26,8 @@ public final class TextUtils
       
    }
    
-   public static void drawText(Point center, String text, Color color, Font font, Graphics g)
+   public static void drawTextInCenter(Point center, String text, Color color, Font font,
+                                       Graphics g)
    {
       Font defaultFont = g.getFont();
       if (font != null)
@@ -45,6 +46,22 @@ public final class TextUtils
          g.setColor(color);
       }
       g.drawString(text, x, y);
+      g.setFont(defaultFont);
+   }
+
+   public static void drawText(Point pos, String text, Color color, Font font,
+                                       Graphics g)
+   {
+      Font defaultFont = g.getFont();
+      if (font != null)
+      {
+         g.setFont(font);
+      }
+
+      {
+         g.setColor(color);
+      }
+      g.drawString(text, pos.getX(), pos.getY());
       g.setFont(defaultFont);
    }
 }

@@ -1,6 +1,7 @@
 package com.greenteam.huntjumper.utils;
 
 import org.newdawn.slick.Color;
+import org.newdawn.slick.Font;
 
 /**
  * User: GreenTea Date: 13.01.12 Time: 22:45
@@ -20,4 +21,16 @@ public final class ViewConstants
    public static final float DRAW_NAME_MAX_RADIUS = GameConstants.JUMPER_RADIUS*7;
 
    public static final Color jumperBorderColor = Color.black;
+
+   public static final int scoresBoxDistFromLeft = 5;
+   public static final int scoresBoxDistFromTop = 5;
+   public static final int scoresBoxTextLeftIndent = 15;
+   public static final int scoresBoxTextTopIndent = 15;
+   public static final int scoresBoxLineIndent = 10;
+   public static final int scoresBoxRectRadius = 4;
+   public static final float scoresBoxAlpha = 0.6f;
+   public static final float scoresBoxJumpersAlpha = 0.5f;
+   public static final int scoresBoxRightBorder = 280;
+   public static final int scoresBoxScoresPosX = 200;
+   public static final Font scoresBoxFont = TextUtils.ArialFont;
 }

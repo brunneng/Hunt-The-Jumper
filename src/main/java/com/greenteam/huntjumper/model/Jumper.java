@@ -4,7 +4,6 @@ import com.greenteam.huntjumper.Camera;
 import com.greenteam.huntjumper.HuntJumperGame;
 import com.greenteam.huntjumper.IVisibleObject;
 import com.greenteam.huntjumper.contoller.AbstractJumperController;
-import com.greenteam.huntjumper.contoller.IJumperController;
 import com.greenteam.huntjumper.contoller.MouseController;
 import com.greenteam.huntjumper.utils.*;
 import net.phys2d.math.ROVector2f;
@@ -102,6 +101,11 @@ public class Jumper implements IVisibleObject
       this.color = color;
    }
 
+   public Color getPaintColor()
+   {
+      return paintColor;
+   }
+
    public Circle getBodyCircle()
    {
       return bodyCircle;
@@ -117,20 +121,27 @@ public class Jumper implements IVisibleObject
       controller.update(this, delta);
    }
 
-   public void draw(Graphics g)
+   private Color toColorWithAlpha(Color color, float alpha)
    {
-      Point viewCenter = Camera.instance().toView(getBody().getPosition());
+      Color res = new Color(color);
+      res.a = alpha;
+      return res;
+   }
+   
+   public void drawBody(Graphics g, Point pos, float alpha)
+   {
       float radius = getBodyCircle().getRadius();
 
       org.newdawn.slick.geom.Circle viewCircle = new org.newdawn.slick.geom.Circle(
-              viewCenter.getX(), viewCenter.getY(), radius);
+              pos.getX(), pos.getY(), radius);
 
-      g.drawImage(lighting, viewCenter.getX() - lighting.getWidth()/2 + 0.6f,
-              viewCenter.getY() - lighting.getHeight()/2 + 0.6f, jumperRole.getRoleColor());
+      g.drawImage(lighting, pos.getX() - lighting.getWidth()/2 + 0.6f,
+              pos.getY() - lighting.getHeight()/2 + 0.6f,
+              toColorWithAlpha(jumperRole.getRoleColor(), alpha));
 
-      g.setColor(getColor());
+      g.setColor(toColorWithAlpha(getColor(), alpha));
       g.fill(viewCircle);
-      g.setColor(ViewConstants.jumperBorderColor);
+      g.setColor(toColorWithAlpha(ViewConstants.jumperBorderColor, alpha));
       g.draw(viewCircle);
 
       g.setColor(paintColor);
@@ -140,12 +151,18 @@ public class Jumper implements IVisibleObject
       for (int i = 0; i < segmentsCount; ++i)
       {
          Vector2D vectorFromCenter = new Vector2D(rotationDirection);
-         vectorFromCenter = vectorFromCenter.plus(new Vector2D(viewCenter));
+         vectorFromCenter = vectorFromCenter.plus(new Vector2D(pos));
 
-         g.drawLine(viewCenter.getX(), viewCenter.getY(),
+         g.drawLine(pos.getX(), pos.getY(),
                  vectorFromCenter.getX(), vectorFromCenter.getY());
          rotationDirection = rotationDirection.rotate(anglePerSegment);
       }
+   }
+   
+   public void draw(Graphics g)
+   {
+      Point viewCenter = Camera.instance().toView(getBody().getPosition());
+      drawBody(g, viewCenter, 1f);
 
       if (GameConstants.PATH_FINDING_DEBUG)
       {
@@ -169,7 +186,7 @@ public class Jumper implements IVisibleObject
       }
 
       renderAccelerationBar(g);
-      drawName(g, viewCenter, radius);
+      drawName(g, viewCenter, getBodyCircle().getRadius());
    }
 
    private void drawName(Graphics g, Point viewCenter, float radius)
@@ -181,12 +198,12 @@ public class Jumper implements IVisibleObject
       {
          float a = 1f - distToCursor/ViewConstants.DRAW_NAME_MAX_RADIUS;
          Color c = new Color(1f, 1f, 1f, a);
-         TextUtils.drawText(viewCenter.plus(new Vector2D(0, radius*3)), playerName, c,
+         TextUtils.drawTextInCenter(viewCenter.plus(new Vector2D(0, radius * 3)), playerName, c,
                  TextUtils.ArialFont, g);
 
          c = new Color(0f, 0f, 0f, a);
-         TextUtils.drawText(viewCenter.plus(new Vector2D(-1, radius*3 - 1)), playerName, c,
-                 TextUtils.ArialFont, g);
+         TextUtils.drawTextInCenter(viewCenter.plus(new Vector2D(-1, radius * 3 - 1)), playerName,
+                 c, TextUtils.ArialFont, g);
       }
    }
 

@@ -172,6 +172,8 @@ public class HuntJumperGame implements Game
    {
       game = this;
       gameContainer = container;
+      gameContainer.setShowFPS(false);
+
       initWorld();
       initMap();
       initJumpers();
@@ -287,6 +289,7 @@ public class HuntJumperGame implements Game
          j.draw(g);
       }
       arrowManager.draw(g);
+      scoresManager.draw(g);
    }
 
    public boolean closeRequested()
