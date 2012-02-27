@@ -32,5 +32,11 @@ public final class ViewConstants
    public static final float scoresBoxJumpersAlpha = 0.5f;
    public static final int scoresBoxRightBorder = 280;
    public static final int scoresBoxScoresPosX = 200;
-   public static final Font scoresBoxFont = TextUtils.ArialFont;
+   public static final Font scoresBoxFont = TextUtils.Arial20Font;
+
+   public static final int timerIndentFromTop = 10;
+   public static final float timerEllipseVerticalRadius = 20f;
+   public static final float timerEllipseHorizontalRadius = 70f;
+   public static final float timerEllipseAlpha = 0.35f;
+   public static final int timerEllipseIndentFromText = 5;
 }

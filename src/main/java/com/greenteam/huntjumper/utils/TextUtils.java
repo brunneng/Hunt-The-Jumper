@@ -7,13 +7,15 @@ import org.newdawn.slick.*;
  */
 public final class TextUtils
 {
-   public static Font ArialFont;
+   public static Font Arial20Font;
+   public static Font Arial30Font;
 
    static
    {
       try
       {
-         ArialFont = new AngelCodeFont("fonts/arial/Arial.fnt", "fonts/arial/Arial_0.png");
+         Arial20Font = new AngelCodeFont("fonts/arial20/Arial.fnt", "fonts/arial20/Arial_0.png");
+         Arial30Font = new AngelCodeFont("fonts/arial30/Arial.fnt", "fonts/arial30/Arial_0.png");
       }
       catch (SlickException e)
       {

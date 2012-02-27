@@ -199,11 +199,11 @@ public class Jumper implements IVisibleObject
          float a = 1f - distToCursor/ViewConstants.DRAW_NAME_MAX_RADIUS;
          Color c = new Color(1f, 1f, 1f, a);
          TextUtils.drawTextInCenter(viewCenter.plus(new Vector2D(0, radius * 3)), playerName, c,
-                 TextUtils.ArialFont, g);
+                 TextUtils.Arial20Font, g);
 
          c = new Color(0f, 0f, 0f, a);
          TextUtils.drawTextInCenter(viewCenter.plus(new Vector2D(-1, radius * 3 - 1)), playerName,
-                 c, TextUtils.ArialFont, g);
+                 c, TextUtils.Arial20Font, g);
       }
    }
 

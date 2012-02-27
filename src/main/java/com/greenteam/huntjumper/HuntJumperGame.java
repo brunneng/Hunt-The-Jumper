@@ -17,9 +17,13 @@ import net.phys2d.raw.CollisionEvent;
 import net.phys2d.raw.StaticBody;
 import net.phys2d.raw.World;
 import org.newdawn.slick.*;
+import org.newdawn.slick.geom.Ellipse;
+import org.newdawn.slick.geom.Shape;
 
 import java.io.IOException;
 import java.util.*;
+
+import static com.greenteam.huntjumper.utils.ViewConstants.*;
 
 /**
  * User: GreenTea Date: 13.01.12 Time: 22:44
@@ -38,7 +42,7 @@ public class HuntJumperGame implements Game
    private HashMap<Body, Jumper> bodyToJumpers = new HashMap<Body, Jumper>();
    
    private Jumper myJumper;
-   private TimeAccumulator timeAccumulator = new TimeAccumulator();
+   private TimeAccumulator updateTimeAccumulator = new TimeAccumulator();
    private ArrowManager arrowManager;
    private GameContainer gameContainer;
    private ScoresManager scoresManager;
@@ -195,18 +199,18 @@ public class HuntJumperGame implements Game
 
    public void update(GameContainer container, int delta) throws SlickException
    {
-      int cycles = timeAccumulator.cycles(delta);
+      int cycles = updateTimeAccumulator.cycles(delta);
       for (int i = 0; i < cycles; i++) 
       {
-         world.step(0.001f * timeAccumulator.getCycleLength());
+         world.step(0.001f * updateTimeAccumulator.getCycleLength());
          updateCamera();
          for (Jumper j : jumpers)
          {
-            j.update(timeAccumulator.getCycleLength());
+            j.update(updateTimeAccumulator.getCycleLength());
          }
 
          updateCollisions();
-         scoresManager.updateScores(timeAccumulator.getCycleLength());
+         scoresManager.updateScores(updateTimeAccumulator.getCycleLength());
       }
       AudioSystem.getInstance().update(delta);
    }
@@ -288,8 +292,41 @@ public class HuntJumperGame implements Game
       {
          j.draw(g);
       }
+
       arrowManager.draw(g);
+      drawInterface(g);
+   }
+   
+   private void drawInterface(Graphics g)
+   {
       scoresManager.draw(g);
+      drawTimer(g);
+   }
+   
+   private void drawTimer(Graphics g)
+   {
+      int time = updateTimeAccumulator.getTotalTimeInMilliseconds();
+      int minutes = time / 60000;
+      int seconds = (time / 1000) % 60;
+      
+      Font font = TextUtils.Arial30Font;
+      String secondsStr = (seconds < 10 ? "0" : "") + seconds;
+
+      String timeStr = minutes + " : " + secondsStr;
+      int timerIndentFromTop = ViewConstants.timerIndentFromTop;
+
+      int textHeight = font.getHeight(timeStr);
+      int width = gameContainer.getWidth();
+      Point timerPos = new Point(width / 2, timerIndentFromTop + textHeight / 2);
+
+      float ellipseVRadius =  timerEllipseVerticalRadius;
+      float ellipseHRadius = timerEllipseHorizontalRadius;
+      Color ellipseColor = new Color(1f, 1f, 1f, timerEllipseAlpha);
+      g.setColor(ellipseColor);
+      g.fill(new Ellipse(timerPos.getX(), timerPos.getY() + timerEllipseIndentFromText,
+              ellipseHRadius, ellipseVRadius));
+
+      TextUtils.drawTextInCenter(timerPos, timeStr, Color.black, font, g);
    }
 
    public boolean closeRequested()
