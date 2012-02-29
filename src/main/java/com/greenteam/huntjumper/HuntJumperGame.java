@@ -177,6 +177,7 @@ public class HuntJumperGame implements Game
       game = this;
       gameContainer = container;
       gameContainer.setShowFPS(false);
+      gameContainer.setAlwaysRender(true);
 
       initWorld();
       initMap();
