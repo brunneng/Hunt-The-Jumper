@@ -711,6 +711,21 @@ public class AvailabilityMap
    {
       return map[y][x];
    }
+   
+   public int getCountOfFreeNearPoints(int x, int y)
+   {
+      int res = 0;
+      IntPoint p = new IntPoint(x, y);
+      for (Direction d : Direction.values)
+      {
+         IntPoint near = p.plus(d);
+         if (isValid(near) && isFree(near))
+         {
+            res++;
+         }
+      }
+      return res;
+   }
 
    public byte setValue(int x, int y, byte value)
    {

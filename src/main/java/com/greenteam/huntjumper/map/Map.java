@@ -10,6 +10,7 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.geom.Line;
 import org.newdawn.slick.geom.Rectangle;
 
 import java.util.ArrayList;
@@ -56,6 +57,11 @@ public class Map implements IVisibleObject
 
       try
       {
+         Image pixel = new Image(1, 1);
+         pixel.getGraphics().setColor(Color.white);
+         pixel.getGraphics().draw(new Rectangle(0, 0, 2, 2));
+         pixel.getGraphics().flush();
+         
          mapImage = new Image(map.countX, map.countY);
          Graphics g = mapImage.getGraphics();
 
@@ -71,12 +77,19 @@ public class Map implements IVisibleObject
                {
                   float scale = 0.2f * (rand.nextFloat() - 0.5f);
                   Color c = ViewConstants.defaultMapColor.brighter(scale);
-                  g.setColor(c);
 
-                  g.draw(new Rectangle(x, y, 2, 2));
+                  int count = map.getCountOfFreeNearPoints(x, y);
+                  if (count > 0)
+                  {
+                     c = c.brighter(0.08f * count);
+                  }
+
+                  g.setColor(c);
+                  g.drawImage(pixel, x, y, c);
                }
             }
          }
+
          g.flush();
       }
       catch (SlickException e)
@@ -189,12 +202,14 @@ public class Map implements IVisibleObject
       Point viewPoint = Camera.instance().toView(p);
       g.drawImage(mapImage, viewPoint.getX(), viewPoint.getY(), Color.white);
 
-//      for (StaticBody b : allPolygons)
-//      {
-//         g.setColor(Color.black);
-//         org.newdawn.slick.geom.Polygon viewPolygon = Utils.toViewPolygon(b);
-//         g.draw(viewPolygon);
-//      }
+      g.setColor(ViewConstants.defaultMapColor);
+      g.setAntiAlias(true);
+      for (StaticBody b : allPolygons)
+      {
+         org.newdawn.slick.geom.Polygon viewPolygon = Utils.toViewPolygon(b);
+         g.draw(viewPolygon);
+      }
+      g.setAntiAlias(false);
    }
 
    public List<StaticBody> getAllPolygons()

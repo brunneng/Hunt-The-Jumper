@@ -287,7 +287,9 @@ public class HuntJumperGame implements Game
 
    public void render(GameContainer container, Graphics g) throws SlickException
    {
+      g.setAntiAlias(false);
       map.draw(g);
+      g.setAntiAlias(true);
       for (Jumper j : jumpers)
       {
          j.draw(g);
