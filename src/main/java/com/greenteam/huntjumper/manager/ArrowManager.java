@@ -41,7 +41,7 @@ public class ArrowManager implements IVisibleObject {
 
       try
       {
-         arrowImage = new Image("arrow.png", Color.white);
+         arrowImage = new Image("images/arrow.png", Color.white);
       }
       catch (SlickException e) {
       }

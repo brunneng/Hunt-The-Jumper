@@ -109,7 +109,7 @@ public class Map implements IVisibleObject
       byte[][] pathFindingMap = new byte[countY][countX];
       for (int x = 0; x < countX; ++x)
       {
-         for (int y = 0; y < countX; ++y)
+         for (int y = 0; y < countY; ++y)
          {
             byte cell = PathFinder.FREE;
             if (!isCellFree(x*cellSize, y*cellSize, cellSize))

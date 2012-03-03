@@ -30,7 +30,7 @@ public class Jumper implements IVisibleObject
    {
       try
       {
-         lighting = new Image("lighting.png").getScaledCopy(1.12f);
+         lighting = new Image("images/lighting.png").getScaledCopy(1.12f);
       }
       catch (SlickException e)
       {
@@ -149,8 +149,8 @@ public class Jumper implements IVisibleObject
       org.newdawn.slick.geom.Circle viewCircle = new org.newdawn.slick.geom.Circle(
               pos.getX(), pos.getY(), radius);
 
-      g.drawImage(lighting, pos.getX() - lighting.getWidth()/2 + 0.6f,
-              pos.getY() - lighting.getHeight()/2 + 0.6f,
+      g.drawImage(lighting, pos.getX() - lighting.getWidth()/2,
+              pos.getY() - lighting.getHeight()/2,
               toColorWithAlpha(jumperRole.getRoleColor(), alpha));
 
       g.setColor(toColorWithAlpha(getColor(), alpha));
@@ -226,12 +226,15 @@ public class Jumper implements IVisibleObject
 
       g.setLineWidth(2);
 
-      float leftX = point.getX() - JUMPER_RADIUS;
       float barLen = (2f*JUMPER_RADIUS * (controller.getAccumulatedImpulseTime() / MAX_IMPULSE_TIME));
-      float rightX = leftX + barLen;
-      float leftY, rightY;
-      leftY = rightY = point.getY() - JUMPER_RADIUS - JUMPER_RADIUS / 2;
-      g.drawGradientLine(leftX, leftY, Color.yellow, rightX, rightY, Color.red);
+      if (barLen > 1)
+      {
+         float leftX = point.getX() - JUMPER_RADIUS;
+         float rightX = leftX + barLen;
+         float leftY, rightY;
+         leftY = rightY = point.getY() - JUMPER_RADIUS - JUMPER_RADIUS / 2;
+         g.drawGradientLine(leftX, leftY, Color.yellow, rightX, rightY, Color.red);
+      }
    }
 
 }
