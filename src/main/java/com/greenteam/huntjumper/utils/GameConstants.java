@@ -12,7 +12,7 @@ public final class GameConstants
    
    public static final float JUMPER_RADIUS = 10f;
    public static final float JUMPER_MASS = 10;
-   public static final float DEFAULT_FORCE_SCALE = 100;
+   public static final float DEFAULT_FORCE_SCALE = 200;
 
 
    public static final float IMPULSE_MULTIPLIER = 0.001f;
@@ -20,10 +20,9 @@ public final class GameConstants
    /**
     * Max time for impulse accumulating
     */
-   public static final float MAX_IMPULSE = 3.0f;
+   public static final float MAX_IMPULSE = 3000.0f;
    public static final float MIN_IMPULSE = 1.0f;
-   public static final float SPEED_DIVISOR = 50.0f;
-   public static final float BASE_SPEED_MODIFIER = 3.0f;
+   public static final float SPEED_DIVISOR = 1500.0f;
 
 
    public static final float JUMPERS_START_RADIUS = 600;

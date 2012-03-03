@@ -3,6 +3,7 @@ package com.greenteam.huntjumper.contoller;
 import com.greenteam.huntjumper.Camera;
 import com.greenteam.huntjumper.HuntJumperGame;
 import com.greenteam.huntjumper.model.Jumper;
+import com.greenteam.huntjumper.utils.GameConstants;
 import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.Utils;
 import com.greenteam.huntjumper.utils.Vector2D;
@@ -21,7 +22,7 @@ public class MouseController extends AbstractJumperController
 {
    public MouseController()
    {
-      resetImpulse();
+      resetImpulse((int)GameConstants.MIN_IMPULSE);
    }
 
    @Override

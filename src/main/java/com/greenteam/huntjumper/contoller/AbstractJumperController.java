@@ -11,6 +11,8 @@ import java.util.List;
 import static com.greenteam.huntjumper.utils.GameConstants.*;
 import static com.greenteam.huntjumper.utils.Vector2D.fromVector2f;
 import static java.lang.Math.*;
+import static java.lang.Math.abs;
+import static java.lang.Math.max;
 import static java.lang.String.format;
 
 /**
@@ -36,7 +38,7 @@ public abstract class AbstractJumperController implements IJumperController
 
    private void incrementImpulse(int delta)
    {
-      accumulatedImpulse += delta * IMPULSE_MULTIPLIER;
+      accumulatedImpulse += delta;
 
       if (accumulatedImpulse > MAX_IMPULSE)
       {
@@ -44,9 +46,9 @@ public abstract class AbstractJumperController implements IJumperController
       }
    }
 
-   protected void resetImpulse()
+   protected void resetImpulse(int delta)
    {
-      accumulatedImpulse = GameConstants.MIN_IMPULSE;
+      accumulatedImpulse = delta;
    }
 
    protected abstract Move makeMove(Jumper jumper);
@@ -64,18 +66,22 @@ public abstract class AbstractJumperController implements IJumperController
 
       final Body body = jumper.getBody();
 
-      float scale = DEFAULT_FORCE_SCALE * delta;
-      if (isImpulseSufficient())
-      {
-         Vector2D velocity = fromVector2f(body.getVelocity());
-         float angleCoef = 1 + (max(30 , abs(velocity.angleToVector(forceDirection))) / 360);
-         float accumulatedTime = getAccumulatedImpulse();
-         float speedCoef = BASE_SPEED_MODIFIER + velocity.length() / SPEED_DIVISOR;
-         scale *= speedCoef * body.getMass() * accumulatedTime * accumulatedTime * angleCoef;      
-         System.out.println(format(INFO, accumulatedTime,  angleCoef, speedCoef, scale));
-      }
+      float scale = DEFAULT_FORCE_SCALE * accumulatedImpulse;
+      Vector2D velocity = fromVector2f(body.getVelocity());
 
-      resetImpulse();
+      float angleCoef = 1f;
+      float speedCoef = 1f;
+      if (velocity.length() > 0 && forceDirection.length() > 0)
+      {
+         angleCoef = 1 + 0.5f*(abs(velocity.angleToVector(forceDirection)) / 180f);
+         angleCoef = angleCoef*angleCoef;
+
+         speedCoef = 1 + Math.min(velocity.length() / SPEED_DIVISOR, 1f);
+         speedCoef = speedCoef*speedCoef;
+      }
+      scale *= angleCoef*speedCoef;
+
+      resetImpulse(delta);
 
       forceDirection.setLength(scale);
       body.addForce(forceDirection.toVector2f());
