@@ -34,7 +34,7 @@ public final class ViewConstants
    public static final int scoresBoxScoresPosX = 200;
    public static final int scoresBoxBackTimerPosX = 260;
    public static final int scoresBoxBackTimerStartBlinkTime = 5000;
-   public static final int scoresBoxBackTimerBlinkPeriod = 5000;
+   public static final int scoresBoxBackTimerBlinkPeriod = 250;
    public static final Font scoresBoxFont = TextUtils.Arial20Font;
 
    public static final int timerIndentFromTop = 10;
