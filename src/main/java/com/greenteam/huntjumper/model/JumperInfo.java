@@ -32,6 +32,28 @@ public class JumperInfo
       }
       return nearest;
    }
+
+   public static JumperInfo getMostFar(List<JumperInfo> infos, JumperRole jumperRole, Point p)
+   {
+      float maxDist = 0;
+      JumperInfo nearest = null;
+
+      for (JumperInfo info : infos)
+      {
+         if (jumperRole != null && !info.jumperRole.equals(jumperRole))
+         {
+            continue;
+         }
+
+         float dist = p.distanceTo(info.position);
+         if (dist > maxDist)
+         {
+            maxDist = dist;
+            nearest = info;
+         }
+      }
+      return nearest;
+   }
    
    public final Point position;
    public final Vector2D velocity;

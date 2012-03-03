@@ -86,7 +86,16 @@ public class BotController extends AbstractJumperController
          JumperInfo nearest = JumperInfo.getNearest(opponentsInfos,
                  jumperRole.equals(JumperRole.Escaping) ? null : JumperRole.HuntingForEveryone,
                  current.position);
-         res = new Move(new Vector2D(nearest.position, current.position), false);
+         JumperInfo escapeTarget = JumperInfo.getMostFar(opponentsInfos, null, current.position);
+         if (current.position.distanceTo(escapeTarget.position) > 1500)
+         {
+            Point target = moveByShortestPath(current, escapeTarget);
+            res = new Move(new Vector2D(current.position, target), false);
+         }
+         else
+         {
+            res = new Move(new Vector2D(nearest.position, current.position), false);
+         }
       }
       else if (jumperRole.equals(JumperRole.Hunting) ||
               jumperRole.equals(JumperRole.HuntingForEveryone))

@@ -84,7 +84,6 @@ public class Map implements IVisibleObject
                      c = c.brighter(0.08f * count);
                   }
 
-                  g.setColor(c);
                   g.drawImage(pixel, x, y, c);
                }
             }
