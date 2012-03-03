@@ -1,4 +1,4 @@
-package com.greenteam.huntjumper.utils;
+package com.greenteam.huntjumper.parameters;
 
 /**
  * User: GreenTea Date: 14.01.12 Time: 21:17

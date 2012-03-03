@@ -1,5 +1,6 @@
-package com.greenteam.huntjumper.utils;
+package com.greenteam.huntjumper.parameters;
 
+import com.greenteam.huntjumper.utils.TextUtils;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Font;
 

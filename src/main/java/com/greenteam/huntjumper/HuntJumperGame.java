@@ -10,6 +10,8 @@ import com.greenteam.huntjumper.map.Map;
 import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.model.JumperInfo;
 import com.greenteam.huntjumper.model.JumperRole;
+import com.greenteam.huntjumper.parameters.GameConstants;
+import com.greenteam.huntjumper.parameters.ViewConstants;
 import com.greenteam.huntjumper.utils.*;
 import net.phys2d.math.Vector2f;
 import net.phys2d.raw.Body;
@@ -22,8 +24,8 @@ import org.newdawn.slick.geom.Ellipse;
 import java.io.IOException;
 import java.util.*;
 
-import static com.greenteam.huntjumper.utils.GameConstants.TIME_TO_BECOME_SUPER_HUNTER;
-import static com.greenteam.huntjumper.utils.ViewConstants.*;
+import static com.greenteam.huntjumper.parameters.GameConstants.TIME_TO_BECOME_SUPER_HUNTER;
+import static com.greenteam.huntjumper.parameters.ViewConstants.*;
 
 /**
  * User: GreenTea Date: 13.01.12 Time: 22:44
@@ -332,7 +334,7 @@ public class HuntJumperGame implements Game
       
       if (collisionDist >= 0)
       {
-         float volumePercent = Math.max(1 - collisionDist/GameConstants.MAX_SOUNDS_DIST, 0f);
+         float volumePercent = Math.max(1 - collisionDist/ GameConstants.MAX_SOUNDS_DIST, 0f);
          
          String sound = AudioSystem.COLLISION_SOUND;
          if (hasChangeRole)

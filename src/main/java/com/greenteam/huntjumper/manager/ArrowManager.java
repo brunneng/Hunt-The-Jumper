@@ -1,12 +1,10 @@
 package com.greenteam.huntjumper.manager;
 
 import com.google.common.base.Predicate;
-import com.greenteam.huntjumper.Camera;
 import com.greenteam.huntjumper.IVisibleObject;
 import com.greenteam.huntjumper.model.Jumper;
-import com.greenteam.huntjumper.utils.GameConstants;
+import com.greenteam.huntjumper.parameters.GameConstants;
 import com.greenteam.huntjumper.utils.Point;
-import com.greenteam.huntjumper.utils.Vector2D;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;

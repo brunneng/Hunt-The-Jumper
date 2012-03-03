@@ -1,6 +1,6 @@
 package com.greenteam.huntjumper;
 
-import com.greenteam.huntjumper.utils.ViewConstants;
+import com.greenteam.huntjumper.parameters.ViewConstants;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.SlickException;
 

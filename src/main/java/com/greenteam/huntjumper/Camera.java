@@ -1,8 +1,6 @@
 package com.greenteam.huntjumper;
 
-import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.utils.Point;
-import com.greenteam.huntjumper.utils.ViewConstants;
 import net.phys2d.math.ROVector2f;
 
 /**

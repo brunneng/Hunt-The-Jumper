@@ -2,13 +2,14 @@ package com.greenteam.huntjumper;
 
 import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.model.JumperRole;
+import com.greenteam.huntjumper.parameters.GameConstants;
 import com.greenteam.huntjumper.utils.*;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.RoundedRectangle;
 
-import static com.greenteam.huntjumper.utils.GameConstants.*;
-import static com.greenteam.huntjumper.utils.ViewConstants.*;
+import static com.greenteam.huntjumper.parameters.GameConstants.*;
+import static com.greenteam.huntjumper.parameters.ViewConstants.*;
 
 import java.util.ArrayList;
 import java.util.Collections;

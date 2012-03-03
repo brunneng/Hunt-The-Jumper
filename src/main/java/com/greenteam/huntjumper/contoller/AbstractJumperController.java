@@ -7,7 +7,7 @@ import net.phys2d.raw.Body;
 
 import java.util.List;
 
-import static com.greenteam.huntjumper.utils.GameConstants.*;
+import static com.greenteam.huntjumper.parameters.GameConstants.*;
 import static com.greenteam.huntjumper.utils.Vector2D.fromVector2f;
 import static java.lang.Math.abs;
 import static java.lang.Math.max;

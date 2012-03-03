@@ -4,9 +4,8 @@ import com.greenteam.huntjumper.map.Map;
 import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.model.JumperInfo;
 import com.greenteam.huntjumper.model.JumperRole;
-import com.greenteam.huntjumper.utils.GameConstants;
+import com.greenteam.huntjumper.parameters.GameConstants;
 import com.greenteam.huntjumper.utils.Point;
-import com.greenteam.huntjumper.utils.Utils;
 import com.greenteam.huntjumper.utils.Vector2D;
 
 import java.util.List;

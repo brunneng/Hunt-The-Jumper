@@ -6,6 +6,8 @@ import com.greenteam.huntjumper.IVisibleObject;
 import com.greenteam.huntjumper.TimeAccumulator;
 import com.greenteam.huntjumper.contoller.AbstractJumperController;
 import com.greenteam.huntjumper.contoller.MouseController;
+import com.greenteam.huntjumper.parameters.GameConstants;
+import com.greenteam.huntjumper.parameters.ViewConstants;
 import com.greenteam.huntjumper.utils.*;
 import net.phys2d.math.ROVector2f;
 import net.phys2d.raw.Body;
@@ -14,7 +16,7 @@ import org.newdawn.slick.*;
 
 import java.util.List;
 
-import static com.greenteam.huntjumper.utils.GameConstants.*;
+import static com.greenteam.huntjumper.parameters.GameConstants.*;
 import static com.greenteam.huntjumper.utils.Vector2D.fromRadianAngleAndLength;
 
 /**
@@ -208,7 +210,7 @@ public class Jumper implements IVisibleObject
       float distToCursor = Utils.getPhysVectorToCursor(getBody(), cursorPos, Camera.instance()).length();
       if (distToCursor < ViewConstants.DRAW_NAME_MAX_RADIUS)
       {
-         float a = 1f - distToCursor/ViewConstants.DRAW_NAME_MAX_RADIUS;
+         float a = 1f - distToCursor/ ViewConstants.DRAW_NAME_MAX_RADIUS;
          Color c = new Color(1f, 1f, 1f, a);
          TextUtils.drawTextInCenter(viewCenter.plus(new Vector2D(0, radius * 3)), playerName, c,
                  TextUtils.Arial20Font, g);

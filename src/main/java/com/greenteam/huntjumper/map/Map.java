@@ -2,6 +2,8 @@ package com.greenteam.huntjumper.map;
 
 import com.greenteam.huntjumper.Camera;
 import com.greenteam.huntjumper.IVisibleObject;
+import com.greenteam.huntjumper.parameters.GameConstants;
+import com.greenteam.huntjumper.parameters.ViewConstants;
 import com.greenteam.huntjumper.utils.*;
 import com.greenteam.huntjumper.utils.pathfinding.PathFinder;
 import net.phys2d.math.ROVector2f;
@@ -10,7 +12,6 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.geom.Line;
 import org.newdawn.slick.geom.Rectangle;
 
 import java.util.ArrayList;
