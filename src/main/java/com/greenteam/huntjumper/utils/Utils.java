@@ -7,6 +7,7 @@ import net.phys2d.raw.Body;
 import net.phys2d.raw.StaticBody;
 import net.phys2d.raw.shapes.Polygon;
 import org.newdawn.slick.Color;
+import org.newdawn.slick.Font;
 import org.newdawn.slick.Input;
 
 import java.util.ArrayList;
@@ -89,5 +90,16 @@ public final class Utils
    {
       int total = color.getRed() + color.getGreen() + color.getBlue() / 2;
       return total > 254;
+   }
+   
+   public static String getTimeString(int timeInMilliseconds)
+   {
+      int minutes = timeInMilliseconds / 60000;
+      int seconds = (timeInMilliseconds / 1000) % 60;
+
+      Font font = TextUtils.Arial30Font;
+      String secondsStr = (seconds < 10 ? "0" : "") + seconds;
+
+      return minutes + " : " + secondsStr;
    }
 }

@@ -38,4 +38,10 @@ public class TimeAccumulator
    {
       return totalCyclesCount * cycleLength + accumulator;
    }
+
+   public void reset()
+   {
+      totalCyclesCount = 0;
+      accumulator = 0;
+   }
 }

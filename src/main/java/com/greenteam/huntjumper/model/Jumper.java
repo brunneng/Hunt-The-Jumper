@@ -3,6 +3,7 @@ package com.greenteam.huntjumper.model;
 import com.greenteam.huntjumper.Camera;
 import com.greenteam.huntjumper.HuntJumperGame;
 import com.greenteam.huntjumper.IVisibleObject;
+import com.greenteam.huntjumper.TimeAccumulator;
 import com.greenteam.huntjumper.contoller.AbstractJumperController;
 import com.greenteam.huntjumper.contoller.MouseController;
 import com.greenteam.huntjumper.utils.*;
@@ -44,6 +45,7 @@ public class Jumper implements IVisibleObject
 
    private JumperRole jumperRole;
    private AbstractJumperController controller;
+   private TimeAccumulator currentRoleTimeAccumulator = new TimeAccumulator();
 
    public Jumper(String playerName, Color color, ROVector2f startPos,
                  AbstractJumperController controller, JumperRole jumperRole)
@@ -83,7 +85,16 @@ public class Jumper implements IVisibleObject
 
    public void setJumperRole(JumperRole jumperRole)
    {
+      if (!jumperRole.equals(this.jumperRole))
+      {
+         currentRoleTimeAccumulator.reset();
+      }
       this.jumperRole = jumperRole;
+   }
+   
+   public int getTimeInCurrentRole()
+   {
+      return currentRoleTimeAccumulator.getTotalTimeInMilliseconds();
    }
 
    public String getPlayerName()
@@ -119,6 +130,7 @@ public class Jumper implements IVisibleObject
    public void update(int delta)
    {
       controller.update(this, delta);
+      currentRoleTimeAccumulator.cycles(delta);
    }
 
    private Color toColorWithAlpha(Color color, float alpha)

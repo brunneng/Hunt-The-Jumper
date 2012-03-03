@@ -6,6 +6,7 @@ import com.greenteam.huntjumper.model.JumperInfo;
 import com.greenteam.huntjumper.model.JumperRole;
 import com.greenteam.huntjumper.utils.GameConstants;
 import com.greenteam.huntjumper.utils.Point;
+import com.greenteam.huntjumper.utils.Utils;
 import com.greenteam.huntjumper.utils.Vector2D;
 
 import java.util.List;
@@ -76,38 +77,44 @@ public class BotController extends AbstractJumperController
    {
       lastShortestPath = null;
       JumperInfo current = new JumperInfo(jumper);
-      List<JumperInfo> jumperInfos = infoSource.getOpponents(jumper);
+      List<JumperInfo> opponentsInfos = infoSource.getOpponents(jumper);
       Move res = null;
-      if (jumper.getJumperRole().equals(JumperRole.Escaping))
+      JumperRole jumperRole = jumper.getJumperRole();
+      if (jumperRole.equals(JumperRole.Escaping) ||
+          jumperRole.equals(JumperRole.EscapingFromHunter))
       {
-         JumperInfo nearest = JumperInfo.getNearest(jumperInfos, current.position);
+         JumperInfo nearest = JumperInfo.getNearest(opponentsInfos,
+                 jumperRole.equals(JumperRole.Escaping) ? null : JumperRole.HuntingForEveryone,
+                 current.position);
          res = new Move(new Vector2D(nearest.position, current.position), false);
       }
-      else if (jumper.getJumperRole().equals(JumperRole.Hunting))
+      else if (jumperRole.equals(JumperRole.Hunting) ||
+              jumperRole.equals(JumperRole.HuntingForEveryone))
       {
-         for (JumperInfo info : jumperInfos)
-         {
-            if (info.jumperRole.equals(JumperRole.Escaping))
-            {
-               List<Point> shortestPath = infoSource.getMap().findShortestPath(
-                       current.position, info.position);
-               Point target = info.position;
-               if (shortestPath != null && shortestPath.size() > 0)
-               {
-                  Point newTarget = findMostFarPointInFreeLine(current.position, shortestPath);
-                  if (newTarget != null)
-                  {
-                     target = newTarget;
-                  }
-                  lastShortestPath = shortestPath;
-               }
-
-               res = new Move(new Vector2D(current.position, target), false);
-               break;
-            }
-         }
+         JumperInfo targetJumperInfo = JumperInfo.getNearest(opponentsInfos,
+                 jumperRole.equals(JumperRole.Hunting) ? JumperRole.Escaping : null,
+                 current.position);
+         Point target = moveByShortestPath(current, targetJumperInfo);
+         res = new Move(new Vector2D(current.position, target), false);
       }
-      
+
       return res;
+   }
+
+   private Point moveByShortestPath(JumperInfo current, JumperInfo info)
+   {
+      List<Point> shortestPath = infoSource.getMap().findShortestPath(
+              current.position, info.position);
+      Point target = info.position;
+      if (shortestPath != null && shortestPath.size() > 0)
+      {
+         Point newTarget = findMostFarPointInFreeLine(current.position, shortestPath);
+         if (newTarget != null)
+         {
+            target = newTarget;
+         }
+         lastShortestPath = shortestPath;
+      }
+      return target;
    }
 }

@@ -2,18 +2,13 @@ package com.greenteam.huntjumper;
 
 import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.model.JumperRole;
-import com.greenteam.huntjumper.utils.GameConstants;
-import com.greenteam.huntjumper.utils.Point;
-import com.greenteam.huntjumper.utils.TextUtils;
-import com.greenteam.huntjumper.utils.Vector2D;
+import com.greenteam.huntjumper.utils.*;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.RoundedRectangle;
 
+import static com.greenteam.huntjumper.utils.GameConstants.*;
 import static com.greenteam.huntjumper.utils.ViewConstants.*;
-
-import static com.greenteam.huntjumper.utils.GameConstants.SCORES_GROWTH_MULTIPLIER_PER_MINUTE;
-import static com.greenteam.huntjumper.utils.GameConstants.SCORES_FOR_ESCAPING_PER_SEC;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,6 +23,7 @@ public class ScoresManager implements IVisibleObject
    private List<Jumper> jumpers;
 
    private float[] scores;
+   private TimeAccumulator hunterForEveryoneTimeAccumulator = new TimeAccumulator(1000);
    private TimeAccumulator[] escapingTimeAccumulators;
 
    private TimeAccumulator minutesAccumulator = new TimeAccumulator(60000);
@@ -68,6 +64,16 @@ public class ScoresManager implements IVisibleObject
          {
             int cycles = escapingTimeAccumulators[i].cycles(dt);
             scores[i] += cycles * scoresMultiplier * SCORES_FOR_ESCAPING_PER_SEC;
+         }
+         else if (j.getJumperRole().equals(JumperRole.HuntingForEveryone))
+         {
+            int cycles = hunterForEveryoneTimeAccumulator.cycles(dt);
+            scores[i] += cycles * scoresMultiplier * SCORES_FOR_HUNTING_FOR_EVERYONE_PER_SEC;
+         }
+
+         if (scores[i] < 0)
+         {
+            scores[i] = 0;
          }
       }
    }
@@ -117,6 +123,27 @@ public class ScoresManager implements IVisibleObject
          TextUtils.drawText(scoresPos, "" + score, Color.gray, scoresBoxFont, g);
          scoresPos = scoresPos.plus(new Vector2D(1, 0));
          TextUtils.drawText(scoresPos, "" + score, Color.black, scoresBoxFont, g);
+         
+         if (j.getJumperRole().equals(JumperRole.Escaping))
+         {
+            int timeLeft = GameConstants.TIME_TO_BECOME_SUPER_HUNTER -
+                    j.getTimeInCurrentRole();
+
+            boolean show = true;
+            if (timeLeft < scoresBoxBackTimerStartBlinkTime)
+            {
+               show = timeLeft / scoresBoxBackTimerBlinkPeriod % 2 == 0;
+            }
+
+            if (show)
+            {
+               String timeStr = Utils.getTimeString(timeLeft);
+               Point backTimerPos = new Point(scoresBoxBackTimerPosX, currentShift);
+               TextUtils.drawText(backTimerPos, timeStr, Color.gray, scoresBoxFont, g);
+               backTimerPos = backTimerPos.plus(new Vector2D(1, 0));
+               TextUtils.drawText(backTimerPos, timeStr, Color.black, scoresBoxFont, g);
+            }
+         }
 
          currentShift += scoresBoxFont.getHeight(j.getPlayerName()) + indent;
       }

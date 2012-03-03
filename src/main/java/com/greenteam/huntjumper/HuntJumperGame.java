@@ -18,11 +18,11 @@ import net.phys2d.raw.StaticBody;
 import net.phys2d.raw.World;
 import org.newdawn.slick.*;
 import org.newdawn.slick.geom.Ellipse;
-import org.newdawn.slick.geom.Shape;
 
 import java.io.IOException;
 import java.util.*;
 
+import static com.greenteam.huntjumper.utils.GameConstants.TIME_TO_BECOME_SUPER_HUNTER;
 import static com.greenteam.huntjumper.utils.ViewConstants.*;
 
 /**
@@ -211,9 +211,39 @@ public class HuntJumperGame implements Game
          }
 
          updateCollisions();
+         updateRolesByTimer();
          scoresManager.updateScores(updateTimeAccumulator.getCycleLength());
       }
       AudioSystem.getInstance().update(delta);
+   }
+
+   public void updateRolesByTimer()
+   {
+      boolean makeHunterForEveryone = false;
+      for (Jumper j : jumpers)
+      {
+         if (j.getJumperRole().equals(JumperRole.Escaping) &&
+             j.getTimeInCurrentRole() > TIME_TO_BECOME_SUPER_HUNTER)
+         {
+            makeHunterForEveryone = true;
+            break;
+         }
+      }
+
+      if (makeHunterForEveryone)
+      {
+         for (Jumper j : jumpers)
+         {
+            if (j.getJumperRole().equals(JumperRole.Escaping))
+            {
+               j.setJumperRole(JumperRole.HuntingForEveryone);
+            }
+            else
+            {
+               j.setJumperRole(JumperRole.EscapingFromHunter);
+            }
+         }
+      }
    }
 
    public void updateCollisions()
@@ -267,6 +297,34 @@ public class HuntJumperGame implements Game
                      hasChangeRole = true;
                      myJumperEscaping = myJumper.equals(jumperB);
                   }
+                  else if (roleA.equals(JumperRole.HuntingForEveryone) &&
+                          roleB.equals(JumperRole.EscapingFromHunter))
+                  {
+                     jumperA.setJumperRole(JumperRole.Escaping);
+                     for (Jumper otherJumper : jumpers)
+                     {
+                        if (!otherJumper.equals(jumperA))
+                        {
+                           otherJumper.setJumperRole(JumperRole.Hunting);
+                        }
+                     }
+                     hasChangeRole = true;
+                     myJumperEscaping = myJumper.equals(jumperA);
+                  }
+                  else if (roleB.equals(JumperRole.HuntingForEveryone) &&
+                          roleA.equals(JumperRole.EscapingFromHunter))
+                  {
+                     jumperB.setJumperRole(JumperRole.Escaping);
+                     for (Jumper otherJumper : jumpers)
+                     {
+                        if (!otherJumper.equals(jumperB))
+                        {
+                           otherJumper.setJumperRole(JumperRole.Hunting);
+                        }
+                     }
+                     hasChangeRole = true;
+                     myJumperEscaping = myJumper.equals(jumperB);
+                  }
                }
             }
          }
@@ -307,15 +365,9 @@ public class HuntJumperGame implements Game
    }
    
    private void drawTimer(Graphics g)
-   {
-      int time = updateTimeAccumulator.getTotalTimeInMilliseconds();
-      int minutes = time / 60000;
-      int seconds = (time / 1000) % 60;
-      
+   {            
       Font font = TextUtils.Arial30Font;
-      String secondsStr = (seconds < 10 ? "0" : "") + seconds;
-
-      String timeStr = minutes + " : " + secondsStr;
+      String timeStr = Utils.getTimeString(updateTimeAccumulator.getTotalTimeInMilliseconds());
       int timerIndentFromTop = ViewConstants.timerIndentFromTop;
 
       int textHeight = font.getHeight(timeStr);

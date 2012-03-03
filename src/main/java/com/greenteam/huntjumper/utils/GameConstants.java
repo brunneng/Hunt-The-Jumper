@@ -40,4 +40,7 @@ public final class GameConstants
 
    public static final float SCORES_GROWTH_MULTIPLIER_PER_MINUTE = 0.2f;
    public static final float SCORES_FOR_ESCAPING_PER_SEC = 5f;
+   public static final float SCORES_FOR_HUNTING_FOR_EVERYONE_PER_SEC = -3f;
+   
+   public static final int TIME_TO_BECOME_SUPER_HUNTER = 30000;
 }

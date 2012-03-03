@@ -4,4 +4,3 @@ call copy target\dependency\*.* program\lib
 call copy target\natives\*.* program\lib
 cd program
 call start.bat
-pause

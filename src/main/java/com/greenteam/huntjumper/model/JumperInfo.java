@@ -11,13 +11,18 @@ import java.util.List;
  */
 public class JumperInfo
 {
-   public static JumperInfo getNearest(List<JumperInfo> infos, Point p)
+   public static JumperInfo getNearest(List<JumperInfo> infos, JumperRole jumperRole, Point p)
    {
       float minDist = Float.MAX_VALUE;
       JumperInfo nearest = null;
-      
+
       for (JumperInfo info : infos)
       {
+         if (jumperRole != null && !info.jumperRole.equals(jumperRole))
+         {
+            continue;
+         }
+
          float dist = p.distanceTo(info.position);
          if (dist < minDist)
          {
@@ -27,7 +32,6 @@ public class JumperInfo
       }
       return nearest;
    }
-   
    
    public final Point position;
    public final Vector2D velocity;

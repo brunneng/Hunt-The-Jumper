@@ -30,8 +30,11 @@ public final class ViewConstants
    public static final int scoresBoxRectRadius = 4;
    public static final float scoresBoxAlpha = 0.6f;
    public static final float scoresBoxJumpersAlpha = 0.5f;
-   public static final int scoresBoxRightBorder = 280;
+   public static final int scoresBoxRightBorder = 310;
    public static final int scoresBoxScoresPosX = 200;
+   public static final int scoresBoxBackTimerPosX = 260;
+   public static final int scoresBoxBackTimerStartBlinkTime = 5000;
+   public static final int scoresBoxBackTimerBlinkPeriod = 5000;
    public static final Font scoresBoxFont = TextUtils.Arial20Font;
 
    public static final int timerIndentFromTop = 10;
