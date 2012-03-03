@@ -22,7 +22,7 @@ public class MouseController extends AbstractJumperController
 {
    public MouseController()
    {
-      resetImpulse((int)GameConstants.MIN_IMPULSE);
+      resetImpulse(0);
    }
 
    @Override

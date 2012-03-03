@@ -20,8 +20,7 @@ public final class GameConstants
    /**
     * Max time for impulse accumulating
     */
-   public static final float MAX_IMPULSE = 3000.0f;
-   public static final float MIN_IMPULSE = 1.0f;
+   public static final int MAX_IMPULSE_TIME = 3000;
    public static final float SPEED_DIVISOR = 1500.0f;
 
 

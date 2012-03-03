@@ -225,7 +225,7 @@ public class Jumper implements IVisibleObject
       g.setLineWidth(2);
 
       float leftX = point.getX() - JUMPER_RADIUS;
-      float barLen = (2*JUMPER_RADIUS * (controller.getAccumulatedImpulse() / MAX_IMPULSE));
+      float barLen = (2f*JUMPER_RADIUS * (controller.getAccumulatedImpulseTime() / MAX_IMPULSE_TIME));
       float rightX = leftX + barLen;
       float leftY, rightY;
       leftY = rightY = point.getY() - JUMPER_RADIUS - JUMPER_RADIUS / 2;

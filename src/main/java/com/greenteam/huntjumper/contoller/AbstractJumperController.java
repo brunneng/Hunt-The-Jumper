@@ -1,7 +1,6 @@
 package com.greenteam.huntjumper.contoller;
 
 import com.greenteam.huntjumper.model.Jumper;
-import com.greenteam.huntjumper.utils.GameConstants;
 import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.Vector2D;
 import net.phys2d.raw.Body;
@@ -10,7 +9,6 @@ import java.util.List;
 
 import static com.greenteam.huntjumper.utils.GameConstants.*;
 import static com.greenteam.huntjumper.utils.Vector2D.fromVector2f;
-import static java.lang.Math.*;
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
 import static java.lang.String.format;
@@ -20,35 +18,27 @@ import static java.lang.String.format;
  */
 public abstract class AbstractJumperController implements IJumperController
 {
-
-   private static final String INFO ="Acceleration info \n Acceleration time - %s \n Angel coef - %s \n Speed coef - %s \n Scale - %s";
-
-   private float accumulatedImpulse;
+   private int accumulatedImpulseTime;
    public List<Point> lastShortestPath = null;
 
-   public float getAccumulatedImpulse()
+   public float getAccumulatedImpulseTime()
    {
-      return accumulatedImpulse;
+      return accumulatedImpulseTime;
    }
 
-   protected boolean isImpulseSufficient()
+   private void incrementImpulseTime(int delta)
    {
-      return accumulatedImpulse > MIN_IMPULSE;
-   }
+      accumulatedImpulseTime += delta;
 
-   private void incrementImpulse(int delta)
-   {
-      accumulatedImpulse += delta;
-
-      if (accumulatedImpulse > MAX_IMPULSE)
+      if (accumulatedImpulseTime > MAX_IMPULSE_TIME)
       {
-         accumulatedImpulse = MAX_IMPULSE;
+         accumulatedImpulseTime = MAX_IMPULSE_TIME;
       }
    }
 
    protected void resetImpulse(int delta)
    {
-      accumulatedImpulse = delta;
+      accumulatedImpulseTime = delta;
    }
 
    protected abstract Move makeMove(Jumper jumper);
@@ -60,13 +50,13 @@ public abstract class AbstractJumperController implements IJumperController
 
       if (move.accumulating)
       {
-         incrementImpulse(delta);
+         incrementImpulseTime(delta);
          return;
       }
 
       final Body body = jumper.getBody();
 
-      float scale = DEFAULT_FORCE_SCALE * accumulatedImpulse;
+      float scale = DEFAULT_FORCE_SCALE * accumulatedImpulseTime;
       Vector2D velocity = fromVector2f(body.getVelocity());
 
       float angleCoef = 1f;
