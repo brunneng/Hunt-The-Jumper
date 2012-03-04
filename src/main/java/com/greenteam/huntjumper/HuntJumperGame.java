@@ -204,16 +204,18 @@ public class HuntJumperGame implements Game
                @Override
                public void draw(Graphics g)
                {
-                  float executionPercent = getExecutionPercent();
+                  float ep = getExecutionPercent();
+                  ep = ep*ep;
+                  
                   Point pos = Camera.getCamera().toView(myJumper.getBody().getPosition());
                   pos = pos.plus(new Vector2D(0,
                           -(GameConstants.JUMPER_RADIUS*3 +
-                                  ViewConstants.roleChangeEffectHeight*executionPercent)));
+                                  ViewConstants.roleChangeEffectHeight*ep)));
 
-                  Color c = new Color(0, 0, 0, 1 - executionPercent);
+                  Color c = new Color(0, 0, 0, 1 - ep);
                   TextUtils.drawTextInCenter(pos, text, c, ViewConstants.roleChangeEffectFont, g);
 
-                  c = Utils.toColorWithAlpha(newRole.getRoleColor(), 1 - executionPercent);
+                  c = Utils.toColorWithAlpha(newRole.getRoleColor(), 1 - ep);
                   pos = pos.plus(new Vector2D(1, 1));
                   TextUtils.drawTextInCenter(pos, text, c, ViewConstants.roleChangeEffectFont, g);
                }
