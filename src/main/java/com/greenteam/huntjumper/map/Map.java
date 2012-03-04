@@ -66,9 +66,6 @@ public class Map implements IVisibleObject
          mapImage = new Image(map.countX, map.countY);
          Graphics g = mapImage.getGraphics();
 
-         g.setColor(ViewConstants.defaultGroundColor);
-         g.fill(new Rectangle(0, 0, map.countX, map.countY));
-
          for (int x = 0; x < map.countX; ++x)
          {
             for (int y = 0; y < map.countY; ++y)
@@ -197,9 +194,13 @@ public class Map implements IVisibleObject
    @Override
    public void draw(Graphics g)
    {
+      Camera c = Camera.getCamera();
+      g.setColor(ViewConstants.defaultGroundColor);
+      g.fill(new Rectangle(0, 0, c.getViewWidth(), c.getViewHeight()));
+      
       Vector2D tv = map.getTranslationVector();
       Point p = new Point(-tv.getX(), -tv.getY());
-      Point viewPoint = Camera.getCamera().toView(p);
+      Point viewPoint = c.toView(p);
 
       g.drawImage(mapImage, viewPoint.getX(), viewPoint.getY(), Color.white);
 
