@@ -5,7 +5,6 @@ import com.greenteam.huntjumper.HuntJumperGame;
 import com.greenteam.huntjumper.IVisibleObject;
 import com.greenteam.huntjumper.TimeAccumulator;
 import com.greenteam.huntjumper.contoller.AbstractJumperController;
-import com.greenteam.huntjumper.contoller.MouseController;
 import com.greenteam.huntjumper.parameters.GameConstants;
 import com.greenteam.huntjumper.parameters.ViewConstants;
 import com.greenteam.huntjumper.utils.*;
@@ -14,6 +13,7 @@ import net.phys2d.raw.Body;
 import net.phys2d.raw.shapes.Circle;
 import org.newdawn.slick.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.greenteam.huntjumper.parameters.GameConstants.*;
@@ -48,6 +48,7 @@ public class Jumper implements IVisibleObject
    private JumperRole jumperRole;
    private AbstractJumperController controller;
    private TimeAccumulator currentRoleTimeAccumulator = new TimeAccumulator();
+   private List<IRoleChangedListener> roleChangedListeners = new ArrayList<IRoleChangedListener>();
 
    public Jumper(String playerName, Color color, ROVector2f startPos,
                  AbstractJumperController controller, JumperRole jumperRole)
@@ -80,12 +81,23 @@ public class Jumper implements IVisibleObject
       return jumperRole;
    }
 
+   public List<IRoleChangedListener> getRoleChangedListeners()
+   {
+      return roleChangedListeners;
+   }
+
    public void setJumperRole(JumperRole jumperRole)
    {
       if (!jumperRole.equals(this.jumperRole))
       {
          currentRoleTimeAccumulator.reset();
       }
+
+      for (IRoleChangedListener listener : roleChangedListeners)
+      {
+         listener.signalRoleIsChanged(this.jumperRole, jumperRole);
+      }
+
       this.jumperRole = jumperRole;
    }
    
@@ -127,16 +139,9 @@ public class Jumper implements IVisibleObject
    public void update(int delta)
    {
       controller.update(this, delta);
-      currentRoleTimeAccumulator.cycles(delta);
+      currentRoleTimeAccumulator.update(delta);
    }
 
-   private Color toColorWithAlpha(Color color, float alpha)
-   {
-      Color res = new Color(color);
-      res.a = alpha;
-      return res;
-   }
-   
    public void drawBody(Graphics g, Point pos, float alpha)
    {
       float radius = getBodyCircle().getRadius();
@@ -146,11 +151,11 @@ public class Jumper implements IVisibleObject
 
       g.drawImage(lighting, pos.getX() - lighting.getWidth()/2,
               pos.getY() - lighting.getHeight()/2,
-              toColorWithAlpha(jumperRole.getRoleColor(), alpha));
+              Utils.toColorWithAlpha(jumperRole.getRoleColor(), alpha));
 
-      g.setColor(toColorWithAlpha(getColor(), alpha));
+      g.setColor(Utils.toColorWithAlpha(getColor(), alpha));
       g.fill(viewCircle);
-      g.setColor(toColorWithAlpha(ViewConstants.jumperBorderColor, alpha));
+      g.setColor(Utils.toColorWithAlpha(ViewConstants.jumperBorderColor, alpha));
       g.draw(viewCircle);
 
       g.setColor(paintColor);

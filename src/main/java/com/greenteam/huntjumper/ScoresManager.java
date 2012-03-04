@@ -56,19 +56,19 @@ public class ScoresManager implements IVisibleObject
 
    public void updateScores(int dt)
    {
-      scoresMultiplier += minutesAccumulator.cycles(dt) * SCORES_GROWTH_MULTIPLIER_PER_MINUTE;
+      scoresMultiplier += minutesAccumulator.update(dt) * SCORES_GROWTH_MULTIPLIER_PER_MINUTE;
 
       for (int i = 0; i < jumpers.size(); ++i)
       {
          Jumper j = jumpers.get(i);
          if (j.getJumperRole().equals(JumperRole.Escaping))
          {
-            int cycles = escapingTimeAccumulators[i].cycles(dt);
+            int cycles = escapingTimeAccumulators[i].update(dt);
             scores[i] += cycles * scoresMultiplier * SCORES_FOR_ESCAPING_PER_SEC;
          }
          else if (j.getJumperRole().equals(JumperRole.HuntingForEveryone))
          {
-            int cycles = hunterForEveryoneTimeAccumulator.cycles(dt);
+            int cycles = hunterForEveryoneTimeAccumulator.update(dt);
             scores[i] += cycles * scoresMultiplier * SCORES_FOR_HUNTING_FOR_EVERYONE_PER_SEC;
          }
 

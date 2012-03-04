@@ -45,4 +45,8 @@ public final class ViewConstants
    public static final int timerEllipseIndentFromText = 5;
    
    public static final int arrowIndentFromBoundaries = 50;
+
+   public static final int roleChangeEffectDuration = 1000;
+   public static final int roleChangeEffectHeight = 100;
+   public static final Font roleChangeEffectFont = TextUtils.Arial30Font;
 }

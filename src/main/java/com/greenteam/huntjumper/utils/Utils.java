@@ -95,9 +95,14 @@ public final class Utils
       int minutes = timeInMilliseconds / 60000;
       int seconds = (timeInMilliseconds / 1000) % 60;
 
-      Font font = TextUtils.Arial30Font;
       String secondsStr = (seconds < 10 ? "0" : "") + seconds;
-
       return minutes + " : " + secondsStr;
+   }
+
+   public static Color toColorWithAlpha(Color color, float alpha)
+   {
+      Color res = new Color(color);
+      res.a = alpha;
+      return res;
    }
 }

@@ -20,7 +20,7 @@ public class TimeAccumulator
       this.cycleLength = cycleLength;
    }
 
-   public int cycles(int delta)
+   public int update(int delta)
    {
       accumulator += delta;
       int cycles = accumulator / cycleLength;

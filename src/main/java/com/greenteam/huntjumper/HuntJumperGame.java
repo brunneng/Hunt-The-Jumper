@@ -4,8 +4,10 @@ import com.greenteam.huntjumper.audio.AudioSystem;
 import com.greenteam.huntjumper.contoller.AbstractJumperController;
 import com.greenteam.huntjumper.contoller.BotController;
 import com.greenteam.huntjumper.contoller.MouseController;
+import com.greenteam.huntjumper.effects.Effect;
 import com.greenteam.huntjumper.map.AvailabilityMap;
 import com.greenteam.huntjumper.map.Map;
+import com.greenteam.huntjumper.model.IRoleChangedListener;
 import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.model.JumperInfo;
 import com.greenteam.huntjumper.model.JumperRole;
@@ -47,6 +49,7 @@ public class HuntJumperGame implements Game
    private ArrowManager arrowManager;
    private GameContainer gameContainer;
    private ScoresManager scoresManager;
+   private LinkedList<Effect> effects = new LinkedList<Effect>();
 
    private void initWorld()
    {
@@ -136,7 +139,9 @@ public class HuntJumperGame implements Game
       
       myJumper = addJumper(jumperPositions.get(0), "GreenTea", Utils.randomColor(),
               new MouseController(), JumperRole.Escaping);
-      
+      addRoleChangeEffect();
+      myJumper.setJumperRole(JumperRole.Escaping);
+
       for (int i = 1; i < jumperPositions.size(); ++i)
       {
          addJumper(jumperPositions.get(i), "bot" + i, Utils.randomColor(),
@@ -167,10 +172,87 @@ public class HuntJumperGame implements Game
       scoresManager = new ScoresManager(jumpers);
    }
 
+   private void addRoleChangeEffect()
+   {
+      final HashMap<JumperRole, List<String>> messages = new HashMap<JumperRole, List<String>>();
+      messages.put(JumperRole.Escaping,
+              Arrays.asList("Run!", "Escape!"));
+      messages.put(JumperRole.Hunting,
+              Arrays.asList("Catch him!", "Run down him!"));
+      messages.put(JumperRole.HuntingForEveryone,
+              Arrays.asList("Time for hunting!", "Go to papa..."));
+      messages.put(JumperRole.EscapingFromHunter,
+              Arrays.asList("Hunter appeared!", "Danger!"));
+      
+      myJumper.getRoleChangedListeners().add(new IRoleChangedListener()
+      {
+         
+         @Override
+         public void signalRoleIsChanged(JumperRole oldRole, final JumperRole newRole)
+         {
+            List<String> possibleMessages = messages.get(newRole);
+            final String text = possibleMessages.get(Utils.rand.nextInt(possibleMessages.size()));
+            
+            addEffect(new Effect()
+            {
+               @Override
+               public int getDuration()
+               {
+                  return ViewConstants.roleChangeEffectDuration;
+               }
+
+               @Override
+               public void draw(Graphics g)
+               {
+                  float executionPercent = getExecutionPercent();
+                  Point pos = Camera.getCamera().toView(myJumper.getBody().getPosition());
+                  pos = pos.plus(new Vector2D(0,
+                          -(GameConstants.JUMPER_RADIUS*3 +
+                                  ViewConstants.roleChangeEffectHeight*executionPercent)));
+
+                  Color c = new Color(0, 0, 0, 1 - executionPercent);
+                  TextUtils.drawTextInCenter(pos, text, c, ViewConstants.roleChangeEffectFont, g);
+
+                  c = Utils.toColorWithAlpha(newRole.getRoleColor(), 1 - executionPercent);
+                  pos = pos.plus(new Vector2D(1, 1));
+                  TextUtils.drawTextInCenter(pos, text, c, ViewConstants.roleChangeEffectFont, g);
+               }
+            });
+         }
+      });
+   }
+
    private void initCamera()
    {
       Camera.instance = new Camera(new Point(myJumper.getBody().getPosition()),
               ViewConstants.VIEW_WIDTH, ViewConstants.VIEW_HEIGHT);
+   }
+   
+   public void addEffect(Effect effect)
+   {
+      effects.add(effect);
+   }
+
+   private void updateEffects(int dt)
+   {
+      Iterator<Effect> i = effects.iterator();
+      while (i.hasNext())
+      {
+         Effect effect = i.next();
+         effect.update(dt);
+         if (effect.isFinished())
+         {
+            i.remove();
+         }
+      }
+   }
+   
+   private void drawEffects(Graphics g)
+   {
+      for (Effect effect : effects)
+      {
+         effect.draw(g);
+      }
    }
 
    public void init(GameContainer container) throws SlickException
@@ -201,7 +283,7 @@ public class HuntJumperGame implements Game
 
    public void update(GameContainer container, int delta) throws SlickException
    {
-      int cycles = updateTimeAccumulator.cycles(delta);
+      int cycles = updateTimeAccumulator.update(delta);
       for (int i = 0; i < cycles; i++) 
       {
          world.step(0.001f * updateTimeAccumulator.getCycleLength());
@@ -214,6 +296,7 @@ public class HuntJumperGame implements Game
          updateCollisions();
          updateRolesByTimer();
          scoresManager.updateScores(updateTimeAccumulator.getCycleLength());
+         updateEffects(updateTimeAccumulator.getCycleLength());
       }
       AudioSystem.getInstance().update(delta);
    }
@@ -357,6 +440,7 @@ public class HuntJumperGame implements Game
 
       arrowManager.draw(g);
       drawInterface(g);
+      drawEffects(g);
    }
    
    private void drawInterface(Graphics g)
