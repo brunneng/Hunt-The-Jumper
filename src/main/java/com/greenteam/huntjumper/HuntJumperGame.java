@@ -4,7 +4,6 @@ import com.greenteam.huntjumper.audio.AudioSystem;
 import com.greenteam.huntjumper.contoller.AbstractJumperController;
 import com.greenteam.huntjumper.contoller.BotController;
 import com.greenteam.huntjumper.contoller.MouseController;
-import com.greenteam.huntjumper.manager.ArrowManager;
 import com.greenteam.huntjumper.map.AvailabilityMap;
 import com.greenteam.huntjumper.map.Map;
 import com.greenteam.huntjumper.model.Jumper;
@@ -58,7 +57,7 @@ public class HuntJumperGame implements Game
    {
       try
       {
-         map = new Map(new AvailabilityMap("maps/2.png"));
+         map = new Map(new AvailabilityMap("maps/3.png"));
       }
       catch (IOException e)
       {
@@ -164,7 +163,7 @@ public class HuntJumperGame implements Game
                  }), JumperRole.Hunting);
       }
 
-      arrowManager = new ArrowManager(jumpers);
+      arrowManager = new ArrowManager(myJumper, jumpers);
       scoresManager = new ScoresManager(jumpers);
    }
 
@@ -190,13 +189,13 @@ public class HuntJumperGame implements Game
    private void updateCamera()
    {
       Point myJumperPos = new Point(myJumper.getBody().getPosition());
-      Vector2D jumperToCamera = new Vector2D(myJumperPos, Camera.instance().getViewCenter());
+      Vector2D jumperToCamera = new Vector2D(myJumperPos, Camera.getCamera().getViewCenter());
 
       if (jumperToCamera.length() > GameConstants.CAMERA_MAX_DIST)
       {
          jumperToCamera.setLength(GameConstants.CAMERA_MAX_DIST);
          Point newCameraPos = myJumperPos.plus(jumperToCamera);
-         Camera.instance().setViewCenter(newCameraPos);
+         Camera.getCamera().setViewCenter(newCameraPos);
       }
    }
 

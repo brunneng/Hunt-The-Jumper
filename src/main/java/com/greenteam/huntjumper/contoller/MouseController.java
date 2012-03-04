@@ -28,7 +28,7 @@ public class MouseController extends AbstractJumperController
       GameContainer container = HuntJumperGame.getInstance().getGameContainer();
       Input input = container.getInput();
       Vector2D forceDirection = Utils.getPhysVectorToCursor(jumper.getBody(),
-              new Point(input.getMouseX(), input.getMouseY()), Camera.instance());
+              new Point(input.getMouseX(), input.getMouseY()), Camera.getCamera());
 
       boolean accumulating = container.getInput().isMouseButtonDown(MOUSE_LEFT_BUTTON);
       return new Move(forceDirection, accumulating);

@@ -1,6 +1,7 @@
 package com.greenteam.huntjumper;
 
 import com.greenteam.huntjumper.utils.Point;
+import com.greenteam.huntjumper.utils.Range;
 import net.phys2d.math.ROVector2f;
 
 /**
@@ -17,7 +18,7 @@ public class Camera
    private float minX;
    private float minY;
 
-   public static Camera instance() {
+   public static Camera getCamera() {
       return instance;
    }
 
@@ -82,8 +83,9 @@ public class Camera
 
    public boolean contains(ROVector2f p)
    {
+      Range xRange = new Range(minX, minX + getViewWidth());
+      Range yRange = new Range(minY, minY + getViewHeight());
       Point point = new Point(p);
-      return !((point.getX() < (viewCenter.getX() + viewWidth / 2) || point.getX() > (viewCenter.getX() - viewWidth / 2))
-              && (point.getY() < (viewCenter.getY() - viewHeight / 2) || point.getY() > (viewCenter.getY() + viewHeight / 2)));
+      return xRange.contains(point.getX()) && yRange.contains(point.getY());
    }
 }

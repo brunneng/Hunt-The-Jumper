@@ -43,4 +43,6 @@ public final class ViewConstants
    public static final float timerEllipseHorizontalRadius = 70f;
    public static final float timerEllipseAlpha = 0.35f;
    public static final int timerEllipseIndentFromText = 5;
+   
+   public static final int arrowIndentFromBoundaries = 50;
 }

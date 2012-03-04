@@ -70,11 +70,6 @@ public class Jumper implements IVisibleObject
       return new Vector2D(getBody().getPosition(), j.getBody().getPosition());
    }
 
-   public boolean locallyControlled()
-   {
-      return controller instanceof MouseController;  
-   }
-
    public Body getBody()
    {
       return body;
@@ -175,7 +170,7 @@ public class Jumper implements IVisibleObject
    
    public void draw(Graphics g)
    {
-      Point viewCenter = Camera.instance().toView(getBody().getPosition());
+      Point viewCenter = Camera.getCamera().toView(getBody().getPosition());
       drawBody(g, viewCenter, 1f);
 
       if (GameConstants.PATH_FINDING_DEBUG)
@@ -190,8 +185,8 @@ public class Jumper implements IVisibleObject
                Point p1 = lastShortestPath.get(i);
                Point p2 = lastShortestPath.get(i + 1);
                
-               Point tP1 = Camera.instance().toView(p1);
-               Point tP2 = Camera.instance().toView(p2);
+               Point tP1 = Camera.getCamera().toView(p1);
+               Point tP2 = Camera.getCamera().toView(p2);
    
                g.drawLine(tP1.getX(), tP1.getY(),
                        tP2.getX(), tP2.getY());
@@ -207,7 +202,7 @@ public class Jumper implements IVisibleObject
    {
       Input input = HuntJumperGame.getInstance().getGameContainer().getInput();
       Point cursorPos = new Point(input.getMouseX(), input.getMouseY());
-      float distToCursor = Utils.getPhysVectorToCursor(getBody(), cursorPos, Camera.instance()).length();
+      float distToCursor = Utils.getPhysVectorToCursor(getBody(), cursorPos, Camera.getCamera()).length();
       if (distToCursor < ViewConstants.DRAW_NAME_MAX_RADIUS)
       {
          float a = 1f - distToCursor/ ViewConstants.DRAW_NAME_MAX_RADIUS;
@@ -222,7 +217,7 @@ public class Jumper implements IVisibleObject
    }
 
    private void renderAccelerationBar(Graphics g) {
-      Point point = Camera.instance().toView(getBody().getPosition());
+      Point point = Camera.getCamera().toView(getBody().getPosition());
 
       g.setLineWidth(2);
 

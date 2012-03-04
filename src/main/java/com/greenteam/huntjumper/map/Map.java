@@ -199,7 +199,8 @@ public class Map implements IVisibleObject
    {
       Vector2D tv = map.getTranslationVector();
       Point p = new Point(-tv.getX(), -tv.getY());
-      Point viewPoint = Camera.instance().toView(p);
+      Point viewPoint = Camera.getCamera().toView(p);
+
       g.drawImage(mapImage, viewPoint.getX(), viewPoint.getY(), Color.white);
 
       g.setColor(ViewConstants.defaultMapColor);

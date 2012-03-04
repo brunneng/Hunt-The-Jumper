@@ -2,13 +2,11 @@ package com.greenteam.huntjumper.utils;
 
 import com.greenteam.huntjumper.Camera;
 import net.phys2d.math.ROVector2f;
-import net.phys2d.math.Vector2f;
 import net.phys2d.raw.Body;
 import net.phys2d.raw.StaticBody;
 import net.phys2d.raw.shapes.Polygon;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Font;
-import org.newdawn.slick.Input;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +51,7 @@ public final class Utils
       for (int i = 0; i < vertices.length; ++i)
       {
          ROVector2f v = vertices[i];
-         Point viewPoint = Camera.instance().toView(v);
+         Point viewPoint = Camera.getCamera().toView(v);
          viewVertices[2*i] = viewPoint.getX();
          viewVertices[2*i + 1] = viewPoint.getY();
       }
