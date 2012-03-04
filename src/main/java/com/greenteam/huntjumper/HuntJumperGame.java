@@ -205,8 +205,7 @@ public class HuntJumperGame implements Game
                public void draw(Graphics g)
                {
                   float ep = getExecutionPercent();
-                  ep = ep*ep;
-                  
+
                   Point pos = Camera.getCamera().toView(myJumper.getBody().getPosition());
                   pos = pos.plus(new Vector2D(0,
                           -(GameConstants.JUMPER_RADIUS*3 +
