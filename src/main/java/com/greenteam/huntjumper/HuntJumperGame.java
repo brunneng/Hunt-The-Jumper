@@ -25,6 +25,7 @@ import org.newdawn.slick.geom.Ellipse;
 import java.io.IOException;
 import java.util.*;
 
+import static com.greenteam.huntjumper.parameters.GameConstants.DEFAULT_GAME_TIME;
 import static com.greenteam.huntjumper.parameters.GameConstants.TIME_TO_BECOME_SUPER_HUNTER;
 import static com.greenteam.huntjumper.parameters.ViewConstants.*;
 
@@ -50,6 +51,8 @@ public class HuntJumperGame implements Game
    private GameContainer gameContainer;
    private ScoresManager scoresManager;
    private LinkedList<Effect> effects = new LinkedList<Effect>();
+   private LinkedList<Integer> beforeEndNotifications = new LinkedList<Integer>();
+   private boolean gameFinished = false;
 
    private void initWorld()
    {
@@ -60,7 +63,7 @@ public class HuntJumperGame implements Game
    {
       try
       {
-         map = new Map(new AvailabilityMap("maps/3.png"));
+         map = new Map(new AvailabilityMap("maps/5.png"));
       }
       catch (IOException e)
       {
@@ -214,7 +217,7 @@ public class HuntJumperGame implements Game
                   Color c = new Color(0, 0, 0, 1 - ep);
                   TextUtils.drawTextInCenter(pos, text, c, ViewConstants.roleChangeEffectFont, g);
 
-                  c = Utils.toColorWithAlpha(newRole.getRoleColor(), 1 - ep);
+                  c = Utils.toColorWithAlpha(newRole.getRoleColor().brighter(), 1 - ep);
                   pos = pos.plus(new Vector2D(1, 1));
                   TextUtils.drawTextInCenter(pos, text, c, ViewConstants.roleChangeEffectFont, g);
                }
@@ -267,6 +270,8 @@ public class HuntJumperGame implements Game
       initMap();
       initJumpers();
       initCamera();
+
+      beforeEndNotifications.addAll(GameConstants.NOTIFY_TIMES_BEFORE_END);
    }
 
    private void updateCamera()
@@ -287,6 +292,12 @@ public class HuntJumperGame implements Game
       int cycles = updateTimeAccumulator.update(delta);
       for (int i = 0; i < cycles; i++) 
       {
+         updateEffects(updateTimeAccumulator.getCycleLength());
+         if (gameFinished)
+         {
+            continue;
+         }
+
          world.step(0.001f * updateTimeAccumulator.getCycleLength());
          updateCamera();
          for (Jumper j : jumpers)
@@ -297,9 +308,89 @@ public class HuntJumperGame implements Game
          updateCollisions();
          updateRolesByTimer();
          scoresManager.updateScores(updateTimeAccumulator.getCycleLength());
-         updateEffects(updateTimeAccumulator.getCycleLength());
+         checkGameIsFinished();
       }
       AudioSystem.getInstance().update(delta);
+   }
+
+   public void checkGameIsFinished()
+   {
+      int totalTime = updateTimeAccumulator.getTotalTimeInMilliseconds();
+      if (!gameFinished && totalTime > GameConstants.DEFAULT_GAME_TIME)
+      {
+         gameFinished = true;
+         scoresManager.setShowWinner(true);
+
+         final Point pos = new Point(gameContainer.getWidth() / 2, gameContainer.getHeight() / 2);
+         addEffect(new Effect()
+         {
+            @Override
+            public int getDuration()
+            {
+               return Integer.MAX_VALUE;
+            }
+
+            @Override
+            public void draw(Graphics g)
+            {
+               float ep = getExecutionPercent();
+               String text = "GAME OVER";
+
+               Color c = new Color(0f, 0f, 0f);
+               TextUtils.drawTextInCenter(pos, text, c, TextUtils.Arial30Font, g);
+
+               c = new Color(0f, 0f, 0f);
+               Point pos2 = pos.plus(new Vector2D(1, 1));
+               TextUtils.drawTextInCenter(pos2, text, c, TextUtils.Arial30Font, g);
+            }
+         });
+      }
+
+      int x = gameContainer.getWidth() / 2;
+      int y = ViewConstants.timerIndentFromTop + (int)(timerEllipseVerticalRadius*2.5f);
+      final Point pos = new Point(x, y);
+
+      Iterator<Integer> i = beforeEndNotifications.iterator();
+      final int timeToEnd = GameConstants.DEFAULT_GAME_TIME - totalTime;
+      while (i.hasNext())
+      {
+         int notificationTime = i.next();
+         if (timeToEnd < notificationTime)
+         {
+            i.remove();
+            addEffect(new Effect()
+            {
+               @Override
+               public int getDuration()
+               {
+                  return beforeEndNotificationDuration;
+               }
+
+               @Override
+               public void draw(Graphics g)
+               {
+                  float ep = getExecutionPercent();
+                  float angle = ep * 2 * (float) Math.PI *
+                          beforeEndNotificationBlinksPerSec * beforeEndNotificationDuration/1000;
+                  float alpha = (1 + (float) Math.cos(angle)) / 2;
+
+                  int endAfterTime = GameConstants.DEFAULT_GAME_TIME -
+                          updateTimeAccumulator.getTotalTimeInMilliseconds();
+                  String text = "End after " + Utils.getTimeString(endAfterTime);
+
+                  float green = (float)timeToEnd / DEFAULT_GAME_TIME;
+                  Color c = new Color(0, 0, 0, alpha);
+                  TextUtils.drawTextInCenter(pos, text, c, ViewConstants.beforeEndNotificationFont,
+                          g);
+
+                  c = new Color(1, green, 0, alpha);
+                  Point pos2 = pos.plus(new Vector2D(1, 1));
+                  TextUtils.drawTextInCenter(pos2, text, c, ViewConstants.beforeEndNotificationFont,
+                          g);
+               }
+            });
+         }
+      }
    }
 
    public void updateRolesByTimer()
@@ -453,7 +544,9 @@ public class HuntJumperGame implements Game
    private void drawTimer(Graphics g)
    {            
       Font font = TextUtils.Arial30Font;
-      String timeStr = Utils.getTimeString(updateTimeAccumulator.getTotalTimeInMilliseconds());
+      String timeStr = Utils.getTimeString(
+              Math.min(updateTimeAccumulator.getTotalTimeInMilliseconds(),
+                      GameConstants.DEFAULT_GAME_TIME));
       int timerIndentFromTop = ViewConstants.timerIndentFromTop;
 
       int textHeight = font.getHeight(timeStr);

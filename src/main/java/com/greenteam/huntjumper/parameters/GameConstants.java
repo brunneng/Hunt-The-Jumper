@@ -1,5 +1,9 @@
 package com.greenteam.huntjumper.parameters;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * User: GreenTea Date: 14.01.12 Time: 21:17
  */
@@ -41,4 +45,8 @@ public final class GameConstants
    public static final float SCORES_FOR_HUNTING_FOR_EVERYONE_PER_SEC = -3f;
    
    public static final int TIME_TO_BECOME_SUPER_HUNTER = 30000;
+   public static final int DEFAULT_GAME_TIME = 10*60*1000;
+   public static final List<Integer> NOTIFY_TIMES_BEFORE_END =
+           Arrays.asList(2* DEFAULT_GAME_TIME / 3, DEFAULT_GAME_TIME / 3,
+                   ViewConstants.beforeEndNotificationDuration);
 }

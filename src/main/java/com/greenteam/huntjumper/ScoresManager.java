@@ -31,6 +31,7 @@ public class ScoresManager implements IVisibleObject
    private float scoresMultiplier = 1;
 
    private final int scoresBoxHeight;
+   private boolean showWinner;
 
    public ScoresManager(List<Jumper> jumpers)
    {
@@ -158,5 +159,10 @@ public class ScoresManager implements IVisibleObject
    public float getScoresMultiplier()
    {
       return scoresMultiplier;
+   }
+
+   public void setShowWinner(boolean showWinner)
+   {
+      this.showWinner = showWinner;
    }
 }

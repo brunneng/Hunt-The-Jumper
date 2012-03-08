@@ -49,4 +49,8 @@ public final class ViewConstants
    public static final int roleChangeEffectDuration = 1000;
    public static final int roleChangeEffectHeight = 100;
    public static final Font roleChangeEffectFont = TextUtils.Arial30Font;
+
+   public static final Font beforeEndNotificationFont = TextUtils.Arial20Font;
+   public static final int beforeEndNotificationDuration = 5000;
+   public static final float beforeEndNotificationBlinksPerSec = 2.5f;
 }
