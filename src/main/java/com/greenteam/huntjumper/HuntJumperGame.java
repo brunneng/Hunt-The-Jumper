@@ -47,7 +47,7 @@ public class HuntJumperGame implements Game
    
    private Jumper myJumper;
    private TimeAccumulator updateTimeAccumulator = new TimeAccumulator();
-   private ArrowManager arrowManager;
+   private ArrowsVisualizer arrowsVisualizer;
    private GameContainer gameContainer;
    private ScoresManager scoresManager;
    private LinkedList<Effect> effects = new LinkedList<Effect>();
@@ -171,7 +171,7 @@ public class HuntJumperGame implements Game
                  }), JumperRole.Hunting);
       }
 
-      arrowManager = new ArrowManager(myJumper, jumpers);
+      arrowsVisualizer = new ArrowsVisualizer(myJumper, jumpers);
       scoresManager = new ScoresManager(jumpers);
    }
 
@@ -425,8 +425,6 @@ public class HuntJumperGame implements Game
    public void updateCollisions()
    {
       Set<Jumper> executedJumpers = new HashSet<Jumper>();
-      float collisionDist = -1;
-      boolean hasChangeRole = false;
       boolean myJumperEscaping = false;
 
       for (Jumper j : jumpers)
@@ -447,7 +445,8 @@ public class HuntJumperGame implements Game
                Jumper jumperA = bodyToJumpers.get(bodyA);
                Jumper jumperB = bodyToJumpers.get(bodyB);
 
-               collisionDist = myJumper.getBody().getPosition().distance(e.getPoint());
+               float collisionDist = myJumper.getBody().getPosition().distance(e.getPoint());
+               boolean hasChangeRole = false;
                
                if (jumperA != null && jumperB != null)
                {
@@ -502,21 +501,27 @@ public class HuntJumperGame implements Game
                      myJumperEscaping = myJumper.equals(jumperB);
                   }
                }
+
+               float volumePercent = Math.max(
+                       1 - collisionDist / GameConstants.MAX_SOUNDS_DIST, 0f);
+
+               String sound = AudioSystem.COLLISION_SOUND;
+               if (hasChangeRole)
+               {
+                  sound = myJumperEscaping ? AudioSystem.ESCAPING_SOUND :
+                          AudioSystem.HUNTING_SOUND;
+               }
+               else
+               {
+                  float collisionVelocity = new Vector2D(bodyA.getVelocity()).minus(
+                          new Vector2D(bodyB.getVelocity())).length();
+                  float powerModifier = Math.min(collisionVelocity / 500, 1);
+                  volumePercent *= powerModifier;
+               }
+
+               AudioSystem.getInstance().playSound(sound, volumePercent);
             }
          }
-      }
-      
-      if (collisionDist >= 0)
-      {
-         float volumePercent = Math.max(1 - collisionDist/ GameConstants.MAX_SOUNDS_DIST, 0f);
-         
-         String sound = AudioSystem.COLLISION_SOUND;
-         if (hasChangeRole)
-         {
-            sound = myJumperEscaping ? AudioSystem.ESCAPING_SOUND : AudioSystem.HUNTING_SOUND;
-         }
-
-         AudioSystem.getInstance().playSound(sound, volumePercent);
       }
    }
 
@@ -530,7 +535,7 @@ public class HuntJumperGame implements Game
          j.draw(g);
       }
 
-      arrowManager.draw(g);
+      arrowsVisualizer.draw(g);
       drawInterface(g);
       drawEffects(g);
    }

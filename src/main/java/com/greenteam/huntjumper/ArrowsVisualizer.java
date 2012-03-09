@@ -26,7 +26,7 @@ import static com.greenteam.huntjumper.utils.Vector2D.fromAngleAndLength;
  * @author BlindButcher
  */
 
-public class ArrowManager implements IVisibleObject
+public class ArrowsVisualizer implements IVisibleObject
 {
    private static Image arrowImage;
    static
@@ -44,7 +44,7 @@ public class ArrowManager implements IVisibleObject
    private Jumper myJumper;
    List<Segment> boundaries;
 
-   public ArrowManager(Jumper myJumper, List<Jumper> jumpers)
+   public ArrowsVisualizer(Jumper myJumper, List<Jumper> jumpers)
    {
       this.myJumper = myJumper;
       this.jumpers = jumpers;
