@@ -55,4 +55,9 @@ public final class ViewConstants
    public static final float beforeEndNotificationBlinksPerSec = 2.5f;
 
    public static final float collisionVelocityOfMaxVolume = 500f;
+
+   public static final float CAMERA_MAX_DIST = 100;
+   public static final int CAMERA_SAMPLES_TIMER_INTERVAL = 20;
+   public static final int CAMERA_MAX_SAMPLES_COUNT = 100;
+   public static final int CAMERA_MAX_VELOCITY_OF_JUMPER = 500;
 }

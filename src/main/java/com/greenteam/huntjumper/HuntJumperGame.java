@@ -274,40 +274,28 @@ public class HuntJumperGame implements Game
       beforeEndNotifications.addAll(GameConstants.NOTIFY_TIMES_BEFORE_END);
    }
 
-   private void updateCamera()
-   {
-      Point myJumperPos = new Point(myJumper.getBody().getPosition());
-      Vector2D jumperToCamera = new Vector2D(myJumperPos, Camera.getCamera().getViewCenter());
-
-      if (jumperToCamera.length() > GameConstants.CAMERA_MAX_DIST)
-      {
-         jumperToCamera.setLength(GameConstants.CAMERA_MAX_DIST);
-         Point newCameraPos = myJumperPos.plus(jumperToCamera);
-         Camera.getCamera().setViewCenter(newCameraPos);
-      }
-   }
-
    public void update(GameContainer container, int delta) throws SlickException
    {
       int cycles = updateTimeAccumulator.update(delta);
       for (int i = 0; i < cycles; i++) 
       {
-         updateEffects(updateTimeAccumulator.getCycleLength());
+         int dt = updateTimeAccumulator.getCycleLength();
+         updateEffects(dt);
          if (gameFinished)
          {
             continue;
          }
 
-         world.step(0.001f * updateTimeAccumulator.getCycleLength());
-         updateCamera();
+         world.step(0.001f * dt);
+         Camera.getCamera().update(dt);
          for (Jumper j : jumpers)
          {
-            j.update(updateTimeAccumulator.getCycleLength());
+            j.update(dt);
          }
 
          updateCollisions();
          updateRolesByTimer();
-         scoresManager.updateScores(updateTimeAccumulator.getCycleLength());
+         scoresManager.updateScores(dt);
          checkGameIsFinished();
       }
       AudioSystem.getInstance().update(delta);
@@ -582,5 +570,15 @@ public class HuntJumperGame implements Game
    public GameContainer getGameContainer()
    {
       return gameContainer;
+   }
+
+   public Jumper getMyJumper()
+   {
+      return myJumper;
+   }
+
+   public List<Jumper> getJumpers()
+   {
+      return jumpers;
    }
 }

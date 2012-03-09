@@ -9,6 +9,7 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Font;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
@@ -104,5 +105,16 @@ public final class Utils
       Color res = new Color(color);
       res.a = alpha;
       return res;
+   }
+   
+   public static float average(Collection<Float> values)
+   {
+      float sum = 0;
+      for (float value : values)
+      {
+         sum += value;
+      }
+
+      return sum / values.size();
    }
 }

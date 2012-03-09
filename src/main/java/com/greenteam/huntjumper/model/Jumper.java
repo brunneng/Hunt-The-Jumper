@@ -1,9 +1,6 @@
 package com.greenteam.huntjumper.model;
 
-import com.greenteam.huntjumper.Camera;
-import com.greenteam.huntjumper.HuntJumperGame;
-import com.greenteam.huntjumper.IVisibleObject;
-import com.greenteam.huntjumper.TimeAccumulator;
+import com.greenteam.huntjumper.*;
 import com.greenteam.huntjumper.contoller.AbstractJumperController;
 import com.greenteam.huntjumper.parameters.GameConstants;
 import com.greenteam.huntjumper.parameters.ViewConstants;
@@ -22,7 +19,7 @@ import static com.greenteam.huntjumper.utils.Vector2D.fromRadianAngleAndLength;
 /**
  * User: GreenTea Date: 14.01.12 Time: 21:11
  */
-public class Jumper implements IVisibleObject
+public class Jumper implements IGameObject
 {
    private static Image lighting;
 
