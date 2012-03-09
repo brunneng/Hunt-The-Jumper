@@ -53,4 +53,6 @@ public final class ViewConstants
    public static final Font beforeEndNotificationFont = TextUtils.Arial20Font;
    public static final int beforeEndNotificationDuration = 5000;
    public static final float beforeEndNotificationBlinksPerSec = 2.5f;
+
+   public static final float collisionVelocityOfMaxVolume = 500f;
 }

@@ -515,7 +515,8 @@ public class HuntJumperGame implements Game
                {
                   float collisionVelocity = new Vector2D(bodyA.getVelocity()).minus(
                           new Vector2D(bodyB.getVelocity())).length();
-                  float powerModifier = Math.min(collisionVelocity / 500, 1);
+                  float powerModifier = Math.min(
+                          collisionVelocity / ViewConstants.collisionVelocityOfMaxVolume, 1);
                   volumePercent *= powerModifier;
                }
 
