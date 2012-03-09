@@ -18,13 +18,7 @@ public final class GameConstants
    public static final float JUMPER_MASS = 10;
    public static final float DEFAULT_FORCE_SCALE = 200;
 
-
-   public static final float IMPULSE_MULTIPLIER = 0.001f;
-
-   /**
-    * Max time for impulse accumulating
-    */
-   public static final int MAX_IMPULSE_TIME = 3000;
+   public static final int MAX_IMPULSE_ACCUMULATION_TIME = 3000;
    public static final float SPEED_DIVISOR = 1500.0f;
 
 

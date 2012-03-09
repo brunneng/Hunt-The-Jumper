@@ -223,7 +223,8 @@ public class Jumper implements IGameObject
 
       g.setLineWidth(2);
 
-      float barLen = (2f*JUMPER_RADIUS * (controller.getAccumulatedImpulseTime() / MAX_IMPULSE_TIME));
+      float barLen = (2f*JUMPER_RADIUS * (controller.getAccumulatedImpulseTime() /
+              MAX_IMPULSE_ACCUMULATION_TIME));
       if (barLen > 1)
       {
          float leftX = point.getX() - JUMPER_RADIUS;

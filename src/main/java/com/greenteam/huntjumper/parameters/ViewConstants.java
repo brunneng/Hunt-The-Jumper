@@ -60,4 +60,12 @@ public final class ViewConstants
    public static final int CAMERA_SAMPLES_TIMER_INTERVAL = 20;
    public static final int CAMERA_MAX_SAMPLES_COUNT = 100;
    public static final int CAMERA_MAX_VELOCITY_OF_JUMPER = 500;
+
+   public static final float WINNER_BOX_INDENT_FACTOR = 1.4f;
+   public static final int WINNER_BOX_RECTANGLE_CORNER_RADIUS = 4;
+   public static final float WINNER_BOX_RECTANGLE_ALPHA = 0.75f;
+   public static final Color WINNER_BOX_COLOR = Color.white;
+   public static final Font WINNER_BOX_FONT = TextUtils.Arial30Font;
+   public static final Color WINNER_BOX_FONT_BACK_COLOR = new Color(160, 160, 160);
+   public static final Color WINNER_BOX_FONT_FRONT_COLOR = Color.black;
 }

@@ -11,15 +11,12 @@ import org.newdawn.slick.geom.RoundedRectangle;
 import static com.greenteam.huntjumper.parameters.GameConstants.*;
 import static com.greenteam.huntjumper.parameters.ViewConstants.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 /**
  * User: GreenTea Date: 20.02.12 Time: 23:05
  */
-public class ScoresManager implements IVisibleObject
+public class ScoresManager implements IGameObject
 {
    private List<Jumper> jumpers;
 
@@ -31,7 +28,7 @@ public class ScoresManager implements IVisibleObject
    private float scoresMultiplier = 1;
 
    private final int scoresBoxHeight;
-   private boolean showWinner;
+   private List<Jumper> winners;
 
    public ScoresManager(List<Jumper> jumpers)
    {
@@ -55,7 +52,7 @@ public class ScoresManager implements IVisibleObject
       scoresBoxHeight = height;
    }
 
-   public void updateScores(int dt)
+   public void update(int dt)
    {
       scoresMultiplier += minutesAccumulator.update(dt) * SCORES_GROWTH_MULTIPLIER_PER_MINUTE;
 
@@ -126,7 +123,7 @@ public class ScoresManager implements IVisibleObject
          scoresPos = scoresPos.plus(new Vector2D(1, 0));
          TextUtils.drawText(scoresPos, "" + score, Color.black, scoresBoxFont, g);
          
-         if (j.getJumperRole().equals(JumperRole.Escaping))
+         if (j.getJumperRole().equals(JumperRole.Escaping) && winners == null)
          {
             int timeLeft = GameConstants.TIME_TO_BECOME_SUPER_HUNTER -
                     j.getTimeInCurrentRole();
@@ -146,6 +143,20 @@ public class ScoresManager implements IVisibleObject
                TextUtils.drawText(backTimerPos, timeStr, Color.black, scoresBoxFont, g);
             }
          }
+         else if (winners != null)
+         {
+            if (winners.contains(j))
+            {
+               String timeStr = "Win!";
+               Point backTimerPos = new Point(scoresBoxBackTimerPosX, currentShift);
+               TextUtils.drawText(backTimerPos, timeStr, Color.gray, scoresBoxFont, g);
+               backTimerPos = backTimerPos.plus(new Vector2D(1, 0));
+
+               Random r = Utils.rand;
+               Color c = new Color(r.nextFloat(), r.nextFloat(), r.nextFloat());
+               TextUtils.drawText(backTimerPos, timeStr, c, scoresBoxFont, g);
+            }
+         }
 
          currentShift += scoresBoxFont.getHeight(j.getPlayerName()) + indent;
       }
@@ -161,8 +172,26 @@ public class ScoresManager implements IVisibleObject
       return scoresMultiplier;
    }
 
-   public void setShowWinner(boolean showWinner)
+   public List<Jumper> calcWinners()
    {
-      this.showWinner = showWinner;
+      this.winners = new ArrayList<Jumper>();
+      int maxScores = 0;
+      for (Jumper j : jumpers)
+      {
+         int scores = (int)getScores(j);
+         
+         if (scores > maxScores)
+         {
+            maxScores = scores;
+            winners.clear();
+            winners.add(j);
+         }
+         else if (scores == maxScores)
+         {
+            winners.add(j);
+         }
+      }
+
+      return winners;
    }
 }

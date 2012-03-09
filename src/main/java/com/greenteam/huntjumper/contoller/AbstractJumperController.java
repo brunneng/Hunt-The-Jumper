@@ -30,9 +30,9 @@ public abstract class AbstractJumperController implements IJumperController
    {
       accumulatedImpulseTime += delta;
 
-      if (accumulatedImpulseTime > MAX_IMPULSE_TIME)
+      if (accumulatedImpulseTime > MAX_IMPULSE_ACCUMULATION_TIME)
       {
-         accumulatedImpulseTime = MAX_IMPULSE_TIME;
+         accumulatedImpulseTime = MAX_IMPULSE_ACCUMULATION_TIME;
       }
    }
 

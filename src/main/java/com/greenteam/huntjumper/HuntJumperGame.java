@@ -21,6 +21,7 @@ import net.phys2d.raw.StaticBody;
 import net.phys2d.raw.World;
 import org.newdawn.slick.*;
 import org.newdawn.slick.geom.Ellipse;
+import org.newdawn.slick.geom.RoundedRectangle;
 
 import java.io.IOException;
 import java.util.*;
@@ -295,19 +296,36 @@ public class HuntJumperGame implements Game
 
          updateCollisions();
          updateRolesByTimer();
-         scoresManager.updateScores(dt);
+         scoresManager.update(dt);
          checkGameIsFinished();
       }
       AudioSystem.getInstance().update(delta);
    }
 
+   private String makeWinnersString(List<Jumper> winners)
+   {
+      StringBuilder sb = new StringBuilder(winners.size() == 1 ? "Winner is " : "Winners are ");
+      for (int i = 0; i < winners.size(); ++i)
+      {
+         sb.append(winners.get(i).getPlayerName()).append(", ");
+      }
+      if (winners.size() > 0)
+      {
+         sb.delete(sb.length() - 2, sb.length());
+      }
+      
+      return sb.toString();
+   }
+   
    public void checkGameIsFinished()
    {
       int totalTime = updateTimeAccumulator.getTotalTimeInMilliseconds();
       if (!gameFinished && totalTime > GameConstants.DEFAULT_GAME_TIME)
       {
          gameFinished = true;
-         scoresManager.setShowWinner(true);
+
+         final String text1 = "GAME OVER";
+         final String text2 = makeWinnersString(scoresManager.calcWinners());
 
          final Point pos = new Point(gameContainer.getWidth() / 2, gameContainer.getHeight() / 2);
          addEffect(new Effect()
@@ -321,15 +339,36 @@ public class HuntJumperGame implements Game
             @Override
             public void draw(Graphics g)
             {
-               float ep = getExecutionPercent();
-               String text = "GAME OVER";
+               Font font = ViewConstants.WINNER_BOX_FONT;
+               final float indentFactor = ViewConstants.WINNER_BOX_INDENT_FACTOR;
 
-               Color c = new Color(0f, 0f, 0f);
-               TextUtils.drawTextInCenter(pos, text, c, TextUtils.Arial30Font, g);
+               Point text1Pos1 = new Point(pos);
+               Point text1Pos2 = pos.plus(new Vector2D(1, 1));
+               Point text2Pos1 = pos.plus(new Vector2D(0, indentFactor*font.getHeight(text1)));
+               Point text2Pos2 = text2Pos1.plus(new Vector2D(1, 1));
+               
+               int maxWidth = Math.max(font.getWidth(text1), font.getWidth(text2));
+               int maxHeight = Math.max(font.getHeight(text1), font.getHeight(text2));
+               Point boxPos = new Point(text1Pos1.getX() - maxWidth/2 - maxHeight*indentFactor/2,
+                       text1Pos1.getY() - maxHeight*indentFactor);
+               float boxWidth = maxWidth + maxHeight*indentFactor;
+               float boxHeight = maxHeight*3*indentFactor;
+               g.setColor(Utils.toColorWithAlpha(ViewConstants.WINNER_BOX_COLOR,
+                       ViewConstants.WINNER_BOX_RECTANGLE_ALPHA));
+               g.fill(new RoundedRectangle(boxPos.getX(), boxPos.getY(), boxWidth, boxHeight,
+                       ViewConstants.WINNER_BOX_RECTANGLE_CORNER_RADIUS));
 
-               c = new Color(0f, 0f, 0f);
-               Point pos2 = pos.plus(new Vector2D(1, 1));
-               TextUtils.drawTextInCenter(pos2, text, c, TextUtils.Arial30Font, g);
+               Color c = ViewConstants.WINNER_BOX_FONT_BACK_COLOR;
+               TextUtils.drawTextInCenter(text1Pos1, text1, c, font, g);
+
+               c = ViewConstants.WINNER_BOX_FONT_FRONT_COLOR;
+               TextUtils.drawTextInCenter(text1Pos2, text1, c, font, g);
+
+               c = ViewConstants.WINNER_BOX_FONT_BACK_COLOR;
+               TextUtils.drawTextInCenter(text2Pos1, text2, c, font, g);
+
+               c = ViewConstants.WINNER_BOX_FONT_FRONT_COLOR;
+               TextUtils.drawTextInCenter(text2Pos2, text2, c, font, g);
             }
          });
       }
