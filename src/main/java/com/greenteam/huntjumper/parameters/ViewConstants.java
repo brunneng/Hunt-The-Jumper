@@ -70,5 +70,6 @@ public final class ViewConstants
    public static final Color WINNER_BOX_FONT_FRONT_COLOR = Color.black;
    
    public static final int COLLISIONS_PARTICLES_MAX_COUNT = 5;
-   public static final int COLLISIONS_PARTICLES_MAX_DEVIATION = 300;
+   public static final int COLLISIONS_PARTICLES_MAX_DEVIATION = 200;
+   public static final float COLLISIONS_PARTICLES_VELOCITY_FACTOR = 0.75f;
 }

@@ -474,22 +474,7 @@ public class HuntJumperGame implements Game
                Vector2D collisionVelocity = new Vector2D(bodyA.getVelocity()).minus(
                        new Vector2D(bodyB.getVelocity()));
 
-               int particlesCount = (int) (ViewConstants.COLLISIONS_PARTICLES_MAX_COUNT *
-                       (collisionVelocity.length() / GameConstants.MAX_VELOCITY));
-               int particlesDeviation = (int) (ViewConstants.COLLISIONS_PARTICLES_MAX_DEVIATION *
-                               (collisionVelocity.length() / GameConstants.MAX_VELOCITY));
-
-               if (particlesCount > 0)
-               {
-                  Collection<ParticleEntity> particles =
-                          new ParticleGenerator(ParticleType.SPARK, 0, particlesCount).update(0);
-                  for (ParticleEntity p : particles)
-                  {
-                     p.setPosition(new Point(e.getPoint()));
-                     p.setDeviation(particlesDeviation);
-                  }
-                  effects.addAll(particles);
-               }
+               addCollisionEffect(e, collisionVelocity);
 
                Jumper jumperA = bodyToJumpers.get(bodyA);
                Jumper jumperB = bodyToJumpers.get(bodyB);
@@ -570,6 +555,34 @@ public class HuntJumperGame implements Game
                AudioSystem.getInstance().playSound(sound, volumePercent);
             }
          }
+      }
+   }
+
+   private void addCollisionEffect(CollisionEvent e, Vector2D collisionVelocity)
+   {
+      int particlesCount = (int) (ViewConstants.COLLISIONS_PARTICLES_MAX_COUNT *
+              (collisionVelocity.length() / GameConstants.MAX_VELOCITY));
+      int particlesDeviation = (int) (ViewConstants.COLLISIONS_PARTICLES_MAX_DEVIATION *
+                      (collisionVelocity.length() / GameConstants.MAX_VELOCITY));
+
+      if (particlesCount > 0)
+      {
+         Collection<ParticleEntity> particles =
+                 new ParticleGenerator(ParticleType.SPARK, 0, particlesCount).update(0);
+         Random rand = Utils.rand;
+         float currAngle = rand.nextFloat()*360f;
+         float dAngle = 360f / particlesCount;
+         for (ParticleEntity p : particles)
+         {
+            p.setPosition(new Point(e.getPoint()));
+            p.setDeviation(particlesDeviation);
+
+            p.setVelocity(Vector2D.fromAngleAndLength(currAngle,
+                    ViewConstants.COLLISIONS_PARTICLES_VELOCITY_FACTOR *
+                            GameConstants.JUMPER_RADIUS * 1000 / p.getDuration()));
+            currAngle += dAngle;
+         }
+         effects.addAll(particles);
       }
    }
 
