@@ -10,7 +10,7 @@ public abstract class Effect implements IVisibleObject
 {
    private TimeAccumulator effectTime = new TimeAccumulator();
 
-   public final void update(int dt)
+   public void update(int dt)
    {
       effectTime.update(dt);
    }

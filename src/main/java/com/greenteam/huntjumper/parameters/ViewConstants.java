@@ -68,4 +68,7 @@ public final class ViewConstants
    public static final Font WINNER_BOX_FONT = TextUtils.Arial30Font;
    public static final Color WINNER_BOX_FONT_BACK_COLOR = new Color(160, 160, 160);
    public static final Color WINNER_BOX_FONT_FRONT_COLOR = Color.black;
+   
+   public static final int COLLISIONS_PARTICLES_MAX_COUNT = 5;
+   public static final int COLLISIONS_PARTICLES_MAX_DEVIATION = 300;
 }

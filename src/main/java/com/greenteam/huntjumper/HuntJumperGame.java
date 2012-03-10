@@ -5,6 +5,9 @@ import com.greenteam.huntjumper.contoller.AbstractJumperController;
 import com.greenteam.huntjumper.contoller.BotController;
 import com.greenteam.huntjumper.contoller.MouseController;
 import com.greenteam.huntjumper.effects.Effect;
+import com.greenteam.huntjumper.effects.particles.ParticleEntity;
+import com.greenteam.huntjumper.effects.particles.ParticleGenerator;
+import com.greenteam.huntjumper.effects.particles.ParticleType;
 import com.greenteam.huntjumper.map.AvailabilityMap;
 import com.greenteam.huntjumper.map.Map;
 import com.greenteam.huntjumper.model.IRoleChangedListener;
@@ -264,7 +267,7 @@ public class HuntJumperGame implements Game
    {
       game = this;
       gameContainer = container;
-      gameContainer.setShowFPS(false);
+      //gameContainer.setShowFPS(false);
       gameContainer.setAlwaysRender(true);
 
       initWorld();
@@ -468,6 +471,25 @@ public class HuntJumperGame implements Game
             {
                Body bodyA = e.getBodyA();
                Body bodyB = e.getBodyB();
+               Vector2D collisionVelocity = new Vector2D(bodyA.getVelocity()).minus(
+                       new Vector2D(bodyB.getVelocity()));
+
+               int particlesCount = (int) (ViewConstants.COLLISIONS_PARTICLES_MAX_COUNT *
+                       (collisionVelocity.length() / GameConstants.MAX_VELOCITY));
+               int particlesDeviation = (int) (ViewConstants.COLLISIONS_PARTICLES_MAX_DEVIATION *
+                               (collisionVelocity.length() / GameConstants.MAX_VELOCITY));
+
+               if (particlesCount > 0)
+               {
+                  Collection<ParticleEntity> particles =
+                          new ParticleGenerator(ParticleType.SPARK, 0, particlesCount).update(0);
+                  for (ParticleEntity p : particles)
+                  {
+                     p.setPosition(new Point(e.getPoint()));
+                     p.setDeviation(particlesDeviation);
+                  }
+                  effects.addAll(particles);
+               }
 
                Jumper jumperA = bodyToJumpers.get(bodyA);
                Jumper jumperB = bodyToJumpers.get(bodyB);
@@ -540,10 +562,8 @@ public class HuntJumperGame implements Game
                }
                else
                {
-                  float collisionVelocity = new Vector2D(bodyA.getVelocity()).minus(
-                          new Vector2D(bodyB.getVelocity())).length();
                   float powerModifier = Math.min(
-                          collisionVelocity / ViewConstants.collisionVelocityOfMaxVolume, 1);
+                          collisionVelocity.length() / ViewConstants.collisionVelocityOfMaxVolume, 1);
                   volumePercent *= powerModifier;
                }
 
