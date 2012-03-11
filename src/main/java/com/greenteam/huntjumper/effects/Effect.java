@@ -9,6 +9,7 @@ import com.greenteam.huntjumper.TimeAccumulator;
 public abstract class Effect implements IVisibleObject
 {
    private TimeAccumulator effectTime = new TimeAccumulator();
+   private boolean forceFinish;
 
    public void update(int dt)
    {
@@ -22,9 +23,13 @@ public abstract class Effect implements IVisibleObject
    
    public final boolean isFinished()
    {
-      return getExecutionPercent() > 1;
+      return forceFinish || getExecutionPercent() > 1;
    }
 
    public abstract int getDuration();
 
+   public void setForceFinish(boolean forceFinish)
+   {
+      this.forceFinish = forceFinish;
+   }
 }

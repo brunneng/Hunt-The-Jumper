@@ -2,16 +2,14 @@ package com.greenteam.huntjumper.map;
 
 import com.greenteam.huntjumper.Camera;
 import com.greenteam.huntjumper.IVisibleObject;
+import com.greenteam.huntjumper.InitializationScreen;
 import com.greenteam.huntjumper.parameters.GameConstants;
 import com.greenteam.huntjumper.parameters.ViewConstants;
 import com.greenteam.huntjumper.utils.*;
 import com.greenteam.huntjumper.utils.pathfinding.PathFinder;
 import net.phys2d.math.ROVector2f;
 import net.phys2d.raw.StaticBody;
-import org.newdawn.slick.Color;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Image;
-import org.newdawn.slick.SlickException;
+import org.newdawn.slick.*;
 import org.newdawn.slick.geom.Rectangle;
 
 import java.util.ArrayList;
@@ -24,6 +22,7 @@ import java.util.Random;
 public class Map implements IVisibleObject
 {
    private List<StaticBody> allPolygons;
+   private ImageBuffer imageBuffer;
    private Image mapImage;
    private AvailabilityMap map;
 
@@ -56,42 +55,37 @@ public class Map implements IVisibleObject
          allPolygons.add(body);
       }
 
-      try
+      imageBuffer = new ImageBuffer(map.countX, map.countY);
+      int totalPixels = map.countX * map.countY;
+      int currentPixelNum = 0;
+
+      for (int x = 0; x < map.countX; ++x)
       {
-         Image pixel = new Image(1, 1);
-         pixel.getGraphics().setColor(Color.white);
-         pixel.getGraphics().draw(new Rectangle(0, 0, 2, 2));
-         pixel.getGraphics().flush();
-         
-         mapImage = new Image(map.countX, map.countY);
-         Graphics g = mapImage.getGraphics();
-
-         for (int x = 0; x < map.countX; ++x)
+         for (int y = 0; y < map.countY; ++y)
          {
-            for (int y = 0; y < map.countY; ++y)
+            currentPixelNum++;
+
+            byte value = map.getValue(x, y);
+            if (value != AvailabilityMap.FREE)
             {
-               byte value = map.getValue(x, y);
-               if (value != AvailabilityMap.FREE)
+               float scale = 0.2f * (rand.nextFloat() - 0.5f);
+               Color c = ViewConstants.defaultMapColor.brighter(scale);
+
+               int count = map.getCountOfFreeNearPoints(x, y);
+               if (count > 0)
                {
-                  float scale = 0.2f * (rand.nextFloat() - 0.5f);
-                  Color c = ViewConstants.defaultMapColor.brighter(scale);
-
-                  int count = map.getCountOfFreeNearPoints(x, y);
-                  if (count > 0)
-                  {
-                     c = c.brighter(0.08f * count);
-                  }
-
-                  g.drawImage(pixel, x, y, c);
+                  c = c.brighter(0.08f * count);
                }
+
+               imageBuffer.setRGBA(x, y, c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha());
             }
          }
 
-         g.flush();
-      }
-      catch (SlickException e)
-      {
-         throw new RuntimeException(e);
+         if (x % 10 == 0 || x == map.countX-1)
+         {
+            Integer successPresent = (int)(100*(float)currentPixelNum / totalPixels);
+            InitializationScreen.getInstance().setStatus("Preparing map", successPresent);
+         }
       }
 
       initPathFinder();
@@ -194,6 +188,12 @@ public class Map implements IVisibleObject
    @Override
    public void draw(Graphics g)
    {
+      if (mapImage == null)
+      {
+         mapImage = imageBuffer.getImage();
+         imageBuffer = null;
+      }
+
       Camera c = Camera.getCamera();
       g.setColor(ViewConstants.defaultGroundColor);
       g.fill(new Rectangle(0, 0, c.getViewWidth(), c.getViewHeight()));

@@ -23,8 +23,13 @@ public class Jumper implements IGameObject
 {
    private static Image lighting;
 
-   static
+   private static void init()
    {
+      if (lighting != null)
+      {
+         return;
+      }
+
       try
       {
          lighting = new Image("images/lighting.png").getScaledCopy(1.12f);
@@ -141,6 +146,8 @@ public class Jumper implements IGameObject
 
    public void drawBody(Graphics g, Point pos, float alpha)
    {
+      init();
+
       float radius = getBodyCircle().getRadius();
 
       org.newdawn.slick.geom.Circle viewCircle = new org.newdawn.slick.geom.Circle(

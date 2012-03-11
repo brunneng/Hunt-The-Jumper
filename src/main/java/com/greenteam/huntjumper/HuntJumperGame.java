@@ -44,13 +44,15 @@ public class HuntJumperGame implements Game
       return game;
    }
 
+   private boolean initialized = false;
    private World world;
    private Map map;
    private List<Jumper> jumpers = new ArrayList<Jumper>();
    private HashMap<Body, Jumper> bodyToJumpers = new HashMap<Body, Jumper>();
-   
+
    private Jumper myJumper;
    private TimeAccumulator updateTimeAccumulator = new TimeAccumulator();
+   private InitializationScreen initializationScreen;
    private ArrowsVisualizer arrowsVisualizer;
    private GameContainer gameContainer;
    private ScoresManager scoresManager;
@@ -67,7 +69,11 @@ public class HuntJumperGame implements Game
    {
       try
       {
-         map = new Map(new AvailabilityMap("maps/5.png"));
+         String mapName = "maps/5.png";
+         initializationScreen.setStatus("Loading map: " + mapName, null);
+         AvailabilityMap availabilityMap = new AvailabilityMap("maps/5.png");
+
+         map = new Map(availabilityMap);
       }
       catch (IOException e)
       {
@@ -137,6 +143,8 @@ public class HuntJumperGame implements Game
    
    private void initJumpers()
    {
+      initializationScreen.setStatus("Init jumpers", null);
+
       gameContainer.setForceExit(false);
       float maxRandomRadius = GameConstants.JUMPERS_START_RADIUS - GameConstants.JUMPER_RADIUS;
 
@@ -232,6 +240,7 @@ public class HuntJumperGame implements Game
 
    private void initCamera()
    {
+      initializationScreen.setStatus("Init camera", null);
       Camera.instance = new Camera(new Point(myJumper.getBody().getPosition()),
               ViewConstants.VIEW_WIDTH, ViewConstants.VIEW_HEIGHT);
    }
@@ -267,19 +276,34 @@ public class HuntJumperGame implements Game
    {
       game = this;
       gameContainer = container;
-      //gameContainer.setShowFPS(false);
+      gameContainer.setShowFPS(false);
       gameContainer.setAlwaysRender(true);
 
-      initWorld();
-      initMap();
-      initJumpers();
-      initCamera();
-
+      initializationScreen = InitializationScreen.getInstance();
       beforeEndNotifications.addAll(GameConstants.NOTIFY_TIMES_BEFORE_END);
+
+      new Thread(new Runnable()
+      {
+         @Override
+         public void run()
+         {
+            initWorld();
+            initMap();
+            initJumpers();
+            initCamera();
+            initialized = true;
+         }
+      }).start();
    }
 
    public void update(GameContainer container, int delta) throws SlickException
    {
+      if (!initialized)
+      {
+         initializationScreen.update(delta);
+         return;
+      }
+
       int cycles = updateTimeAccumulator.update(delta);
       for (int i = 0; i < cycles; i++) 
       {
@@ -588,6 +612,12 @@ public class HuntJumperGame implements Game
 
    public void render(GameContainer container, Graphics g) throws SlickException
    {
+      if (!initialized)
+      {
+         initializationScreen.draw(g);
+         return;
+      }
+
       g.setAntiAlias(false);
       map.draw(g);
       g.setAntiAlias(true);

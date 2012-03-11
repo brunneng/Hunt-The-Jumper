@@ -29,8 +29,14 @@ import static com.greenteam.huntjumper.utils.Vector2D.fromAngleAndLength;
 public class ArrowsVisualizer implements IVisibleObject
 {
    private static Image arrowImage;
-   static
+
+   private static void init()
    {
+      if (arrowImage != null)
+      {
+         return;
+      }
+
       try
       {
          arrowImage = new Image("images/arrow.png", Color.white);
@@ -52,6 +58,7 @@ public class ArrowsVisualizer implements IVisibleObject
 
    public void draw(Graphics g)
    {
+      init();
       drawArrowTo(filter(jumpers, new Predicate<Jumper>()
       {
          public boolean apply(Jumper jumper)
