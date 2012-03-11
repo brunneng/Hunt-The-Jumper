@@ -185,14 +185,19 @@ public class Map implements IVisibleObject
               map.getValue((int)tp.getX(), (int)tp.getY()) == AvailabilityMap.FREE;
    }
 
-   @Override
-   public void draw(Graphics g)
+   private void init()
    {
       if (mapImage == null)
       {
          mapImage = imageBuffer.getImage();
          imageBuffer = null;
       }
+   }
+
+   @Override
+   public void draw(Graphics g)
+   {
+      init();
 
       Camera c = Camera.getCamera();
       g.setColor(ViewConstants.defaultGroundColor);

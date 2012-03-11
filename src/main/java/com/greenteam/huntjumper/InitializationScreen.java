@@ -1,5 +1,6 @@
 package com.greenteam.huntjumper;
 
+import com.greenteam.huntjumper.parameters.ViewConstants;
 import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.TextUtils;
 import org.newdawn.slick.Color;
@@ -24,8 +25,6 @@ public class InitializationScreen implements IGameObject
    private int dotsCount;
 
    TimeAccumulator dotsTimeAccumulator = new TimeAccumulator(1000);
-   final int MAX_DOTS_COUNT = 3;
-   final int MAX_PERCENT_STR_LEN = 4;
 
    private InitializationScreen()
    {
@@ -41,7 +40,7 @@ public class InitializationScreen implements IGameObject
       if (percent != null)
       {
          String percentStr = percent.toString() + "%";
-         for (int i = 0; i < MAX_PERCENT_STR_LEN - percentStr.length(); ++i)
+         for (int i = 0; i < ViewConstants.INIT_SCREEN_MAX_PERCENT_STR_LEN - percentStr.length(); ++i)
          {
             percentStr += " ";
          }
@@ -62,7 +61,8 @@ public class InitializationScreen implements IGameObject
    {
       if (percent == null)
       {
-         int newDotsCount = (dotsCount + dotsTimeAccumulator.update(delta)) % (MAX_DOTS_COUNT + 1);
+         int newDotsCount = (dotsCount + dotsTimeAccumulator.update(delta)) % (
+                 ViewConstants.INIT_SCREEN_MAX_DOTS_COUNT + 1);
          if (dotsCount != newDotsCount)
          {
             dotsCount = newDotsCount;
@@ -71,7 +71,7 @@ public class InitializationScreen implements IGameObject
             {
                dots += ".";
             }
-            for (int i = 0; i < MAX_DOTS_COUNT - newDotsCount; ++i)
+            for (int i = 0; i < ViewConstants.INIT_SCREEN_MAX_DOTS_COUNT - newDotsCount; ++i)
             {
                dots += " ";
             }

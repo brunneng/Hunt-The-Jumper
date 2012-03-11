@@ -72,4 +72,7 @@ public final class ViewConstants
    public static final int COLLISIONS_PARTICLES_MAX_COUNT = 5;
    public static final int COLLISIONS_PARTICLES_MAX_DEVIATION = 200;
    public static final float COLLISIONS_PARTICLES_VELOCITY_FACTOR = 0.75f;
+
+   public static final int INIT_SCREEN_MAX_DOTS_COUNT = 3;
+   public static final int INIT_SCREEN_MAX_PERCENT_STR_LEN = 4;
 }
