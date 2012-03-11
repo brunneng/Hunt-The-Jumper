@@ -117,4 +117,14 @@ public final class Utils
 
       return sum / values.size();
    }
+   
+   public static String createString(char ch, int len)
+   {
+      StringBuilder sb = new StringBuilder(len);
+      for (int i = 0; i < len; ++i)
+      {
+         sb.append(ch);
+      }
+      return sb.toString();
+   }
 }

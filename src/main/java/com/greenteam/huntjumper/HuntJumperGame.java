@@ -618,9 +618,7 @@ public class HuntJumperGame implements Game
          return;
       }
 
-      g.setAntiAlias(false);
       map.draw(g);
-      g.setAntiAlias(true);
       for (Jumper j : jumpers)
       {
          j.draw(g);
