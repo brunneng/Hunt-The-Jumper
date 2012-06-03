@@ -30,12 +30,15 @@ public class Camera implements IUpdateable
            ViewConstants.CAMERA_SAMPLES_TIMER_INTERVAL);
    private Deque<Float> velocitySamples = new LinkedList<Float>();
 
+   private SinglePlayerMatchState matchState;
+
    public static Camera getCamera() {
       return instance;
    }
 
-   Camera(Point pos, int viewWidth, int viewHeight)
+   Camera(SinglePlayerMatchState matchState, Point pos, int viewWidth, int viewHeight)
    {
+      this.matchState = matchState;
       this.viewWidth = viewWidth;
       this.viewHeight = viewHeight;
       setViewCenter(pos);
@@ -106,7 +109,7 @@ public class Camera implements IUpdateable
    @Override
    public void update(int delta)
    {
-      Jumper myJumper = HuntJumperGame.getInstance().getMyJumper();
+      Jumper myJumper = matchState.getMyJumper();
       if (samplesTimer.update(delta) > 0)
       {
          velocitySamples.add(myJumper.getBody().getVelocity().length());
