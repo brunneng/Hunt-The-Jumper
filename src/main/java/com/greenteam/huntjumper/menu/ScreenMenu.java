@@ -6,6 +6,7 @@ import com.greenteam.huntjumper.IGameState;
 import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.TextUtils;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.newdawn.slick.*;
 import org.newdawn.slick.geom.Rectangle;
 
@@ -102,11 +103,12 @@ public class ScreenMenu extends AbstractGameState
          }
       }
 
-      if (Keyboard.isKeyDown(Keyboard.KEY_DOWN))
+      int dWheel = Mouse.hasWheel() ? Mouse.getDWheel() : 0;
+      if (Keyboard.isKeyDown(Keyboard.KEY_DOWN) || dWheel < 0)
       {
          selectedItemIndex = Math.min(selectedItemIndex + 1, items.size() - 1);
       }
-      else if (Keyboard.isKeyDown(Keyboard.KEY_UP))
+      else if (Keyboard.isKeyDown(Keyboard.KEY_UP) || dWheel > 0)
       {
          selectedItemIndex = Math.max(selectedItemIndex - 1, 0);
       }
