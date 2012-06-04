@@ -1,8 +1,7 @@
-package com.greenteam.huntjumper;
+package com.greenteam.huntjumper.match;
 
 import com.google.common.base.Predicate;
 import com.greenteam.huntjumper.model.Jumper;
-import com.greenteam.huntjumper.parameters.GameConstants;
 import com.greenteam.huntjumper.parameters.ViewConstants;
 import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.Segment;
@@ -16,9 +15,6 @@ import java.util.Collection;
 import java.util.List;
 
 import static com.google.common.collect.Collections2.filter;
-import static com.greenteam.huntjumper.Camera.*;
-import static com.greenteam.huntjumper.model.JumperRole.*;
-import static com.greenteam.huntjumper.utils.Vector2D.fromAngleAndLength;
 
 /**
  * Calculates position and draws direction arrows
@@ -64,14 +60,14 @@ public class ArrowsVisualizer implements IVisibleObject
          public boolean apply(Jumper jumper)
          {
             return !jumper.getJumperRole().equals(myJumper.getJumperRole()) &&
-                    !getCamera().contains(jumper.getBody().getPosition());
+                    !Camera.getCamera().contains(jumper.getBody().getPosition());
          }
       }), g);
    }
 
    private void drawArrowTo(Collection<Jumper> jumpers, Graphics g)
    {
-      Camera c = getCamera();
+      Camera c = Camera.getCamera();
       if (boundaries == null)
       {
          final int indent = ViewConstants.arrowIndentFromBoundaries;

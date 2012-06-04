@@ -1,4 +1,4 @@
-package com.greenteam.huntjumper;
+package com.greenteam.huntjumper.match;
 
 import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.model.JumperRole;

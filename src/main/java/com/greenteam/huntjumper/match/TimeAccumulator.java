@@ -1,4 +1,4 @@
-package com.greenteam.huntjumper;
+package com.greenteam.huntjumper.match;
 
 /**
  * Slices time in same pieces for different CPUs

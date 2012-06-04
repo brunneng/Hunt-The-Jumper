@@ -1,6 +1,7 @@
-package com.greenteam.huntjumper;
+package com.greenteam.huntjumper.match;
 
-import com.greenteam.huntjumper.IGameState;
+import com.greenteam.huntjumper.AbstractGameState;
+import com.greenteam.huntjumper.HuntJumperGame;
 import com.greenteam.huntjumper.audio.AudioSystem;
 import com.greenteam.huntjumper.contoller.AbstractJumperController;
 import com.greenteam.huntjumper.contoller.BotController;

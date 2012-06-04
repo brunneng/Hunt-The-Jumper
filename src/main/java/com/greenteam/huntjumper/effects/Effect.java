@@ -1,7 +1,7 @@
 package com.greenteam.huntjumper.effects;
 
-import com.greenteam.huntjumper.IVisibleObject;
-import com.greenteam.huntjumper.TimeAccumulator;
+import com.greenteam.huntjumper.match.IVisibleObject;
+import com.greenteam.huntjumper.match.TimeAccumulator;
 
 /**
  * User: GreenTea Date: 04.03.12 Time: 21:49

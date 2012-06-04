@@ -1,37 +1,10 @@
 package com.greenteam.huntjumper;
 
-import com.greenteam.huntjumper.audio.AudioSystem;
-import com.greenteam.huntjumper.contoller.AbstractJumperController;
-import com.greenteam.huntjumper.contoller.BotController;
-import com.greenteam.huntjumper.contoller.MouseController;
-import com.greenteam.huntjumper.effects.Effect;
-import com.greenteam.huntjumper.effects.particles.ParticleEntity;
-import com.greenteam.huntjumper.effects.particles.ParticleGenerator;
-import com.greenteam.huntjumper.effects.particles.ParticleType;
-import com.greenteam.huntjumper.map.AvailabilityMap;
-import com.greenteam.huntjumper.map.Map;
-import com.greenteam.huntjumper.model.IRoleChangedListener;
-import com.greenteam.huntjumper.model.Jumper;
-import com.greenteam.huntjumper.model.JumperInfo;
-import com.greenteam.huntjumper.model.JumperRole;
-import com.greenteam.huntjumper.parameters.GameConstants;
+import com.greenteam.huntjumper.match.SinglePlayerMatchState;
+import com.greenteam.huntjumper.menu.INextStateProvider;
+import com.greenteam.huntjumper.menu.ScreenMenu;
 import com.greenteam.huntjumper.parameters.ViewConstants;
-import com.greenteam.huntjumper.utils.*;
-import net.phys2d.math.Vector2f;
-import net.phys2d.raw.Body;
-import net.phys2d.raw.CollisionEvent;
-import net.phys2d.raw.StaticBody;
-import net.phys2d.raw.World;
 import org.newdawn.slick.*;
-import org.newdawn.slick.geom.Ellipse;
-import org.newdawn.slick.geom.RoundedRectangle;
-
-import java.io.IOException;
-import java.util.*;
-
-import static com.greenteam.huntjumper.parameters.GameConstants.DEFAULT_GAME_TIME;
-import static com.greenteam.huntjumper.parameters.GameConstants.TIME_TO_BECOME_SUPER_HUNTER;
-import static com.greenteam.huntjumper.parameters.ViewConstants.*;
 
 /**
  * User: GreenTea Date: 13.01.12 Time: 22:44
@@ -45,7 +18,7 @@ public class HuntJumperGame implements Game
    }
 
    private GameContainer gameContainer;
-   private IGameState state = new SinglePlayerMatchState();
+   private IGameState state;
 
    public GameContainer getGameContainer()
    {
@@ -59,6 +32,29 @@ public class HuntJumperGame implements Game
       gameContainer = container;
       container.setShowFPS(false);
       container.setAlwaysRender(true);
+
+      ScreenMenu mainMenu = new ScreenMenu();
+      ScreenMenu singlePlayer = new ScreenMenu("single player", new INextStateProvider()
+      {
+         @Override
+         public IGameState getNextState()
+         {
+            return new SinglePlayerMatchState();
+         }
+      });
+      ScreenMenu exit = new ScreenMenu("exit", new INextStateProvider()
+      {
+         @Override
+         public IGameState getNextState()
+         {
+            System.exit(0);
+            return null;
+         }
+      });
+      mainMenu.getItems().add(singlePlayer);
+      mainMenu.getItems().add(exit);
+      state = mainMenu;
+
       state.init();
    }
 

@@ -1,8 +1,8 @@
 package com.greenteam.huntjumper.map;
 
-import com.greenteam.huntjumper.Camera;
-import com.greenteam.huntjumper.IVisibleObject;
-import com.greenteam.huntjumper.InitializationScreen;
+import com.greenteam.huntjumper.match.Camera;
+import com.greenteam.huntjumper.match.IVisibleObject;
+import com.greenteam.huntjumper.match.InitializationScreen;
 import com.greenteam.huntjumper.parameters.GameConstants;
 import com.greenteam.huntjumper.parameters.ViewConstants;
 import com.greenteam.huntjumper.utils.*;

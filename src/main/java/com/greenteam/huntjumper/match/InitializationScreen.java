@@ -1,10 +1,10 @@
-package com.greenteam.huntjumper;
+package com.greenteam.huntjumper.match;
 
+import com.greenteam.huntjumper.HuntJumperGame;
 import com.greenteam.huntjumper.parameters.ViewConstants;
 import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.TextUtils;
 import com.greenteam.huntjumper.utils.Utils;
-import com.greenteam.huntjumper.utils.Vector2D;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;

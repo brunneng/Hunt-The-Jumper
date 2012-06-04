@@ -1,0 +1,185 @@
+package com.greenteam.huntjumper.menu;
+
+import com.greenteam.huntjumper.AbstractGameState;
+import com.greenteam.huntjumper.HuntJumperGame;
+import com.greenteam.huntjumper.IGameState;
+import com.greenteam.huntjumper.utils.Point;
+import com.greenteam.huntjumper.utils.TextUtils;
+import org.lwjgl.input.Keyboard;
+import org.newdawn.slick.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * User: GreenTea Date: 04.06.12 Time: 11:27
+ */
+public class ScreenMenu extends AbstractGameState
+{
+   private final String name;
+   private List<ScreenMenu> items = new ArrayList<ScreenMenu>();
+   private int selectedItemIndex = 0;
+
+   private INextStateProvider nextStateProvider;
+   private boolean active;
+   private IGameState nextState;
+
+   public ScreenMenu()
+   {
+      this("");
+   }
+
+   public ScreenMenu(String name)
+   {
+      this.name = name;
+   }
+
+   public ScreenMenu(String name, List<ScreenMenu> items)
+   {
+      this(name);
+      this.items = items;
+   }
+
+   public ScreenMenu(String name, INextStateProvider nextStateProvider)
+   {
+      this(name);
+      this.nextStateProvider = nextStateProvider;
+   }
+
+   public void initNextState()
+   {
+      if (nextState == null)
+      {
+         if (nextStateProvider != null)
+         {
+            nextState = nextStateProvider.getNextState();
+            if (!nextState.isInitialized())
+            {
+               nextState.init();
+            }
+         }
+      }
+   }
+
+   public ScreenMenu getSelectedMenuItem()
+   {
+      return selectedItemIndex < items.size() ? items.get(selectedItemIndex) : null;
+   }
+
+
+   @Override
+   public void init()
+   {
+      initialized = true;
+   }
+
+   @Override
+   public void update(int delta) throws SlickException
+   {
+      ScreenMenu selectedItem = getSelectedMenuItem();
+      if (selectedItem != null)
+      {
+         if (selectedItem.isActive())
+         {
+            selectedItem.update(delta);
+            return;
+         }
+      }
+      else if (active)
+      {
+         initNextState();
+         if (nextState != null)
+         {
+            nextState.update(delta);
+            return;
+         }
+      }
+
+      if (Keyboard.isKeyDown(Keyboard.KEY_DOWN))
+      {
+         selectedItemIndex = Math.min(selectedItemIndex + 1, items.size() - 1);
+      }
+      else if (Keyboard.isKeyDown(Keyboard.KEY_UP))
+      {
+         selectedItemIndex = Math.max(selectedItemIndex - 1, 0);
+      }
+      else if (Keyboard.isKeyDown(Input.KEY_ENTER))
+      {
+         if (selectedItem != null)
+         {
+            selectedItem.setActive(true);
+         }
+      }
+   }
+
+   @Override
+   public void render(Graphics g) throws SlickException
+   {
+      ScreenMenu selectedItem = getSelectedMenuItem();
+      if (selectedItem != null)
+      {
+         if (selectedItem.isActive())
+         {
+            selectedItem.render(g);
+            return;
+         }
+      }
+      else if (active)
+      {
+         initNextState();
+         if (nextState != null)
+         {
+            nextState.render(g);
+            return;
+         }
+      }
+
+      GameContainer container = HuntJumperGame.getInstance().getGameContainer();
+      float centerX = container.getWidth() / 2;
+      float centerY = container.getHeight() / 2;
+
+      Font font = TextUtils.Arial30Font;
+      int lineIndent = 5;
+      int lineHeight = font.getHeight("T") + lineIndent;
+      float currItemY = centerY - lineHeight*items.size() / 2.0f;
+
+      for (int i = 0; i < items.size(); ++i)
+      {
+         Color c = Color.white;
+         if (i == selectedItemIndex)
+         {
+            c = Color.orange;
+         }
+
+         Point pos = new Point(centerX, currItemY);
+         TextUtils.drawTextInCenter(pos, items.get(i).getName(), c, font, g);
+
+         currItemY += lineHeight;
+      }
+   }
+
+   public String getName()
+   {
+      return name;
+   }
+
+   public List<ScreenMenu> getItems()
+   {
+      return items;
+   }
+
+   public void setItems(List<ScreenMenu> items)
+   {
+      this.items = items;
+   }
+
+   public boolean isActive()
+   {
+      return active;
+   }
+
+   public void setActive(boolean active)
+   {
+      this.active = active;
+   }
+}

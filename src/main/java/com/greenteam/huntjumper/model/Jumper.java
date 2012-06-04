@@ -2,6 +2,9 @@ package com.greenteam.huntjumper.model;
 
 import com.greenteam.huntjumper.*;
 import com.greenteam.huntjumper.contoller.AbstractJumperController;
+import com.greenteam.huntjumper.match.Camera;
+import com.greenteam.huntjumper.match.IGameObject;
+import com.greenteam.huntjumper.match.TimeAccumulator;
 import com.greenteam.huntjumper.parameters.GameConstants;
 import com.greenteam.huntjumper.parameters.ViewConstants;
 import com.greenteam.huntjumper.utils.*;

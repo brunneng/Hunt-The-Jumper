@@ -1,6 +1,6 @@
 package com.greenteam.huntjumper.contoller;
 
-import com.greenteam.huntjumper.Camera;
+import com.greenteam.huntjumper.match.Camera;
 import com.greenteam.huntjumper.HuntJumperGame;
 import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.utils.Point;

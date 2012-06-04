@@ -1,6 +1,6 @@
 package com.greenteam.huntjumper.effects.particles;
 
-import com.greenteam.huntjumper.Camera;
+import com.greenteam.huntjumper.match.Camera;
 import com.greenteam.huntjumper.effects.Effect;
 import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.Utils;

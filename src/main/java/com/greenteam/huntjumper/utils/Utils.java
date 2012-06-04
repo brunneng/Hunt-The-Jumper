@@ -1,12 +1,11 @@
 package com.greenteam.huntjumper.utils;
 
-import com.greenteam.huntjumper.Camera;
+import com.greenteam.huntjumper.match.Camera;
 import net.phys2d.math.ROVector2f;
 import net.phys2d.raw.Body;
 import net.phys2d.raw.StaticBody;
 import net.phys2d.raw.shapes.Polygon;
 import org.newdawn.slick.Color;
-import org.newdawn.slick.Font;
 
 import java.util.ArrayList;
 import java.util.Collection;
