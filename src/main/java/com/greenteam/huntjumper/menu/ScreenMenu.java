@@ -7,6 +7,7 @@ import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.TextUtils;
 import org.lwjgl.input.Keyboard;
 import org.newdawn.slick.*;
+import org.newdawn.slick.geom.Rectangle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,10 +20,11 @@ public class ScreenMenu extends AbstractGameState
    private final String name;
    private List<ScreenMenu> items = new ArrayList<ScreenMenu>();
    private int selectedItemIndex = 0;
-
    private INextStateProvider nextStateProvider;
+
    private boolean active;
    private IGameState nextState;
+   private List<Rectangle> itemsRectangles = new ArrayList<Rectangle>();
 
    public ScreenMenu()
    {
@@ -61,11 +63,16 @@ public class ScreenMenu extends AbstractGameState
       }
    }
 
-   public ScreenMenu getSelectedMenuItem()
+   private ScreenMenu getSelectedMenuItem()
    {
       return selectedItemIndex < items.size() ? items.get(selectedItemIndex) : null;
    }
 
+   private Rectangle getSelectedMenuItemRectangle()
+   {
+      return selectedItemIndex < itemsRectangles.size() ?
+              itemsRectangles.get(selectedItemIndex) : null;
+   }
 
    @Override
    public void init()
@@ -110,6 +117,28 @@ public class ScreenMenu extends AbstractGameState
             selectedItem.setActive(true);
          }
       }
+      else
+      {
+         Input input = HuntJumperGame.getInstance().getGameContainer().getInput();
+         for (int i = 0; i < itemsRectangles.size(); ++i)
+         {
+            Rectangle rect = itemsRectangles.get(i);
+            if (rect.contains(input.getMouseX(), input.getMouseY()))
+            {
+               selectedItemIndex = i;
+               break;
+            }
+         }
+
+         if (selectedItem != null && input.isMousePressed(Input.MOUSE_LEFT_BUTTON))
+         {
+            Rectangle rect = getSelectedMenuItemRectangle();
+            if (rect.contains(input.getMouseX(), input.getMouseY()))
+            {
+               selectedItem.setActive(true);
+            }
+         }
+      }
    }
 
    @Override
@@ -143,6 +172,7 @@ public class ScreenMenu extends AbstractGameState
       int lineHeight = font.getHeight("T") + lineIndent;
       float currItemY = centerY - lineHeight*items.size() / 2.0f;
 
+      itemsRectangles.clear();
       for (int i = 0; i < items.size(); ++i)
       {
          Color c = Color.white;
@@ -152,7 +182,7 @@ public class ScreenMenu extends AbstractGameState
          }
 
          Point pos = new Point(centerX, currItemY);
-         TextUtils.drawTextInCenter(pos, items.get(i).getName(), c, font, g);
+         itemsRectangles.add(TextUtils.drawTextInCenter(pos, items.get(i).getName(), c, font, g));
 
          currItemY += lineHeight;
       }

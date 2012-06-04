@@ -1,6 +1,7 @@
 package com.greenteam.huntjumper.utils;
 
 import org.newdawn.slick.*;
+import org.newdawn.slick.geom.Rectangle;
 
 /**
  * User: GreenTea Date: 18.02.12 Time: 22:50
@@ -28,7 +29,7 @@ public final class TextUtils
       
    }
    
-   public static void drawTextInCenter(Point center, String text, Color color, Font font,
+   public static Rectangle drawTextInCenter(Point center, String text, Color color, Font font,
                                        Graphics g)
    {
       Font defaultFont = g.getFont();
@@ -49,6 +50,8 @@ public final class TextUtils
       }
       g.drawString(text, x, y);
       g.setFont(defaultFont);
+
+      return new Rectangle(x, y, w, h);
    }
 
    public static void drawText(Point pos, String text, Color color, Font font,
