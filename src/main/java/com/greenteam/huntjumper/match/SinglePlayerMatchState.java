@@ -46,6 +46,7 @@ import static com.greenteam.huntjumper.parameters.ViewConstants.timerEllipseInde
 public class SinglePlayerMatchState extends AbstractGameState
 {
    private World world;
+   private String pathToMap = "maps/5.png";
    private Map map;
    private List<Jumper> jumpers = new ArrayList<Jumper>();
    private HashMap<Body, Jumper> bodyToJumpers = new HashMap<Body, Jumper>();
@@ -69,9 +70,9 @@ public class SinglePlayerMatchState extends AbstractGameState
    {
       try
       {
-         String mapName = "maps/5.png";
+         String mapName = pathToMap;
          initializationScreen.setStatus("Loading map: " + mapName, null);
-         AvailabilityMap availabilityMap = new AvailabilityMap("maps/5.png");
+         AvailabilityMap availabilityMap = new AvailabilityMap(pathToMap);
 
          map = new Map(availabilityMap);
       }
@@ -677,5 +678,15 @@ public class SinglePlayerMatchState extends AbstractGameState
    public List<Jumper> getJumpers()
    {
       return jumpers;
+   }
+
+   public String getPathToMap()
+   {
+      return pathToMap;
+   }
+
+   public void setPathToMap(String pathToMap)
+   {
+      this.pathToMap = pathToMap;
    }
 }

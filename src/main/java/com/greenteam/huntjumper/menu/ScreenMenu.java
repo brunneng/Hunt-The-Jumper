@@ -5,6 +5,7 @@ import com.greenteam.huntjumper.HuntJumperGame;
 import com.greenteam.huntjumper.IGameState;
 import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.TextUtils;
+import com.greenteam.huntjumper.utils.Utils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.newdawn.slick.*;
@@ -21,7 +22,7 @@ public class ScreenMenu extends AbstractGameState
    private final String name;
    private List<ScreenMenu> items = new ArrayList<ScreenMenu>();
    private int selectedItemIndex = 0;
-   private INextStateProvider nextStateProvider;
+   private INextStateProvider<ScreenMenu> nextStateProvider;
 
    private boolean active;
    private IGameState nextState;
@@ -43,19 +44,19 @@ public class ScreenMenu extends AbstractGameState
       this.items = items;
    }
 
-   public ScreenMenu(String name, INextStateProvider nextStateProvider)
+   public ScreenMenu(String name, INextStateProvider<ScreenMenu> nextStateProvider)
    {
       this(name);
       this.nextStateProvider = nextStateProvider;
    }
 
-   public void initNextState()
+   protected void initNextState()
    {
       if (nextState == null)
       {
          if (nextStateProvider != null)
          {
-            nextState = nextStateProvider.getNextState();
+            nextState = nextStateProvider.getNextState(this);
             if (!nextState.isInitialized())
             {
                nextState.init();
@@ -103,17 +104,23 @@ public class ScreenMenu extends AbstractGameState
          }
       }
 
+      boolean keyEvent = Utils.isKeyboardEnabled(Keyboard.getEventKeyState());
+
       int dWheel = Mouse.hasWheel() ? Mouse.getDWheel() : 0;
-      if (Keyboard.isKeyDown(Keyboard.KEY_DOWN) || dWheel < 0)
+
+      if ((keyEvent && Keyboard.isKeyDown(Keyboard.KEY_DOWN)) || dWheel < 0)
       {
          selectedItemIndex = Math.min(selectedItemIndex + 1, items.size() - 1);
+         Utils.consumeKeyboardEvent();
       }
-      else if (Keyboard.isKeyDown(Keyboard.KEY_UP) || dWheel > 0)
+      else if ((keyEvent && Keyboard.isKeyDown(Keyboard.KEY_UP)) || dWheel > 0)
       {
          selectedItemIndex = Math.max(selectedItemIndex - 1, 0);
+         Utils.consumeKeyboardEvent();
       }
-      else if (Keyboard.isKeyDown(Input.KEY_ENTER))
+      else if (keyEvent && Keyboard.isKeyDown(Input.KEY_ENTER))
       {
+         Utils.consumeKeyboardEvent();
          if (selectedItem != null)
          {
             selectedItem.setActive(true);

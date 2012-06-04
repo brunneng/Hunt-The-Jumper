@@ -20,6 +20,9 @@ public final class Utils
    public static double ERROR = 0.0005;
    public static Random rand = new Random();
 
+   private static long lastConsumeKeyboardEventTime;
+   private static boolean prevKeyboardEventState;
+
    private Utils()
    {
 
@@ -125,5 +128,18 @@ public final class Utils
          sb.append(ch);
       }
       return sb.toString();
+   }
+
+   public static void consumeKeyboardEvent()
+   {
+      lastConsumeKeyboardEventTime = System.currentTimeMillis();
+   }
+
+   public static boolean isKeyboardEnabled(boolean keyEventState)
+   {
+      boolean res = !prevKeyboardEventState && keyEventState ||
+              System.currentTimeMillis() - lastConsumeKeyboardEventTime > 200;
+      prevKeyboardEventState = keyEventState;
+      return res;
    }
 }

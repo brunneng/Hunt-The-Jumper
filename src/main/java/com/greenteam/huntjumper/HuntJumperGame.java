@@ -2,6 +2,7 @@ package com.greenteam.huntjumper;
 
 import com.greenteam.huntjumper.match.SinglePlayerMatchState;
 import com.greenteam.huntjumper.menu.INextStateProvider;
+import com.greenteam.huntjumper.menu.MapSelectionMenu;
 import com.greenteam.huntjumper.menu.ScreenMenu;
 import com.greenteam.huntjumper.parameters.ViewConstants;
 import org.newdawn.slick.*;
@@ -34,18 +35,21 @@ public class HuntJumperGame implements Game
       container.setAlwaysRender(true);
 
       ScreenMenu mainMenu = new ScreenMenu();
-      ScreenMenu singlePlayer = new ScreenMenu("single player", new INextStateProvider()
+      MapSelectionMenu singlePlayer = new MapSelectionMenu("single player", "maps/",
+              new INextStateProvider<MapSelectionMenu>()
       {
          @Override
-         public IGameState getNextState()
+         public IGameState getNextState(MapSelectionMenu parent)
          {
-            return new SinglePlayerMatchState();
+            SinglePlayerMatchState res = new SinglePlayerMatchState();
+            res.setPathToMap(parent.getPathToMap());
+            return res;
          }
       });
-      ScreenMenu exit = new ScreenMenu("exit", new INextStateProvider()
+      ScreenMenu exit = new ScreenMenu("exit", new INextStateProvider<ScreenMenu>()
       {
          @Override
-         public IGameState getNextState()
+         public IGameState getNextState(ScreenMenu parent)
          {
             System.exit(0);
             return null;
