@@ -80,10 +80,12 @@ public final class ViewConstants
 
    public static int PREVIEW_IMAGE_WIDTH = 250;
    public static int PREVIEW_IMAGE_HEIGHT = 250;
+   public static final Color PREVIEW_IMAGE_BORDER_COLOR = new Color(73, 73, 73);
 
    public static final int MAX_FADE_TIME = 400;
-   public static final int MIN_FADE_LENGTH = 10;
+   public static final int MIN_FADE_LENGTH = 5;
    public static final float START_FADE_ALPHA = 0.8f;
    public static final int FADE_POSITIONS_TIME_INTERVAL = 15;
 
+   public static final Color MENU_SELECTED_COLOR = Color.orange;
 }

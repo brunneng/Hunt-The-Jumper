@@ -137,6 +137,12 @@ public class MapSelectionMenu extends ScreenMenu
          float y = (container.getHeight() - PREVIEW_IMAGE_HEIGHT) / 2f;
 
          float margin = PREVIEW_IMAGE_WIDTH / 20f;
+
+         float margin2 = margin + 3;
+         g.setColor(ViewConstants.PREVIEW_IMAGE_BORDER_COLOR);
+         g.fillRoundRect(x - margin2, y - margin2,
+                 PREVIEW_IMAGE_WIDTH + 2*margin2, PREVIEW_IMAGE_HEIGHT + 2*margin2, 6);
+
          g.setColor(org.newdawn.slick.Color.white);
          g.fillRoundRect(x - margin, y - margin,
                  PREVIEW_IMAGE_WIDTH + 2*margin, PREVIEW_IMAGE_HEIGHT + 2*margin, 6);

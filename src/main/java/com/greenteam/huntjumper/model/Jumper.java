@@ -227,9 +227,9 @@ public class Jumper implements IGameObject
       org.newdawn.slick.geom.Circle viewCircle = new org.newdawn.slick.geom.Circle(
               pos.getX(), pos.getY(), radius);
 
-      g.drawImage(lighting, pos.getX() - lighting.getWidth()/2,
-              pos.getY() - lighting.getHeight()/2,
-              Utils.toColorWithAlpha(jumperRole.getRoleColor(), alpha));
+//      g.drawImage(lighting, pos.getX() - lighting.getWidth()/2,
+//              pos.getY() - lighting.getHeight()/2,
+//              Utils.toColorWithAlpha(jumperRole.getRoleColor(), alpha));
 
       g.setColor(Utils.toColorWithAlpha(getColor(), alpha));
       g.fill(viewCircle);

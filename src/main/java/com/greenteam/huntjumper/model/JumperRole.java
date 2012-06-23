@@ -7,9 +7,9 @@ import org.newdawn.slick.Color;
  */
 public enum JumperRole
 {
-   Escaping(new Color(51, 255, 15)),
+   Escaping(new Color(61, 87, 255)),
    Hunting(new Color(255, 151, 151)),
-   EscapingFromHunter(new Color(171, 255, 159)),
+   EscapingFromHunter(new Color(125, 183, 115)),
    HuntingForEveryone(new Color(255, 0, 0));
 
    private Color roleColor;

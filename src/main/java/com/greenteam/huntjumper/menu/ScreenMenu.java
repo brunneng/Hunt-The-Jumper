@@ -3,6 +3,7 @@ package com.greenteam.huntjumper.menu;
 import com.greenteam.huntjumper.AbstractGameState;
 import com.greenteam.huntjumper.HuntJumperGame;
 import com.greenteam.huntjumper.IGameState;
+import com.greenteam.huntjumper.parameters.ViewConstants;
 import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.TextUtils;
 import com.greenteam.huntjumper.utils.Utils;
@@ -208,7 +209,7 @@ public class ScreenMenu extends AbstractGameState
          Color c = Color.white;
          if (i == selectedItemIndex)
          {
-            c = Color.orange;
+            c = ViewConstants.MENU_SELECTED_COLOR;
          }
 
          Point pos = new Point(centerX, currItemY);
