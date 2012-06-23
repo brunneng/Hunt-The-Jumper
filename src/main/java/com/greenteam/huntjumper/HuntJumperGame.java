@@ -35,17 +35,7 @@ public class HuntJumperGame implements Game
       container.setAlwaysRender(true);
 
       ScreenMenu mainMenu = new ScreenMenu();
-      MapSelectionMenu singlePlayer = new MapSelectionMenu("single player", "maps/",
-              new INextStateProvider<MapSelectionMenu>()
-      {
-         @Override
-         public IGameState getNextState(MapSelectionMenu parent)
-         {
-            SinglePlayerMatchState res = new SinglePlayerMatchState();
-            res.setPathToMap(parent.getPathToMap());
-            return res;
-         }
-      });
+      MapSelectionMenu singlePlayer = new MapSelectionMenu("single player", "maps/");
       ScreenMenu exit = new ScreenMenu("exit", new INextStateProvider<ScreenMenu>()
       {
          @Override

@@ -31,6 +31,7 @@ import org.newdawn.slick.*;
 import org.newdawn.slick.geom.Ellipse;
 import org.newdawn.slick.geom.RoundedRectangle;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -46,7 +47,7 @@ import static com.greenteam.huntjumper.parameters.ViewConstants.timerEllipseInde
 public class SinglePlayerMatchState extends AbstractGameState
 {
    private World world;
-   private String pathToMap = "maps/5.png";
+   private File mapFile;
    private Map map;
    private List<Jumper> jumpers = new ArrayList<Jumper>();
    private HashMap<Body, Jumper> bodyToJumpers = new HashMap<Body, Jumper>();
@@ -61,6 +62,11 @@ public class SinglePlayerMatchState extends AbstractGameState
    private LinkedList<Integer> beforeEndNotifications = new LinkedList<Integer>();
    private boolean gameFinished = false;
 
+   public SinglePlayerMatchState(File mapFile)
+   {
+      this.mapFile = mapFile;
+   }
+
    private void initWorld()
    {
       world = new World(new Vector2f(0f, 0f), 5);
@@ -70,9 +76,8 @@ public class SinglePlayerMatchState extends AbstractGameState
    {
       try
       {
-         String mapName = pathToMap;
-         initializationScreen.setStatus("Loading map: " + mapName, null);
-         AvailabilityMap availabilityMap = new AvailabilityMap(pathToMap);
+         initializationScreen.setStatus("Loading map: " + mapFile.getName(), null);
+         AvailabilityMap availabilityMap = new AvailabilityMap(mapFile);
 
          map = new Map(availabilityMap);
       }
@@ -680,13 +685,4 @@ public class SinglePlayerMatchState extends AbstractGameState
       return jumpers;
    }
 
-   public String getPathToMap()
-   {
-      return pathToMap;
-   }
-
-   public void setPathToMap(String pathToMap)
-   {
-      this.pathToMap = pathToMap;
-   }
 }

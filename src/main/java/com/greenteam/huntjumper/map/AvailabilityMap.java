@@ -98,10 +98,9 @@ public class AvailabilityMap
    private Vector2D translationVector;
    private byte[][] map;
 
-   public AvailabilityMap(String imageFileName) throws IOException
+   public AvailabilityMap(File imageFile) throws IOException
    {
-      File file = new File(imageFileName);
-      BufferedImage image = ImageIO.read(file);
+      BufferedImage image = ImageIO.read(imageFile);
       countX = image.getWidth();
       countY = image.getHeight();
       maxXdist = countX;
