@@ -2,11 +2,7 @@ package com.greenteam.huntjumper.model;
 
 import com.greenteam.huntjumper.*;
 import com.greenteam.huntjumper.contoller.AbstractJumperController;
-import com.greenteam.huntjumper.effects.particles.CustomParticleGenerator;
-import com.greenteam.huntjumper.effects.particles.IParticleCreator;
-import com.greenteam.huntjumper.effects.particles.ParticleEntity;
 import com.greenteam.huntjumper.match.Camera;
-import com.greenteam.huntjumper.match.EffectsContainer;
 import com.greenteam.huntjumper.match.IGameObject;
 import com.greenteam.huntjumper.match.TimeAccumulator;
 import com.greenteam.huntjumper.parameters.GameConstants;
@@ -18,9 +14,12 @@ import net.phys2d.raw.shapes.Circle;
 import org.newdawn.slick.*;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import static com.greenteam.huntjumper.parameters.GameConstants.*;
+import static com.greenteam.huntjumper.parameters.ViewConstants.*;
 import static com.greenteam.huntjumper.utils.Vector2D.fromRadianAngleAndLength;
 
 /**
@@ -40,6 +39,7 @@ public class Jumper implements IGameObject
       try
       {
          lighting = new Image("images/lighting.png").getScaledCopy(1.12f);
+         lighting.startUse();
       }
       catch (SlickException e)
       {
@@ -58,7 +58,10 @@ public class Jumper implements IGameObject
    private AbstractJumperController controller;
    private TimeAccumulator currentRoleTimeAccumulator = new TimeAccumulator();
    private List<IRoleChangedListener> roleChangedListeners = new ArrayList<IRoleChangedListener>();
-//   private CustomParticleGenerator particleGenerator;
+
+   private LinkedList<PreviousPosition> fadePositions = new LinkedList<PreviousPosition>();
+   private TimeAccumulator fadePositionsTimer = new TimeAccumulator(FADE_POSITIONS_TIME_INTERVAL);
+
 
    public Jumper(String playerName, Color color, ROVector2f startPos,
                  AbstractJumperController controller, JumperRole jumperRole)
@@ -74,20 +77,6 @@ public class Jumper implements IGameObject
       body.setRestitution(1.0f);
       this.jumperRole = jumperRole;
       this.controller = controller;
-
-//      particleGenerator = new CustomParticleGenerator(100, new IParticleCreator()
-//      {
-//         @Override
-//         public ParticleEntity createParticle()
-//         {
-//            ParticleEntity p = new ParticleEntity();
-//            p.setPosition(new Point(body.getPosition()));
-//            p.setStartRadius(getBodyCircle().getRadius());
-//            p.setDuration(1000);
-//            p.setColor(getColor());
-//            return p;
-//         }
-//      });
    }
 
    public Vector2D vectorTo(Jumper j)
@@ -165,7 +154,69 @@ public class Jumper implements IGameObject
       controller.update(this, delta);
       currentRoleTimeAccumulator.update(delta);
 
-//      EffectsContainer.getInstance().addAllEffects(particleGenerator.update(delta));
+      updateFadePositions(delta);
+   }
+
+   private void updateFadePositions(int delta)
+   {
+      if (fadePositionsTimer.update(delta) > 0)
+      {
+         PreviousPosition prevPos = new PreviousPosition(System.currentTimeMillis(),
+                 new Point(body.getPosition()));
+         if (fadePositions.size() == 0)
+         {
+            fadePositions.add(prevPos);
+         }
+         else
+         {
+            if (fadePositions.getLast().getPos().distanceTo(prevPos.getPos()) > MIN_FADE_LENGTH)
+            {
+               fadePositions.addLast(prevPos);
+            }
+         }
+
+         Iterator<PreviousPosition> i = fadePositions.iterator();
+         while (i.hasNext())
+         {
+            PreviousPosition pp = i.next();
+            if (pp.getTime() < prevPos.getTime() - MAX_FADE_TIME)
+            {
+               i.remove();
+            }
+            else
+            {
+               break;
+            }
+         }
+      }
+   }
+
+   private void drawFade(Graphics g)
+   {
+      if (fadePositions.size() > 0)
+      {
+         float currAlpha = START_FADE_ALPHA;
+         float alphaStep = currAlpha / fadePositions.size();
+
+         Point prevFadePos = null;
+         Iterator<PreviousPosition> i = fadePositions.descendingIterator();
+         while (i.hasNext())
+         {
+            Point currFadePos = Camera.getCamera().toView(i.next().getPos());
+            if (prevFadePos == null)
+            {
+               prevFadePos = currFadePos;
+               continue;
+            }
+
+            g.setColor(Utils.toColorWithAlpha(jumperRole.getRoleColor(), currAlpha));
+            g.drawLine(prevFadePos.getX(), prevFadePos.getY(),
+                    currFadePos.getX(), currFadePos.getY());
+            currAlpha -= alphaStep;
+
+            prevFadePos = currFadePos;
+         }
+      }
    }
 
    public void drawBody(Graphics g, Point pos, float alpha)
@@ -173,7 +224,6 @@ public class Jumper implements IGameObject
       init();
 
       float radius = getBodyCircle().getRadius();
-
       org.newdawn.slick.geom.Circle viewCircle = new org.newdawn.slick.geom.Circle(
               pos.getX(), pos.getY(), radius);
 
@@ -203,6 +253,7 @@ public class Jumper implements IGameObject
    
    public void draw(Graphics g)
    {
+      drawFade(g);
       Point viewCenter = Camera.getCamera().toView(getBody().getPosition());
       drawBody(g, viewCenter, 1f);
 
