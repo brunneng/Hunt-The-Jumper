@@ -77,4 +77,8 @@ public final class ViewConstants
    public static final int INIT_SCREEN_MAX_DOTS_COUNT = 3;
    public static final int INIT_SCREEN_MAX_PERCENT_STR_LEN = 4;
    public static final int INIT_SCREEN_DOT_ADD_TIME = 1000;
+
+   public static int PREVIEW_IMAGE_WIDTH = 250;
+   public static int PREVIEW_IMAGE_HEIGHT = 250;
+
 }

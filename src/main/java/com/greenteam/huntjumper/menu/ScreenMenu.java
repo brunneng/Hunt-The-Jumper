@@ -28,6 +28,8 @@ public class ScreenMenu extends AbstractGameState
    private IGameState nextState;
    private List<Rectangle> itemsRectangles = new ArrayList<Rectangle>();
 
+   private boolean shouldRenderMenu;
+
    public ScreenMenu()
    {
       this("");
@@ -91,6 +93,7 @@ public class ScreenMenu extends AbstractGameState
          if (selectedItem.isActive())
          {
             selectedItem.update(delta);
+            shouldRenderMenu = false;
             return;
          }
       }
@@ -100,9 +103,12 @@ public class ScreenMenu extends AbstractGameState
          if (nextState != null)
          {
             nextState.update(delta);
+            shouldRenderMenu = false;
             return;
          }
       }
+
+      shouldRenderMenu = true;
 
       boolean keyEvent = Utils.isKeyboardEnabled(Keyboard.getEventKeyState());
 
@@ -148,6 +154,21 @@ public class ScreenMenu extends AbstractGameState
             }
          }
       }
+
+      ScreenMenu currSelectedItem = getSelectedMenuItem();
+      if (selectedItem != currSelectedItem)
+      {
+         onSelection(currSelectedItem);
+      }
+   }
+
+   public boolean isShouldRenderMenu()
+   {
+      return shouldRenderMenu;
+   }
+
+   protected void onSelection(ScreenMenu selectedItem)
+   {
    }
 
    @Override
@@ -219,6 +240,11 @@ public class ScreenMenu extends AbstractGameState
 
    public void setActive(boolean active)
    {
+      if (!this.active && active)
+      {
+         onSelection(getSelectedMenuItem());
+      }
+
       this.active = active;
    }
 }

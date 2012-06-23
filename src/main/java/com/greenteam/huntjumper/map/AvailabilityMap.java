@@ -100,7 +100,7 @@ public class AvailabilityMap
 
    public AvailabilityMap(File imageFile) throws IOException
    {
-      BufferedImage image = ImageIO.read(imageFile);
+      BufferedImage image = ImageLoader.getInstance().load(imageFile);
       countX = image.getWidth();
       countY = image.getHeight();
       maxXdist = countX;
