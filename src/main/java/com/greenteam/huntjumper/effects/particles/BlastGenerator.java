@@ -11,7 +11,7 @@ import java.util.Random;
  * Created by IntelliJ IDEA. User: Ivan Date: 16.01.2011 Time: 12:13:11 To change this template use
  * File | Settings | File Templates.
  */
-public class BlastGenerator extends ParticleGenerator
+public class BlastGenerator extends TypedParticleGenerator
 {
    protected static final Random rand = Utils.rand;
 

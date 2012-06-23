@@ -2,7 +2,11 @@ package com.greenteam.huntjumper.model;
 
 import com.greenteam.huntjumper.*;
 import com.greenteam.huntjumper.contoller.AbstractJumperController;
+import com.greenteam.huntjumper.effects.particles.CustomParticleGenerator;
+import com.greenteam.huntjumper.effects.particles.IParticleCreator;
+import com.greenteam.huntjumper.effects.particles.ParticleEntity;
 import com.greenteam.huntjumper.match.Camera;
+import com.greenteam.huntjumper.match.EffectsContainer;
 import com.greenteam.huntjumper.match.IGameObject;
 import com.greenteam.huntjumper.match.TimeAccumulator;
 import com.greenteam.huntjumper.parameters.GameConstants;
@@ -54,6 +58,7 @@ public class Jumper implements IGameObject
    private AbstractJumperController controller;
    private TimeAccumulator currentRoleTimeAccumulator = new TimeAccumulator();
    private List<IRoleChangedListener> roleChangedListeners = new ArrayList<IRoleChangedListener>();
+//   private CustomParticleGenerator particleGenerator;
 
    public Jumper(String playerName, Color color, ROVector2f startPos,
                  AbstractJumperController controller, JumperRole jumperRole)
@@ -69,6 +74,20 @@ public class Jumper implements IGameObject
       body.setRestitution(1.0f);
       this.jumperRole = jumperRole;
       this.controller = controller;
+
+//      particleGenerator = new CustomParticleGenerator(100, new IParticleCreator()
+//      {
+//         @Override
+//         public ParticleEntity createParticle()
+//         {
+//            ParticleEntity p = new ParticleEntity();
+//            p.setPosition(new Point(body.getPosition()));
+//            p.setStartRadius(getBodyCircle().getRadius());
+//            p.setDuration(1000);
+//            p.setColor(getColor());
+//            return p;
+//         }
+//      });
    }
 
    public Vector2D vectorTo(Jumper j)
@@ -145,6 +164,8 @@ public class Jumper implements IGameObject
    {
       controller.update(this, delta);
       currentRoleTimeAccumulator.update(delta);
+
+//      EffectsContainer.getInstance().addAllEffects(particleGenerator.update(delta));
    }
 
    public void drawBody(Graphics g, Point pos, float alpha)

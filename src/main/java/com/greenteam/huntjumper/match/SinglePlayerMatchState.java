@@ -7,9 +7,10 @@ import com.greenteam.huntjumper.contoller.AbstractJumperController;
 import com.greenteam.huntjumper.contoller.BotController;
 import com.greenteam.huntjumper.contoller.MouseController;
 import com.greenteam.huntjumper.effects.Effect;
+import com.greenteam.huntjumper.effects.particles.AbstractParticleGenerator;
 import com.greenteam.huntjumper.effects.particles.ParticleEntity;
-import com.greenteam.huntjumper.effects.particles.ParticleGenerator;
 import com.greenteam.huntjumper.effects.particles.ParticleType;
+import com.greenteam.huntjumper.effects.particles.TypedParticleGenerator;
 import com.greenteam.huntjumper.map.AvailabilityMap;
 import com.greenteam.huntjumper.map.Map;
 import com.greenteam.huntjumper.model.IRoleChangedListener;
@@ -58,7 +59,6 @@ public class SinglePlayerMatchState extends AbstractGameState
    private ArrowsVisualizer arrowsVisualizer;
    private GameContainer gameContainer;
    private ScoresManager scoresManager;
-   private LinkedList<Effect> effects = new LinkedList<Effect>();
    private LinkedList<Integer> beforeEndNotifications = new LinkedList<Integer>();
    private boolean gameFinished = false;
 
@@ -253,34 +253,13 @@ public class SinglePlayerMatchState extends AbstractGameState
 
    public void addEffect(Effect effect)
    {
-      effects.add(effect);
-   }
-
-   private void updateEffects(int dt)
-   {
-      Iterator<Effect> i = effects.iterator();
-      while (i.hasNext())
-      {
-         Effect effect = i.next();
-         effect.update(dt);
-         if (effect.isFinished())
-         {
-            i.remove();
-         }
-      }
-   }
-
-   private void drawEffects(Graphics g)
-   {
-      for (Effect effect : effects)
-      {
-         effect.draw(g);
-      }
+      EffectsContainer.getInstance().addEffect(effect);
    }
 
    @Override
    public void init()
    {
+      EffectsContainer.getInstance().clearEffects();
       gameContainer = HuntJumperGame.getInstance().getGameContainer();
       initializationScreen = InitializationScreen.getInstance();
       beforeEndNotifications.addAll(GameConstants.NOTIFY_TIMES_BEFORE_END);
@@ -311,7 +290,7 @@ public class SinglePlayerMatchState extends AbstractGameState
       for (int i = 0; i < cycles; i++)
       {
          int dt = updateTimeAccumulator.getCycleLength();
-         updateEffects(dt);
+         EffectsContainer.getInstance().updateEffects(dt);
          if (gameFinished)
          {
             continue;
@@ -595,10 +574,12 @@ public class SinglePlayerMatchState extends AbstractGameState
       if (particlesCount > 0)
       {
          Collection<ParticleEntity> particles =
-                 new ParticleGenerator(ParticleType.SPARK, 0, particlesCount).update(0);
+                 new TypedParticleGenerator(ParticleType.SPARK, 0, particlesCount).update(0);
          Random rand = Utils.rand;
          float currAngle = rand.nextFloat()*360f;
          float dAngle = 360f / particlesCount;
+
+         EffectsContainer effectsContainer = EffectsContainer.getInstance();
          for (ParticleEntity p : particles)
          {
             p.setPosition(new Point(e.getPoint()));
@@ -608,8 +589,8 @@ public class SinglePlayerMatchState extends AbstractGameState
                     ViewConstants.COLLISIONS_PARTICLES_VELOCITY_FACTOR *
                             GameConstants.JUMPER_RADIUS * 1000 / p.getDuration()));
             currAngle += dAngle;
+            effectsContainer.addEffect(p);
          }
-         effects.addAll(particles);
       }
    }
 
@@ -629,7 +610,7 @@ public class SinglePlayerMatchState extends AbstractGameState
 
       arrowsVisualizer.draw(g);
       drawInterface(g);
-      drawEffects(g);
+      EffectsContainer.getInstance().drawEffects(g);
    }
 
    private void drawInterface(Graphics g)

@@ -29,7 +29,7 @@ public class ParticleEntity extends Effect
    protected Point position;
    protected Vector2D velocity = new Vector2D();
 
-   private ParticleEntity()
+   public ParticleEntity()
    {
    }
 
@@ -120,7 +120,13 @@ public class ParticleEntity extends Effect
    public float getCurrentRadius()
    {
       float ep = getExecutionPercent();
-      return startRadius * ep + (1 - ep) * endRadius;
+
+      if (startRadius < endRadius)
+      {
+         return startRadius * ep + (1 - ep) * endRadius;
+      }
+
+      return endRadius * ep + (1 - ep) * startRadius;
    }
 
    @Override
@@ -157,18 +163,17 @@ public class ParticleEntity extends Effect
    @Override
    public void draw(Graphics g)
    {
-      Color c = Utils.toColorWithAlpha(color, getExecutionPercent());
       float curRadius = getCurrentRadius();
       
       Point pos = Camera.getCamera().toView(position);
-      float x = pos.getX() - curRadius;
-      float y = pos.getY() - curRadius;
+      float x = pos.getX();
+      float y = pos.getY();
 
-      g.setColor(Utils.toColorWithAlpha(Color.gray, getExecutionPercent()));
+      g.setColor(Utils.toColorWithAlpha(Color.gray, 1f - getExecutionPercent()));
       g.fill(new Circle(x, y, curRadius));
 
       float d = Math.min(1, curRadius/5);
-      g.setColor(Utils.toColorWithAlpha(color, getExecutionPercent()));
+      g.setColor(Utils.toColorWithAlpha(color, 1f - getExecutionPercent()));
       g.fill(new Circle(x+d, y+d, curRadius));
    }
 
