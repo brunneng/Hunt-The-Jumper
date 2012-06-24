@@ -195,6 +195,8 @@ public class Jumper implements IGameObject
    {
       if (fadePositions.size() > 0)
       {
+         g.setLineWidth(2);
+
          float currAlpha = START_FADE_ALPHA;
          float alphaStep = currAlpha / fadePositions.size();
 
@@ -216,6 +218,8 @@ public class Jumper implements IGameObject
 
             prevFadePos = currFadePos;
          }
+
+         g.setLineWidth(1);
       }
    }
 
@@ -268,10 +272,10 @@ public class Jumper implements IGameObject
             {
                Point p1 = lastShortestPath.get(i);
                Point p2 = lastShortestPath.get(i + 1);
-               
+
                Point tP1 = Camera.getCamera().toView(p1);
                Point tP2 = Camera.getCamera().toView(p2);
-   
+
                g.drawLine(tP1.getX(), tP1.getY(),
                        tP2.getX(), tP2.getY());
             }
@@ -286,7 +290,8 @@ public class Jumper implements IGameObject
    {
       Input input = HuntJumperGame.getInstance().getGameContainer().getInput();
       Point cursorPos = new Point(input.getMouseX(), input.getMouseY());
-      float distToCursor = Utils.getPhysVectorToCursor(getBody(), cursorPos, Camera.getCamera()).length();
+      float distToCursor = Utils.getPhysVectorToCursor(getBody(), cursorPos,
+              Camera.getCamera()).length();
       if (distToCursor < ViewConstants.DRAW_NAME_MAX_RADIUS)
       {
          float a = 1f - distToCursor/ ViewConstants.DRAW_NAME_MAX_RADIUS;
@@ -315,6 +320,8 @@ public class Jumper implements IGameObject
          leftY = rightY = point.getY() - JUMPER_RADIUS - JUMPER_RADIUS / 2;
          g.drawGradientLine(leftX, leftY, Color.yellow, rightX, rightY, Color.red);
       }
+
+      g.setLineWidth(1);
    }
 
 }
