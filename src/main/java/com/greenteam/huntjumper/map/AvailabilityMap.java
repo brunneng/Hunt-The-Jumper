@@ -7,8 +7,7 @@ import com.greenteam.huntjumper.utils.Polygon;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.List;
 
@@ -98,26 +97,37 @@ public class AvailabilityMap
    private Vector2D translationVector;
    private byte[][] map;
 
-   public AvailabilityMap(File imageFile) throws IOException
+   public AvailabilityMap(File mapFile) throws IOException
    {
-      BufferedImage image = ImageLoader.getInstance().load(imageFile);
-      countX = image.getWidth();
-      countY = image.getHeight();
+      CompressedMap compressedMap = Utils.loadMap(mapFile);
+      countX = compressedMap.getWidth();
+      countY = compressedMap.getWidth();
       maxXdist = countX;
       maxYdist = countY;
+
       translationVector = new Vector2D(maxXdist / 2, maxYdist / 2);
 
       map = new byte[countY][countX];
-      int blackColorRgb = Color.black.getRGB();
 
+      int lineCounter = 0;
+      int lineNum = 0;
+      boolean white = true;
+      int[] whiteBlackLines = compressedMap.getWhiteBlackLines();
       for (int x = 0; x < countX; ++x)
       {
          for (int y = 0; y < countY; ++y)
          {
-            int colorRgb = image.getRGB(x, y);
-            if (blackColorRgb == colorRgb)
+            if (!white)
             {
-               setValue(x, countY - y - 1, WALL);
+               setValue(x, y, WALL);
+            }
+
+            lineCounter++;
+            if (lineCounter >= whiteBlackLines[lineNum])
+            {
+               lineCounter = 0;
+               white = !white;
+               lineNum++;
             }
          }
       }
@@ -665,9 +675,42 @@ public class AvailabilityMap
    
    public void saveToFile(String fileName)
    {
+      List<Integer> whiteBlackLines = new ArrayList<Integer>();
+      boolean currentLineWhite = true;
+      int lineLength = 0;
+      for (int x = 0; x < getCountX(); ++x)
+      {
+         for (int y = 0; y < getCountY(); ++y)
+         {
+            byte value = getValue(x, getCountY() - y - 1);
+            boolean white = value == AvailabilityMap.FREE;
+            if ((currentLineWhite && white) || (!currentLineWhite && !white))
+            {
+               lineLength++;
+            }
+            else
+            {
+               whiteBlackLines.add(lineLength);
+               lineLength = 1;
+               currentLineWhite = white;
+            }
+         }
+      }
+      whiteBlackLines.add(lineLength);
+      CompressedMap compressedMap = new CompressedMap(getCountX(), getCountY(), whiteBlackLines);
+      try (FileOutputStream fos = new FileOutputStream(fileName))
+      {
+         ObjectOutputStream oos = new ObjectOutputStream(fos);
+         oos.writeObject(compressedMap);
+      }
+      catch (IOException e)
+      {
+         e.printStackTrace();
+      }
+
+      // image
       BufferedImage image = new BufferedImage(getCountX(), getCountY(),
               BufferedImage.TYPE_INT_BGR);
-
       for (int x = 0; x < getCountX(); ++x)
       {
          for (int y = 0; y < getCountY(); ++y)
@@ -683,6 +726,7 @@ public class AvailabilityMap
          }
       }
 
+      fileName = fileName + ".gif";
       String fileExtension = fileName.substring(fileName.lastIndexOf('.') + 1);
       File outputFile = new File(fileName);
       try

@@ -11,6 +11,7 @@ import net.phys2d.math.ROVector2f;
 import net.phys2d.raw.StaticBody;
 import org.newdawn.slick.*;
 import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.opengl.LoadableImageData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -208,7 +209,6 @@ public class Map implements IVisibleObject
       Point viewPoint = c.toView(p);
 
       g.drawImage(mapImage, viewPoint.getX(), viewPoint.getY(), Color.white);
-
       g.setColor(ViewConstants.defaultMapColor);
       g.setAntiAlias(true);
       for (StaticBody b : allPolygons)

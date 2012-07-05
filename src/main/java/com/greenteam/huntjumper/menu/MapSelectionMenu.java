@@ -2,9 +2,11 @@ package com.greenteam.huntjumper.menu;
 
 import com.greenteam.huntjumper.HuntJumperGame;
 import com.greenteam.huntjumper.IGameState;
+import com.greenteam.huntjumper.map.CompressedMap;
 import com.greenteam.huntjumper.match.SinglePlayerMatchState;
 import com.greenteam.huntjumper.parameters.ViewConstants;
 import com.greenteam.huntjumper.utils.ImageLoader;
+import com.greenteam.huntjumper.utils.Utils;
 import org.newdawn.slick.*;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -37,7 +39,7 @@ public class MapSelectionMenu extends ScreenMenu
       File[] files = mapsDirectory.listFiles();
       for (final File file : files)
       {
-         if (file.getName().endsWith("png"))
+         if (file.getName().endsWith("map"))
          {
             ScreenMenu item = new ScreenMenu(file.getName(), new INextStateProvider<ScreenMenu>()
             {
@@ -82,21 +84,47 @@ public class MapSelectionMenu extends ScreenMenu
    private void loadPreviewImage() throws IOException
    {
       File file = selectedFile;
-      BufferedImage image = ImageLoader.getInstance().load(file);
 
-      BufferedImage previewImage = new BufferedImage(PREVIEW_IMAGE_WIDTH, PREVIEW_IMAGE_HEIGHT,
-              image.getType());
-      Graphics2D g = previewImage.createGraphics();
-      g.drawImage(image, 0, 0, PREVIEW_IMAGE_WIDTH, PREVIEW_IMAGE_HEIGHT, null);
-      g.dispose();
+      CompressedMap compressedMap = Utils.loadMap(file);
+      float sizeFactor = compressedMap.getWidth() / (float)(PREVIEW_IMAGE_WIDTH);
+
+      int lineNum = 0;
+      int lineCounter = 0;
+      int[] whiteBlackLines = compressedMap.getWhiteBlackLines();
+
+      boolean white = true;
+
+      int[][] accumulator = new int[PREVIEW_IMAGE_WIDTH][PREVIEW_IMAGE_HEIGHT];
+      for (int i = 0; i < compressedMap.getWidth(); ++i)
+      {
+         for (int j = 0; j < compressedMap.getHeight(); ++j)
+         {
+            int x = (int)(i / sizeFactor);
+            int y = (int)(j / sizeFactor);
+
+            if (!white)
+            {
+               accumulator[x][y]++;
+            }
+
+            lineCounter++;
+            if (lineCounter >= whiteBlackLines[lineNum])
+            {
+               lineCounter = 0;
+               white = !white;
+               lineNum++;
+            }
+         }
+      }
 
       ImageBuffer buffer = new ImageBuffer(
               PREVIEW_IMAGE_WIDTH, PREVIEW_IMAGE_HEIGHT);
+      float maxAcc = sizeFactor*sizeFactor;
       for (int i = 0; i < PREVIEW_IMAGE_WIDTH; ++i)
       {
          for (int j = 0; j < PREVIEW_IMAGE_HEIGHT; ++j)
          {
-            Color c = new Color(previewImage.getRGB(i, j));
+            Color c = Color.getHSBColor(0f, 0f, 1f - accumulator[i][j] / maxAcc);
             buffer.setRGBA(i, j, c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha());
          }
       }

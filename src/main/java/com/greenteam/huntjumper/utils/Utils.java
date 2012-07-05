@@ -1,5 +1,6 @@
 package com.greenteam.huntjumper.utils;
 
+import com.greenteam.huntjumper.map.CompressedMap;
 import com.greenteam.huntjumper.match.Camera;
 import net.phys2d.math.ROVector2f;
 import net.phys2d.raw.Body;
@@ -7,6 +8,10 @@ import net.phys2d.raw.StaticBody;
 import net.phys2d.raw.shapes.Polygon;
 import org.newdawn.slick.Color;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -141,5 +146,21 @@ public final class Utils
               System.currentTimeMillis() - lastConsumeKeyboardEventTime > 200;
       prevKeyboardEventState = keyEventState;
       return res;
+   }
+
+   public static CompressedMap loadMap(File mapFile) throws IOException
+   {
+      CompressedMap compressedMap = null;
+      try (FileInputStream fis = new FileInputStream(mapFile))
+      {
+         ObjectInputStream ois = new ObjectInputStream(fis);
+         compressedMap = (CompressedMap)ois.readObject();
+      }
+      catch (ClassNotFoundException e)
+      {
+         e.printStackTrace();
+         throw new RuntimeException(e);
+      }
+      return compressedMap;
    }
 }
