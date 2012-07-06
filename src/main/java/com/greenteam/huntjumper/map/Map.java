@@ -2,7 +2,6 @@ package com.greenteam.huntjumper.map;
 
 import com.greenteam.huntjumper.match.Camera;
 import com.greenteam.huntjumper.match.IVisibleObject;
-import com.greenteam.huntjumper.match.InitializationScreen;
 import com.greenteam.huntjumper.parameters.GameConstants;
 import com.greenteam.huntjumper.parameters.ViewConstants;
 import com.greenteam.huntjumper.utils.*;
@@ -11,7 +10,6 @@ import net.phys2d.math.ROVector2f;
 import net.phys2d.raw.StaticBody;
 import org.newdawn.slick.*;
 import org.newdawn.slick.geom.Rectangle;
-import org.newdawn.slick.opengl.LoadableImageData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +21,10 @@ import java.util.Random;
 public class Map implements IVisibleObject
 {
    private List<StaticBody> allPolygons;
-   private ImageBuffer imageBuffer;
-   private Image mapImage;
+
+   private final int SMALL_IMAGE_SIZE = 128;
+   private Image[][] mapImages;
+
    private AvailabilityMap map;
 
    private int cellSize;
@@ -36,8 +36,6 @@ public class Map implements IVisibleObject
       List<Polygon> polygons = map.splitOnPolygons();
       allPolygons = new ArrayList<StaticBody>();
 
-      Random rand = Utils.rand;
-      
       for (Polygon p : polygons)
       {
          ROVector2f[] physPoints = new ROVector2f[p.getSegments().size()];
@@ -56,16 +54,29 @@ public class Map implements IVisibleObject
          allPolygons.add(body);
       }
 
-      imageBuffer = new ImageBuffer(map.countX, map.countY);
-      int totalPixels = map.countX * map.countY;
-      int currentPixelNum = 0;
+      int imagesX = 1 + (map.countX / SMALL_IMAGE_SIZE);
+      int imagesY = 1 + (map.countX / SMALL_IMAGE_SIZE);
+      mapImages = new Image[imagesX][imagesY];
 
-      for (int x = 0; x < map.countX; ++x)
+//
+
+      initPathFinder();
+   }
+
+   private Image createSmallImage(int sx, int sy)
+   {
+      Random rand = Utils.rand;
+      ImageBuffer imageBuffer = new ImageBuffer(SMALL_IMAGE_SIZE, SMALL_IMAGE_SIZE);
+
+      int startX = Math.max(sx * SMALL_IMAGE_SIZE, 0);
+      int startY = Math.max(sy * SMALL_IMAGE_SIZE, 0);
+      int endX = Math.min(startX + SMALL_IMAGE_SIZE, map.countX);
+      int endY = Math.min(startY + SMALL_IMAGE_SIZE, map.countY);
+
+      for (int x = startX; x < endX; ++x)
       {
-         for (int y = 0; y < map.countY; ++y)
+         for (int y = startY; y < endY; ++y)
          {
-            currentPixelNum++;
-
             byte value = map.getValue(x, y);
             if (value != AvailabilityMap.FREE)
             {
@@ -78,18 +89,13 @@ public class Map implements IVisibleObject
                   c = c.brighter(0.08f * count);
                }
 
-               imageBuffer.setRGBA(x, y, c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha());
+               imageBuffer.setRGBA(x - startX, y - startY,
+                       c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha());
             }
-         }
-
-         if (x % 10 == 0 || x == map.countX-1)
-         {
-            Integer successPresent = (int)(100*(float)currentPixelNum / totalPixels);
-            InitializationScreen.getInstance().setStatus("Preparing map", successPresent);
          }
       }
 
-      initPathFinder();
+      return imageBuffer.getImage();
    }
 
    private void initPathFinder()
@@ -186,20 +192,9 @@ public class Map implements IVisibleObject
               map.getValue((int)tp.getX(), (int)tp.getY()) == AvailabilityMap.FREE;
    }
 
-   private void init()
-   {
-      if (mapImage == null)
-      {
-         mapImage = imageBuffer.getImage();
-         imageBuffer = null;
-      }
-   }
-
    @Override
    public void draw(Graphics g)
    {
-      init();
-
       Camera c = Camera.getCamera();
       g.setColor(ViewConstants.defaultGroundColor);
       g.fill(new Rectangle(0, 0, c.getViewWidth(), c.getViewHeight()));
@@ -208,7 +203,9 @@ public class Map implements IVisibleObject
       Point p = new Point(-tv.getX(), -tv.getY());
       Point viewPoint = c.toView(p);
 
-      g.drawImage(mapImage, viewPoint.getX(), viewPoint.getY(), Color.white);
+      prepareBackImages(c, viewPoint);
+      drawBackImages(viewPoint);
+
       g.setColor(ViewConstants.defaultMapColor);
       g.setAntiAlias(true);
       for (StaticBody b : allPolygons)
@@ -217,6 +214,52 @@ public class Map implements IVisibleObject
          g.draw(viewPolygon);
       }
       g.setAntiAlias(false);
+   }
+
+   //static int imagesCount = 0;
+   private void prepareBackImages(Camera c, Point viewPoint)
+   {
+      int topLeftSx = -(int)viewPoint.getX() / SMALL_IMAGE_SIZE;
+      int topLeftSy = -(int)viewPoint.getY() / SMALL_IMAGE_SIZE;
+
+      final int border = 1;
+      topLeftSx = Math.max(topLeftSx-border, 0);
+      topLeftSy = Math.max(topLeftSy-border, 0);
+      int sXLen = (c.getViewWidth() / SMALL_IMAGE_SIZE) + border*2;
+      int sYLen = (c.getViewHeight() / SMALL_IMAGE_SIZE) + border*2;
+      int bottomRightSx = topLeftSx + sXLen;
+      int bottomRightSy = topLeftSy + sYLen;
+      for (int sx = 0; sx < mapImages.length; ++sx)
+      {
+         for (int sy = 0; sy < mapImages[sx].length; ++sy)
+         {
+            if (sx < topLeftSx || sy < topLeftSy || sx > bottomRightSx || sy > bottomRightSy)
+            {
+               mapImages[sx][sy] = null;
+            }
+            else if (mapImages[sx][sy] == null)
+            {
+               //System.out.println("image created " + imagesCount++);
+               mapImages[sx][sy] = createSmallImage(sx, sy);
+            }
+         }
+      }
+   }
+
+   private void drawBackImages(Point viewPoint)
+   {
+      for (int sx = 0; sx < mapImages.length; ++sx)
+      {
+         for (int sy = 0; sy < mapImages[sx].length; ++sy)
+         {
+            if (mapImages[sx][sy] != null)
+            {
+               mapImages[sx][sy].draw(
+                       (int)(viewPoint.getX() + sx*SMALL_IMAGE_SIZE),
+                       (int)(viewPoint.getY() + sy*SMALL_IMAGE_SIZE));
+            }
+         }
+      }
    }
 
    public List<StaticBody> getAllPolygons()
