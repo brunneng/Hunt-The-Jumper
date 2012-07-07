@@ -23,7 +23,7 @@ public class MouseController extends AbstractJumperController
    }
 
    @Override
-   protected Move makeMove(Jumper jumper)
+   protected Move makeMove(Jumper jumper, int delta)
    {
       GameContainer container = HuntJumperGame.getInstance().getGameContainer();
       Input input = container.getInput();

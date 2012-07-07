@@ -41,11 +41,11 @@ public abstract class AbstractJumperController implements IJumperController
       accumulatedImpulseTime = delta;
    }
 
-   protected abstract Move makeMove(Jumper jumper);
+   protected abstract Move makeMove(Jumper jumper, int delta);
 
    public void update(Jumper jumper, int delta)
    {
-      Move move = makeMove(jumper);
+      Move move = makeMove(jumper, delta);
       Vector2D forceDirection = new Vector2D(move.forceDirection);
 
       if (move.accumulating)

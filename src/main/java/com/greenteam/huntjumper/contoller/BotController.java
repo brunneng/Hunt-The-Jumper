@@ -1,13 +1,16 @@
 package com.greenteam.huntjumper.contoller;
 
 import com.greenteam.huntjumper.map.Map;
+import com.greenteam.huntjumper.match.TimeAccumulator;
 import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.model.JumperInfo;
 import com.greenteam.huntjumper.model.JumperRole;
 import com.greenteam.huntjumper.parameters.GameConstants;
 import com.greenteam.huntjumper.utils.Point;
+import com.greenteam.huntjumper.utils.Utils;
 import com.greenteam.huntjumper.utils.Vector2D;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -22,10 +25,16 @@ public class BotController extends AbstractJumperController
    }
 
    private WorldInformationSource infoSource;
+   private TimeAccumulator pathFindingTimer;
+   private Point previousTarget;
 
    public BotController(WorldInformationSource infoSource)
    {
       this.infoSource = infoSource;
+      int t = GameConstants.PATH_FINDING_AVERAGE_TIME_INTERVAL;
+      int dt = GameConstants.PATH_FINDING_TIME_DISPERSION;
+      pathFindingTimer = new TimeAccumulator(t + Utils.rand.nextInt(dt) - dt/2);
+      pathFindingTimer.update(Utils.rand.nextInt(pathFindingTimer.getCycleLength()));
    }
    
    private boolean isLineFree(Point start, Point end, float step)
@@ -72,7 +81,7 @@ public class BotController extends AbstractJumperController
    }
    
    @Override
-   protected Move makeMove(Jumper jumper)
+   protected Move makeMove(Jumper jumper, int delta)
    {
       lastShortestPath = null;
       JumperInfo current = new JumperInfo(jumper);
@@ -88,7 +97,7 @@ public class BotController extends AbstractJumperController
          JumperInfo escapeTarget = JumperInfo.getMostFar(opponentsInfos, null, current.position);
          if (current.position.distanceTo(escapeTarget.position) > 1500)
          {
-            Point target = moveByShortestPath(current, escapeTarget);
+            Point target = moveByShortestPath(current, escapeTarget, delta);
             res = new Move(new Vector2D(current.position, target), false);
          }
          else
@@ -102,20 +111,29 @@ public class BotController extends AbstractJumperController
          JumperInfo targetJumperInfo = JumperInfo.getNearest(opponentsInfos,
                  jumperRole.equals(JumperRole.Hunting) ? JumperRole.Escaping : null,
                  current.position);
-         Point target = moveByShortestPath(current, targetJumperInfo);
+         Point target = moveByShortestPath(current, targetJumperInfo, delta);
          res = new Move(new Vector2D(current.position, target), false);
       }
 
       return res;
    }
 
-   private Point moveByShortestPath(JumperInfo current, JumperInfo info)
+   private Point moveByShortestPath(JumperInfo current, JumperInfo info, int delta)
    {
+      if (pathFindingTimer.update(delta) < 0 && previousTarget != null
+              && previousTarget.distanceTo(current.position) >
+                 GameConstants.PATH_FINDING_MAP_CELL_SIZE*2)
+      {
+         return previousTarget;
+      }
+
       List<Point> shortestPath = infoSource.getMap().findShortestPath(
-              current.position, info.position);
+              info.position, current.position);
+
       Point target = info.position;
       if (shortestPath != null && shortestPath.size() > 0)
       {
+         Collections.reverse(shortestPath);
          Point newTarget = findMostFarPointInFreeLine(current.position, shortestPath);
          if (newTarget != null)
          {
@@ -123,6 +141,8 @@ public class BotController extends AbstractJumperController
          }
          lastShortestPath = shortestPath;
       }
+      previousTarget = target;
+
       return target;
    }
 }
