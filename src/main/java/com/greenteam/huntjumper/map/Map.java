@@ -34,7 +34,7 @@ public class Map implements IVisibleObject
    public Map(AvailabilityMap map)
    {
       this.map = map;
-      InitializationScreen.getInstance().setStatus("Initialize physics polygons");
+      InitializationScreen.getInstance().setStatus("Prepare physics polygons");
       List<Polygon> polygons = map.splitOnPolygons();
       allPolygons = new ArrayList<StaticBody>();
 
@@ -78,17 +78,11 @@ public class Map implements IVisibleObject
       {
          for (int y = startY; y < endY; ++y)
          {
-            boolean value = map.getBoolValue(x, y);
+            boolean value = map.isFree(x, y);
             if (!value)
             {
                float scale = 0.2f * (rand.nextFloat() - 0.5f);
                Color c = ViewConstants.defaultMapColor.brighter(scale);
-
-               int count = map.getCountOfFreeNearPoints(x, y);
-               if (count > 0)
-               {
-                  c = c.brighter(0.08f * count);
-               }
 
                imageBuffer.setRGBA(x - startX, y - startY,
                        c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha());
@@ -124,7 +118,7 @@ public class Map implements IVisibleObject
 
    private boolean isNotFree(IntPoint p)
    {
-      return map.isValid(p) && !map.getBoolValue(p);
+      return map.isValid(p) && !map.isFree(p);
    }
    
    private boolean isCellFree(int x, int y, int size)
@@ -190,7 +184,7 @@ public class Map implements IVisibleObject
    {
       Point tp = p.plus(map.getTranslationVector());
       return map.isValid((int)tp.getX(), (int)tp.getY()) &&
-              map.getBoolValue((int)tp.getX(), (int)tp.getY());
+              map.isFree((int) tp.getX(), (int) tp.getY());
    }
 
    private Rectangle viewRect; // memory optimization
@@ -216,10 +210,12 @@ public class Map implements IVisibleObject
 
       g.setColor(ViewConstants.defaultMapColor);
       g.setAntiAlias(true);
+      g.setLineWidth(2);
       for (StaticBody b : allPolygons)
       {
          drawContours(g, b);
       }
+      g.setLineWidth(1);
       g.setAntiAlias(false);
    }
 

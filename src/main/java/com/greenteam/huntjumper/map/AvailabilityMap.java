@@ -278,9 +278,14 @@ public class AvailabilityMap
       return p.x >= 0 && p.x < countX && p.y >= 0 && p.y < countY;
    }
 
-   private boolean isFree(IntPoint p)
+   public boolean isFree(IntPoint p)
    {
-      return !isValid(p) || getValue(p) == FREE;
+      return map[p.y][p.x] == FREE;
+   }
+
+   public boolean isFree(int x, int y)
+   {
+      return map[y][x] == FREE;
    }
    
    private void fillPolygon(IntPoint startPoint)
@@ -304,7 +309,7 @@ public class AvailabilityMap
                   for (Direction dToNear : Direction.values)
                   {
                      IntPoint nearPoint = next.plus(dToNear);
-                     if (isFree(nearPoint))
+                     if (!isValid(nearPoint) || isFree(nearPoint))
                      {
                         borderPoint = true;
                         break;
@@ -327,7 +332,7 @@ public class AvailabilityMap
       for (Direction d : Direction.values())
       {
          IntPoint next = p.plus(d);
-         if (isFree(next))
+         if (!isValid(next) || isFree(next))
          {
             res.add(next);
          }
@@ -475,11 +480,23 @@ public class AvailabilityMap
       
       return new Polygon(segments);
    }
-   
+
+   private void updateStatus(InitializationScreen initScreen,
+                             int polygonsPrepared, int polygonsCreated)
+   {
+      if (initScreen != null)
+      {
+         InitializationScreen.getInstance().setStatus("Prepare physics polygons: [ " +
+                 polygonsPrepared + " / " + polygonsCreated + " ]");
+      }
+   }
+
    public List<Polygon> splitOnPolygons()
    {
+      final InitializationScreen initScreen = InitializationScreen.getInstance();
       final List<Polygon> polygons = new ArrayList<Polygon>();
 
+      final int[] polygonsCounter = new int[2];
       processAllPoints(new IPointProcessor()
       {
          @Override
@@ -489,6 +506,8 @@ public class AvailabilityMap
             {
                IntPoint p = new IntPoint(x, y);
                fillPolygon(p);
+               polygonsCounter[0]++;
+               updateStatus(initScreen, polygonsCounter[0], polygonsCounter[1]);
             }
          }
       });
@@ -505,6 +524,8 @@ public class AvailabilityMap
                if (polygon != null)
                {
                   polygons.add(polygon);
+                  polygonsCounter[1]++;
+                  updateStatus(initScreen, polygonsCounter[0], polygonsCounter[1]);
                }
             }
          }
@@ -763,34 +784,24 @@ public class AvailabilityMap
       return map[y][x];
    }
 
-   public boolean getBoolValue(IntPoint p)
-   {
-      return map[p.y][p.x] == FREE;
-   }
-
-   public boolean getBoolValue(int x, int y)
-   {
-      return map[y][x] == FREE;
-   }
-   
-   public int getCountOfFreeNearPoints(int x, int y)
-   {
-      int res = 0;
-      List<Direction> values = Direction.values;
-      for (int i = 0, valuesSize = values.size(); i < valuesSize; i++)
-      {
-         Direction d = values.get(i);
-
-         int nx = x + d.dx;
-         int ny = y + d.dy;
-
-         if (isValid(nx, ny) && getBoolValue(nx, ny))
-         {
-            res++;
-         }
-      }
-      return res;
-   }
+//   public int getCountOfFreeNearPoints(int x, int y)
+//   {
+//      int res = 0;
+//      List<Direction> values = Direction.values;
+//      for (int i = 0, valuesSize = values.size(); i < valuesSize; i++)
+//      {
+//         Direction d = values.get(i);
+//
+//         int nx = x + d.dx;
+//         int ny = y + d.dy;
+//
+//         if (isValid(nx, ny) && isFree(nx, ny))
+//         {
+//            res++;
+//         }
+//      }
+//      return res;
+//   }
 
    public byte setValue(int x, int y, byte value)
    {
