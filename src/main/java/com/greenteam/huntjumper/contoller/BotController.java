@@ -120,9 +120,7 @@ public class BotController extends AbstractJumperController
 
    private Point moveByShortestPath(JumperInfo current, JumperInfo info, int delta)
    {
-      if (pathFindingTimer.update(delta) < 0 && previousTarget != null
-              && previousTarget.distanceTo(current.position) >
-                 GameConstants.PATH_FINDING_MAP_CELL_SIZE*2)
+      if (pathFindingTimer.update(delta) < 0 && previousTarget != null)
       {
          return previousTarget;
       }
