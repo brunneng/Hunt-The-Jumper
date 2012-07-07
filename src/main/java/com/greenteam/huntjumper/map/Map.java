@@ -192,12 +192,19 @@ public class Map implements IVisibleObject
               map.getValue((int)tp.getX(), (int)tp.getY()) == AvailabilityMap.FREE;
    }
 
+   private Rectangle viewRect; // memory optimization
+
    @Override
    public void draw(Graphics g)
    {
       Camera c = Camera.getCamera();
       g.setColor(ViewConstants.defaultGroundColor);
-      g.fill(new Rectangle(0, 0, c.getViewWidth(), c.getViewHeight()));
+
+      if (viewRect == null)
+      {
+         viewRect = new Rectangle(0, 0, c.getViewWidth(), c.getViewHeight());
+      }
+      g.fill(viewRect);
       
       Vector2D tv = map.getTranslationVector();
       Point p = new Point(-tv.getX(), -tv.getY());
@@ -210,10 +217,36 @@ public class Map implements IVisibleObject
       g.setAntiAlias(true);
       for (StaticBody b : allPolygons)
       {
-         org.newdawn.slick.geom.Polygon viewPolygon = Utils.toViewPolygon(b);
-         g.draw(viewPolygon);
+         drawContours(g, b);
       }
       g.setAntiAlias(false);
+   }
+
+   private void drawContours(Graphics g, StaticBody b)
+   {
+      net.phys2d.raw.shapes.Polygon poly = (net.phys2d.raw.shapes.Polygon)b.getShape();
+      ROVector2f[] vertices = poly.getVertices();
+
+      Point firstPoint = null;
+      Point currPoint = null;
+      for (int i = 0; i < vertices.length; ++i)
+      {
+         ROVector2f v = vertices[i];
+         Point nextPoint = Camera.getCamera().toView(v);
+         if (currPoint != null)
+         {
+            g.drawLine(currPoint.getX(), currPoint.getY(), nextPoint.getX(), nextPoint.getY());
+         }
+         currPoint = nextPoint;
+         if (firstPoint == null)
+         {
+            firstPoint = currPoint;
+         }
+      }
+      if (currPoint != null)
+      {
+         g.drawLine(currPoint.getX(), currPoint.getY(), firstPoint.getX(), firstPoint.getY());
+      }
    }
 
    //static int imagesCount = 0;

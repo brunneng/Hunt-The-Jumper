@@ -27,26 +27,6 @@ import static com.greenteam.huntjumper.utils.Vector2D.fromRadianAngleAndLength;
  */
 public class Jumper implements IGameObject
 {
-   private static Image lighting;
-
-   private static void init()
-   {
-      if (lighting != null)
-      {
-         return;
-      }
-
-      try
-      {
-         lighting = new Image("images/lighting.png").getScaledCopy(1.12f);
-         lighting.startUse();
-      }
-      catch (SlickException e)
-      {
-         e.printStackTrace();
-      }
-   }
-
    private String playerName;
 
    private Color color;
@@ -225,15 +205,10 @@ public class Jumper implements IGameObject
 
    public void drawBody(Graphics g, Point pos, float alpha)
    {
-      init();
-
       float radius = getBodyCircle().getRadius();
+
       org.newdawn.slick.geom.Circle viewCircle = new org.newdawn.slick.geom.Circle(
               pos.getX(), pos.getY(), radius);
-
-//      g.drawImage(lighting, pos.getX() - lighting.getWidth()/2,
-//              pos.getY() - lighting.getHeight()/2,
-//              Utils.toColorWithAlpha(jumperRole.getRoleColor(), alpha));
 
       g.setColor(Utils.toColorWithAlpha(getColor(), alpha));
       g.fill(viewCircle);
@@ -246,8 +221,7 @@ public class Jumper implements IGameObject
       Vector2D rotationDirection = fromRadianAngleAndLength(getBody().getRotation(), 0.9f*radius);
       for (int i = 0; i < segmentsCount; ++i)
       {
-         Vector2D vectorFromCenter = new Vector2D(rotationDirection);
-         vectorFromCenter = vectorFromCenter.plus(new Vector2D(pos));
+         Vector2D vectorFromCenter = rotationDirection.plus(pos.getX(), pos.getY());
 
          g.drawLine(pos.getX(), pos.getY(),
                  vectorFromCenter.getX(), vectorFromCenter.getY());

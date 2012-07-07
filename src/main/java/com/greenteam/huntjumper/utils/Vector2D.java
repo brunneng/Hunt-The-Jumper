@@ -118,6 +118,11 @@ public class  Vector2D implements Cloneable
       return new Vector2D(x + other.x, y + other.y);
    }
 
+   public Vector2D plus(float dx, float dy)
+   {
+      return new Vector2D(x + dx, y + dy);
+   }
+
    public Vector2D minus(Vector2D other)
    {
       return this.plus(other.negate());
