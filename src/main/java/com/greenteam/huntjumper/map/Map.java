@@ -2,6 +2,7 @@ package com.greenteam.huntjumper.map;
 
 import com.greenteam.huntjumper.match.Camera;
 import com.greenteam.huntjumper.match.IVisibleObject;
+import com.greenteam.huntjumper.match.InitializationScreen;
 import com.greenteam.huntjumper.parameters.GameConstants;
 import com.greenteam.huntjumper.parameters.ViewConstants;
 import com.greenteam.huntjumper.utils.*;
@@ -33,6 +34,7 @@ public class Map implements IVisibleObject
    public Map(AvailabilityMap map)
    {
       this.map = map;
+      InitializationScreen.getInstance().setStatus("Initialize physics polygons");
       List<Polygon> polygons = map.splitOnPolygons();
       allPolygons = new ArrayList<StaticBody>();
 
@@ -58,8 +60,7 @@ public class Map implements IVisibleObject
       int imagesY = 1 + (map.countX / SMALL_IMAGE_SIZE);
       mapImages = new Image[imagesX][imagesY];
 
-//
-
+      InitializationScreen.getInstance().setStatus("Init path finder");
       initPathFinder();
    }
 
@@ -77,8 +78,8 @@ public class Map implements IVisibleObject
       {
          for (int y = startY; y < endY; ++y)
          {
-            byte value = map.getValue(x, y);
-            if (value != AvailabilityMap.FREE)
+            boolean value = map.getBoolValue(x, y);
+            if (!value)
             {
                float scale = 0.2f * (rand.nextFloat() - 0.5f);
                Color c = ViewConstants.defaultMapColor.brighter(scale);
@@ -123,7 +124,7 @@ public class Map implements IVisibleObject
 
    private boolean isNotFree(IntPoint p)
    {
-      return map.isValid(p) && map.getValue(p) != AvailabilityMap.FREE;
+      return map.isValid(p) && !map.getBoolValue(p);
    }
    
    private boolean isCellFree(int x, int y, int size)
@@ -189,7 +190,7 @@ public class Map implements IVisibleObject
    {
       Point tp = p.plus(map.getTranslationVector());
       return map.isValid((int)tp.getX(), (int)tp.getY()) &&
-              map.getValue((int)tp.getX(), (int)tp.getY()) == AvailabilityMap.FREE;
+              map.getBoolValue((int)tp.getX(), (int)tp.getY());
    }
 
    private Rectangle viewRect; // memory optimization

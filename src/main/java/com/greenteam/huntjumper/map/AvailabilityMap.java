@@ -1,5 +1,6 @@
 package com.greenteam.huntjumper.map;
 
+import com.greenteam.huntjumper.match.InitializationScreen;
 import com.greenteam.huntjumper.utils.*;
 import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.Polygon;
@@ -113,6 +114,7 @@ public class AvailabilityMap
       int lineNum = 0;
       boolean white = true;
       int[] whiteBlackLines = compressedMap.getWhiteBlackLines();
+
       for (int x = 0; x < countX; ++x)
       {
          for (int y = 0; y < countY; ++y)
@@ -129,6 +131,12 @@ public class AvailabilityMap
                white = !white;
                lineNum++;
             }
+         }
+
+         if (x % 10 == 0 || x == countX-1)
+         {
+            Integer successPresent = 1 + (int)(100*(float)x / countX);
+            InitializationScreen.getInstance().setStatus("Preparing map ", successPresent);
          }
       }
    }
@@ -753,6 +761,16 @@ public class AvailabilityMap
    public byte getValue(int x, int y)
    {
       return map[y][x];
+   }
+
+   public boolean getBoolValue(IntPoint p)
+   {
+      return map[p.y][p.x] == FREE;
+   }
+
+   public boolean getBoolValue(int x, int y)
+   {
+      return map[y][x] == FREE;
    }
    
    public int getCountOfFreeNearPoints(int x, int y)

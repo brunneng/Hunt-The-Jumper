@@ -34,7 +34,12 @@ public class InitializationScreen implements IGameObject
    {
       setStatus("Initialization", null);
    }
-   
+
+   public void setStatus(String status)
+   {
+      setStatus(status, null);
+   }
+
    public void setStatus(String status, Integer percent)
    {
       this.status = status;
