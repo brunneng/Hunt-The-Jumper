@@ -44,4 +44,9 @@ public final class GameConstants
    public static final List<Integer> NOTIFY_TIMES_BEFORE_END =
            Arrays.asList(2* DEFAULT_GAME_TIME / 3, DEFAULT_GAME_TIME / 3,
                    ViewConstants.beforeEndNotificationDuration);
+
+   public static final int COIN_APPEAR_INTERVAL = 1000;
+   public static final float COIN_RADIUS = 5;
+   public static final float COIN_SCORES = 20;
+   public static final float MAX_COINS_ON_MAP = 100;
 }

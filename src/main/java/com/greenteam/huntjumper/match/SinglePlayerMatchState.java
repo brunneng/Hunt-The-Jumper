@@ -13,10 +13,7 @@ import com.greenteam.huntjumper.effects.particles.ParticleType;
 import com.greenteam.huntjumper.effects.particles.TypedParticleGenerator;
 import com.greenteam.huntjumper.map.AvailabilityMap;
 import com.greenteam.huntjumper.map.Map;
-import com.greenteam.huntjumper.model.IRoleChangedListener;
-import com.greenteam.huntjumper.model.Jumper;
-import com.greenteam.huntjumper.model.JumperInfo;
-import com.greenteam.huntjumper.model.JumperRole;
+import com.greenteam.huntjumper.model.*;
 import com.greenteam.huntjumper.parameters.GameConstants;
 import com.greenteam.huntjumper.parameters.ViewConstants;
 import com.greenteam.huntjumper.utils.Point;
@@ -36,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import static com.greenteam.huntjumper.parameters.GameConstants.COIN_RADIUS;
 import static com.greenteam.huntjumper.parameters.GameConstants.DEFAULT_GAME_TIME;
 import static com.greenteam.huntjumper.parameters.GameConstants.TIME_TO_BECOME_SUPER_HUNTER;
 import static com.greenteam.huntjumper.parameters.ViewConstants.*;
@@ -54,6 +52,7 @@ public class SinglePlayerMatchState extends AbstractGameState
    private HashMap<Body, Jumper> bodyToJumpers = new HashMap<Body, Jumper>();
 
    private Jumper myJumper;
+
    private TimeAccumulator updateTimeAccumulator = new TimeAccumulator();
    private InitializationScreen initializationScreen;
    private ArrowsVisualizer arrowsVisualizer;
@@ -61,6 +60,10 @@ public class SinglePlayerMatchState extends AbstractGameState
    private ScoresManager scoresManager;
    private LinkedList<Integer> beforeEndNotifications = new LinkedList<Integer>();
    private boolean gameFinished = false;
+
+   private TimeAccumulator createCoinsAccumulator = new TimeAccumulator(
+           GameConstants.COIN_APPEAR_INTERVAL);
+   private Set<Coin> coins = new HashSet<>();
 
    public SinglePlayerMatchState(File mapFile)
    {
@@ -106,22 +109,9 @@ public class SinglePlayerMatchState extends AbstractGameState
    private boolean isStartPointFree(Point p, List<Point> resultJumperPositions,
                                     int currentJumperIndex)
    {
-      if (!map.isPointFree(p))
-      {
-         return false;
-      }
-
-      List<Point> rotationPoints = Utils.getRotationPoints(p, GameConstants.JUMPER_RADIUS, 0, 4);
-      for (Point rp : rotationPoints)
-      {
-         if (!map.isPointFree(rp))
-         {
-            return false;
-         }
-      }
-
-      return p.inRange(resultJumperPositions.subList(0, currentJumperIndex),
-              GameConstants.JUMPER_RADIUS*2).size() == 0;
+      return map.isCircleFree(p, GameConstants.JUMPER_RADIUS) &&
+              p.inRange(resultJumperPositions.subList(0, currentJumperIndex),
+                      GameConstants.JUMPER_RADIUS * 2).size() == 0;
    }
 
    private List<Point> getJumperPositionsOnFreePoints(List<Point> initialJumperPositions)
@@ -303,12 +293,61 @@ public class SinglePlayerMatchState extends AbstractGameState
             j.update(dt);
          }
 
+         updateCoins(dt);
          updateCollisions();
          updateRolesByTimer();
          scoresManager.update(dt);
          checkGameIsFinished();
       }
       AudioSystem.getInstance().update(delta);
+   }
+
+   private void updateCoins(int dt)
+   {
+      processTakeCoins();
+      createNewCoin(dt);
+   }
+
+   private void processTakeCoins()
+   {
+      Iterator<Coin> i = coins.iterator();
+      A: while (i.hasNext())
+      {
+         Coin c = i.next();
+
+         for (Jumper j : jumpers)
+         {
+            if (c.getPos().distanceTo(new Point(j.getBody().getPosition())) <
+                    GameConstants.JUMPER_RADIUS + GameConstants.COIN_RADIUS)
+            {
+               scoresManager.signalCoinTaken(j);
+               i.remove();
+               continue A;
+            }
+         }
+      }
+   }
+
+   private void createNewCoin(int dt)
+   {
+      if (createCoinsAccumulator.update(dt) == 0 || coins.size() >= GameConstants.MAX_COINS_ON_MAP)
+      {
+         return;
+      }
+
+      Random rand = Utils.rand;
+      int appearRadius = map.getWidth() / 2;
+
+      Point pos;
+      do
+      {
+         Vector2D createVector = Vector2D.fromAngleAndLength(rand.nextFloat() * 360,
+                 rand.nextFloat()*appearRadius);
+         pos = new Point(createVector.getX(), createVector.getY());
+      }
+      while (!map.isCircleFree(pos, COIN_RADIUS));
+
+      coins.add(new Coin(pos));
    }
 
    private String makeWinnersString(List<Jumper> winners)
@@ -603,14 +642,28 @@ public class SinglePlayerMatchState extends AbstractGameState
       }
 
       map.draw(g);
-      for (Jumper j : jumpers)
-      {
-         j.draw(g);
-      }
+      drawJumpers(g);
+      drawCoins(g);
 
       arrowsVisualizer.draw(g);
       drawInterface(g);
       EffectsContainer.getInstance().drawEffects(g);
+   }
+
+   private void drawJumpers(Graphics g)
+   {
+      for (Jumper j : jumpers)
+      {
+         j.draw(g);
+      }
+   }
+
+   public void drawCoins(Graphics g)
+   {
+      for (Coin c : coins)
+      {
+         c.draw(g);
+      }
    }
 
    private void drawInterface(Graphics g)

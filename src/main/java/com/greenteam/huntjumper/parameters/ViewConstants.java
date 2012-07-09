@@ -88,4 +88,7 @@ public final class ViewConstants
    public static final int FADE_POSITIONS_TIME_INTERVAL = 15;
 
    public static final Color MENU_SELECTED_COLOR = Color.orange;
+
+   public static final Color COIN_COLOR1 = new Color(218, 117, 45);
+   public static final Color COIN_COLOR2 = new Color(243, 201, 99);
 }

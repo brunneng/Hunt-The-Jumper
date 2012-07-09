@@ -187,6 +187,25 @@ public class Map implements IVisibleObject
               map.isFree((int) tp.getX(), (int) tp.getY());
    }
 
+   public boolean isCircleFree(Point p, float radius)
+   {
+      if (!isPointFree(p))
+      {
+         return false;
+      }
+
+      List<Point> rotationPoints = Utils.getRotationPoints(p, GameConstants.JUMPER_RADIUS, 0, 4);
+      for (Point rp : rotationPoints)
+      {
+         if (!isPointFree(rp))
+         {
+            return false;
+         }
+      }
+
+      return true;
+   }
+
    private Rectangle viewRect; // memory optimization
 
    @Override
@@ -295,5 +314,15 @@ public class Map implements IVisibleObject
    public List<StaticBody> getAllPolygons()
    {
       return allPolygons;
+   }
+
+   public int getWidth()
+   {
+      return map.getCountX();
+   }
+
+   public int getHeight()
+   {
+      return map.getCountY();
    }
 }

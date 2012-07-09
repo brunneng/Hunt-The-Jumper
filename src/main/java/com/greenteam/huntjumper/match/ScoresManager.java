@@ -1,5 +1,6 @@
 package com.greenteam.huntjumper.match;
 
+import com.greenteam.huntjumper.map.Map;
 import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.model.JumperRole;
 import com.greenteam.huntjumper.parameters.GameConstants;
@@ -8,10 +9,10 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.RoundedRectangle;
 
+import java.util.*;
+
 import static com.greenteam.huntjumper.parameters.GameConstants.*;
 import static com.greenteam.huntjumper.parameters.ViewConstants.*;
-
-import java.util.*;
 
 /**
  * User: GreenTea Date: 20.02.12 Time: 23:05
@@ -76,7 +77,7 @@ public class ScoresManager implements IGameObject
          }
       }
    }
-   
+
    public void draw(Graphics g)
    {
       int currentShift = scoresBoxDistFromTop + scoresBoxTextTopIndent;
@@ -160,6 +161,11 @@ public class ScoresManager implements IGameObject
 
          currentShift += scoresBoxFont.getHeight(j.getPlayerName()) + indent;
       }
+   }
+
+   public void signalCoinTaken(Jumper jumper)
+   {
+      scores[jumpers.indexOf(jumper)] += GameConstants.COIN_SCORES;
    }
    
    public float getScores(Jumper jumper)
