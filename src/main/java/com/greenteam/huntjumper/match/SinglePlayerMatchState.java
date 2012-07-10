@@ -304,6 +304,11 @@ public class SinglePlayerMatchState extends AbstractGameState
 
    private void updateCoins(int dt)
    {
+      for (Coin c : coins)
+      {
+         c.update(dt);
+      }
+
       processTakeCoins();
       createNewCoin(dt);
    }
