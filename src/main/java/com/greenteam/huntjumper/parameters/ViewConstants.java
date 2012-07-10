@@ -89,6 +89,6 @@ public final class ViewConstants
 
    public static final Color MENU_SELECTED_COLOR = Color.orange;
 
-   public static final Color COIN_COLOR1 = new Color(218, 117, 45);
-   public static final Color COIN_COLOR2 = new Color(243, 201, 99);
+   public static final Color COIN_COLOR1 = new Color(154, 130, 251);
+   public static final Color COIN_COLOR2 = new Color(163, 197, 211);
 }
