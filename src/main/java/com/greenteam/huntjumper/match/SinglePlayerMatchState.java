@@ -7,7 +7,6 @@ import com.greenteam.huntjumper.contoller.AbstractJumperController;
 import com.greenteam.huntjumper.contoller.BotController;
 import com.greenteam.huntjumper.contoller.MouseController;
 import com.greenteam.huntjumper.effects.Effect;
-import com.greenteam.huntjumper.effects.particles.AbstractParticleGenerator;
 import com.greenteam.huntjumper.effects.particles.ParticleEntity;
 import com.greenteam.huntjumper.effects.particles.ParticleType;
 import com.greenteam.huntjumper.effects.particles.TypedParticleGenerator;
@@ -327,6 +326,10 @@ public class SinglePlayerMatchState extends AbstractGameState
             {
                scoresManager.signalCoinTaken(j);
                i.remove();
+
+               AudioSystem.getInstance().playFarSound(AudioSystem.TAKE_COIN_SOUND,
+                       myJumper.getBody().getPosition(), j.getBody().getPosition());
+
                continue A;
             }
          }
