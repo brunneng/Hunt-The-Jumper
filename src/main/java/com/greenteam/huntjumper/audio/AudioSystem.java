@@ -63,9 +63,9 @@ public final class AudioSystem
          wavEffectsVolume.put(ESCAPING_SOUND, 1f);
 
          in = new BufferedInputStream(
-                 ClassLoader.getSystemResourceAsStream("sounds/warble_mid.wav"));
+                 ClassLoader.getSystemResourceAsStream("sounds/rattle_high_01.wav"));
          wavEffects.put(TAKE_COIN_SOUND, AudioLoader.getAudio("WAV", in));
-         wavEffectsVolume.put(TAKE_COIN_SOUND, 0.6f);
+         wavEffectsVolume.put(TAKE_COIN_SOUND, 0.4f);
 
          SoundStore.get().setMaxSources(5);
          SoundStore.get().setSoundVolume(NORMAL_SOUND_VOLUME);
