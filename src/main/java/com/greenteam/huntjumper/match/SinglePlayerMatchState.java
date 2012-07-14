@@ -19,6 +19,7 @@ import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.TextUtils;
 import com.greenteam.huntjumper.utils.Utils;
 import com.greenteam.huntjumper.utils.Vector2D;
+import net.phys2d.math.ROVector2f;
 import net.phys2d.math.Vector2f;
 import net.phys2d.raw.Body;
 import net.phys2d.raw.CollisionEvent;
@@ -203,32 +204,9 @@ public class SinglePlayerMatchState extends AbstractGameState
             List<String> possibleMessages = messages.get(newRole);
             final String text = possibleMessages.get(Utils.rand.nextInt(possibleMessages.size()));
 
-            addEffect(new Effect()
-            {
-               @Override
-               public int getDuration()
-               {
-                  return ViewConstants.roleChangeEffectDuration;
-               }
-
-               @Override
-               public void draw(Graphics g)
-               {
-                  float ep = getExecutionPercent();
-
-                  Point pos = Camera.getCamera().toView(myJumper.getBody().getPosition());
-                  pos = pos.plus(new Vector2D(0,
-                          -(GameConstants.JUMPER_RADIUS*3 +
-                                  ViewConstants.roleChangeEffectHeight*ep)));
-
-                  Color c = new Color(0, 0, 0, 1 - ep);
-                  TextUtils.drawTextInCenter(pos, text, c, ViewConstants.roleChangeEffectFont, g);
-
-                  c = Utils.toColorWithAlpha(newRole.getRoleColor().brighter(), 1 - ep);
-                  pos = pos.plus(new Vector2D(1, 1));
-                  TextUtils.drawTextInCenter(pos, text, c, ViewConstants.roleChangeEffectFont, g);
-               }
-            });
+            addEffect(new FlyUpTextEffect(myJumper, text, ViewConstants.roleChangeEffectDuration,
+                    newRole.getRoleColor().brighter(), ViewConstants.roleChangeEffectFont,
+                    ViewConstants.roleChangeEffectHeight));
          }
       });
    }
@@ -317,18 +295,33 @@ public class SinglePlayerMatchState extends AbstractGameState
       Iterator<Coin> i = coins.iterator();
       A: while (i.hasNext())
       {
-         Coin c = i.next();
+         final Coin c = i.next();
 
          for (Jumper j : jumpers)
          {
             if (c.getPos().distanceTo(new Point(j.getBody().getPosition())) <
                     GameConstants.JUMPER_RADIUS + GameConstants.COIN_RADIUS)
             {
-               scoresManager.signalCoinTaken(j);
                i.remove();
+
+               scoresManager.signalCoinTaken(j);
+
+               addEffect(new FlyUpTextEffect(new FlyUpTextEffect.IGetPositionCallback()
+                        {
+                           @Override
+                           public ROVector2f getPosition()
+                           {
+                              return c.getPos().toVector2f();
+                           }
+                        },
+                       "+" + (int)GameConstants.COIN_SCORES, ViewConstants.takeCoinEffectDuration,
+                       ViewConstants.takeCoinEffectColor, ViewConstants.takeCoinEffectFont,
+                       ViewConstants.takeCoinEffectHeight));
 
                AudioSystem.getInstance().playFarSound(AudioSystem.TAKE_COIN_SOUND,
                        myJumper.getBody().getPosition(), j.getBody().getPosition());
+
+               EffectsContainer.getInstance().addAllEffects(c.createTakeCoinParticles());
 
                continue A;
             }

@@ -25,6 +25,7 @@ public class ParticleEntity extends Effect
    private boolean friction;
    private float deviation;
    private int duration;
+   private boolean drawShadow = true;
 
    protected Point position;
    protected Vector2D velocity = new Vector2D();
@@ -83,6 +84,16 @@ public class ParticleEntity extends Effect
       this.deviation = dev;
    }
 
+   public boolean isDrawShadow()
+   {
+      return drawShadow;
+   }
+
+   public void setDrawShadow(boolean drawShadow)
+   {
+      this.drawShadow = drawShadow;
+   }
+
    @Override
    public void update(int delta)
    {
@@ -101,21 +112,6 @@ public class ParticleEntity extends Effect
          velocity = velocity.multiply((float) Math.pow(0.99, delta));
       }
    }
-
-//   @Override
-//   public void renderShadow(GameContainer gc, BasicGame sb, Graphics gr)
-//   {
-//      if (getShadow() == null)
-//      {
-//         return;
-//      }
-//
-//      getShadow().getColor().setA(getLifeTimeRatio() / 2);
-//      float curWidth = getCurrentRadius() * 2;
-//      Builder.template.draw(position.x + ViewUtils.lengthToView(getShadow().getDx()) - curWidth / 2,
-//              position.y + ViewUtils.lengthToView(getShadow().getDy()) - curWidth / 2, curWidth, curWidth,
-//              getShadow().getColor().toColor());
-//   }
 
    public float getCurrentRadius()
    {
@@ -169,11 +165,16 @@ public class ParticleEntity extends Effect
       float x = pos.getX();
       float y = pos.getY();
 
-      g.setColor(Utils.toColorWithAlpha(Color.gray, 1f - getExecutionPercent()));
-      g.fill(new Circle(x, y, curRadius));
+
+      float a = (1f - color.a)*(1f - getExecutionPercent());
+      if (drawShadow)
+      {
+         g.setColor(Utils.toColorWithAlpha(Color.gray, a));
+         g.fill(new Circle(x, y, curRadius));
+      }
 
       float d = Math.min(1, curRadius/5);
-      g.setColor(Utils.toColorWithAlpha(color, 1f - getExecutionPercent()));
+      g.setColor(Utils.toColorWithAlpha(color, a));
       g.fill(new Circle(x+d, y+d, curRadius));
    }
 

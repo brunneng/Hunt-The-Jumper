@@ -1,13 +1,19 @@
 package com.greenteam.huntjumper.model;
 
+import com.greenteam.huntjumper.effects.particles.ParticleEntity;
 import com.greenteam.huntjumper.match.Camera;
 import com.greenteam.huntjumper.match.IGameObject;
 import com.greenteam.huntjumper.utils.Point;
+import com.greenteam.huntjumper.utils.Utils;
 import com.greenteam.huntjumper.utils.Vector2D;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * User: GreenTea Date: 10.07.12 Time: 0:16
@@ -15,6 +21,7 @@ import org.newdawn.slick.SlickException;
 public class Coin implements IGameObject
 {
    private static Image coinImage;
+   private static List<Color> colors = Arrays.asList(Color.red, Color.green, Color.blue);
 
    private Vector2D rotationVector = Vector2D.fromAngleAndLength(90, 2);
 
@@ -54,17 +61,52 @@ public class Coin implements IGameObject
       init();
 
       Point viewPos = Camera.getCamera().toView(pos);
+      float dxy = coinImage.getWidth() / 2f;
 
       Vector2D dir = new Vector2D(rotationVector);
-      g.drawImage(coinImage, viewPos.getX()+dir.getX(), viewPos.getY()+dir.getY(), Color.red);
+      float rotationAngle = 360 / colors.size();
+      for (Color c : colors)
+      {
+         g.drawImage(
+                 coinImage, viewPos.getX()+dir.getX() - dxy,
+                 viewPos.getY()+dir.getY() - dxy,
+                 c);
+         dir = dir.rotate(rotationAngle);
+      }
 
-      dir = dir.rotate(120);
-      g.drawImage(coinImage, viewPos.getX()+dir.getX(), viewPos.getY()+dir.getY(), Color.green);
+      g.drawImage(coinImage, viewPos.getX() - dxy, viewPos.getY() - dxy, Color.white);
+   }
 
-      dir = dir.rotate(120);
-      g.drawImage(coinImage, viewPos.getX()+dir.getX(), viewPos.getY()+dir.getY(), Color.blue);
+   public List<ParticleEntity> createTakeCoinParticles()
+   {
+      List<ParticleEntity> res = new ArrayList<>();
 
-      g.drawImage(coinImage, viewPos.getX(), viewPos.getY(), Color.white);
+      float startRadius = coinImage.getWidth() * 0.6f;
+      Vector2D dir = new Vector2D(rotationVector);
+      float rotationAngle = 360 / colors.size();
+      for (Color c : colors)
+      {
+         res.add(createParticleEntity(startRadius, dir, c));
+         dir = dir.rotate(rotationAngle);
+      }
+
+      ParticleEntity pe = createParticleEntity(startRadius*0.6f, new Vector2D(), Color.white);
+      pe.setDrawShadow(false);
+      res.add(pe);
+
+      return res;
+   }
+
+   private ParticleEntity createParticleEntity(float startRadius, Vector2D dir, Color c)
+   {
+      c = Utils.toColorWithAlpha(c, 0.1f);
+      ParticleEntity pe = new ParticleEntity();
+      pe.setPosition(pos.plus(dir));
+      pe.setColor(c);
+      pe.setDuration(200);
+      pe.setStartRadius(startRadius);
+      pe.setEndRadius(startRadius/3);
+      return pe;
    }
 
    public Point getPos()
