@@ -138,6 +138,23 @@ public class Point implements Cloneable
       return res;
    }
 
+   public Point findNearestPoint(List<Point> otherPoints)
+   {
+      Point res = null;
+      float minDist = Integer.MAX_VALUE;
+      for (int i = 0; i < otherPoints.size(); ++i)
+      {
+         Point p = otherPoints.get(i);
+         float dist = distanceTo(p);
+         if (dist < minDist)
+         {
+            res = p;
+            minDist = dist;
+         }
+      }
+      return res;
+   }
+
    @Override
    public int hashCode()
    {

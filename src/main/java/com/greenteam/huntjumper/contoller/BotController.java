@@ -21,6 +21,7 @@ public class BotController extends AbstractJumperController
    public static interface WorldInformationSource
    {
       List<JumperInfo> getOpponents(Jumper jumper);
+      List<Point> getCoins();
       Map getMap();
    }
 
@@ -65,16 +66,22 @@ public class BotController extends AbstractJumperController
       return res;
    }
    
-   private Point findMostFarPointInFreeLine(Point current, List<Point> shortestPath)
+   private Point findMostFarPointInFreeLine(Point current, List<Point> shortestPath, Point target)
    {
       Point mostFarPoint = null;
+      boolean hasNotFreePoint = false;
       for (Point p : shortestPath)
       {
          if (!isLineFree(current, p, GameConstants.FREE_LINE_TEST_STEP))
          {
+            hasNotFreePoint = true;
             break;
          }
          mostFarPoint = p;
+      }
+      if (!hasNotFreePoint)
+      {
+         mostFarPoint = target;
       }
 
       return mostFarPoint;
@@ -97,8 +104,9 @@ public class BotController extends AbstractJumperController
          JumperInfo escapeTarget = JumperInfo.getMostFar(opponentsInfos, null, current.position);
          if (current.position.distanceTo(escapeTarget.position) > 1500)
          {
-            Point target = moveByShortestPath(current, escapeTarget, delta);
-            res = new Move(new Vector2D(current.position, target), false);
+            Point target = moveByShortestPath(current, escapeTarget, delta,
+                    jumperRole.equals(JumperRole.EscapingFromHunter));
+            res = new Move(vectorToTargetConsideringVelocity(current, target), false);
          }
          else
          {
@@ -111,28 +119,54 @@ public class BotController extends AbstractJumperController
          JumperInfo targetJumperInfo = JumperInfo.getNearest(opponentsInfos,
                  jumperRole.equals(JumperRole.Hunting) ? JumperRole.Escaping : null,
                  current.position);
-         Point target = moveByShortestPath(current, targetJumperInfo, delta);
-         res = new Move(new Vector2D(current.position, target), false);
+         Point target = moveByShortestPath(current, targetJumperInfo, delta, true);
+         res = new Move(vectorToTargetConsideringVelocity(current, target), false);
       }
 
       return res;
    }
 
-   private Point moveByShortestPath(JumperInfo current, JumperInfo info, int delta)
+   private Vector2D vectorToTargetConsideringVelocity(JumperInfo current, Point target)
+   {
+      Vector2D straightVector = new Vector2D(current.position, target);
+      if (current.velocity.length() < Float.MIN_VALUE)
+      {
+         return straightVector;
+      }
+
+      float angle = current.velocity.angleToVector(straightVector);
+
+      return Math.abs(angle) < 90 ? straightVector.rotate(angle) : straightVector;
+   }
+
+   private Point moveByShortestPath(JumperInfo current, JumperInfo targetInfo, int delta,
+                                    boolean huntForCoin)
    {
       if (pathFindingTimer.update(delta) < 0 && previousTarget != null)
       {
          return previousTarget;
       }
 
-      List<Point> shortestPath = infoSource.getMap().findShortestPath(
-              info.position, current.position);
+      Point currPos = current.position;
+      Point target = targetInfo.position;
+      if (huntForCoin)
+      {
+         Point nearestCoinPos = currPos.findNearestPoint(infoSource.getCoins());
+         if (nearestCoinPos != null &&
+                 currPos.distanceTo(nearestCoinPos) < currPos.distanceTo(targetInfo.position) &&
+                 currPos.distanceTo(nearestCoinPos) < 500)
+         {
+            target = nearestCoinPos;
+         }
+      }
 
-      Point target = info.position;
+      List<Point> shortestPath = infoSource.getMap().findShortestPath(
+              target, currPos);
+
       if (shortestPath != null && shortestPath.size() > 0)
       {
          Collections.reverse(shortestPath);
-         Point newTarget = findMostFarPointInFreeLine(current.position, shortestPath);
+         Point newTarget = findMostFarPointInFreeLine(currPos, shortestPath, target);
          if (newTarget != null)
          {
             target = newTarget;

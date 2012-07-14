@@ -176,6 +176,18 @@ public class SinglePlayerMatchState extends AbstractGameState
                     {
                        return map;
                     }
+
+                    @Override
+                    public List<Point> getCoins()
+                    {
+                       List<Point> res = new ArrayList<>(coins.size());
+                       for (Coin c : coins)
+                       {
+                          res.add(new Point(c.getPos()));
+                       }
+
+                       return res;
+                    }
                  }), JumperRole.Hunting);
       }
 
