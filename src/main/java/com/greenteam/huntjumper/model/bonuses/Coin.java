@@ -1,11 +1,19 @@
-package com.greenteam.huntjumper.model;
+package com.greenteam.huntjumper.model.bonuses;
 
+import com.greenteam.huntjumper.IMatch;
+import com.greenteam.huntjumper.audio.AudioSystem;
 import com.greenteam.huntjumper.effects.particles.ParticleEntity;
 import com.greenteam.huntjumper.match.Camera;
-import com.greenteam.huntjumper.match.IGameObject;
+import com.greenteam.huntjumper.match.EffectsContainer;
+import com.greenteam.huntjumper.match.FlyUpTextEffect;
+import com.greenteam.huntjumper.model.Jumper;
+import com.greenteam.huntjumper.parameters.GameConstants;
+import com.greenteam.huntjumper.parameters.ViewConstants;
 import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.Utils;
 import com.greenteam.huntjumper.utils.Vector2D;
+import net.phys2d.math.ROVector2f;
+import net.phys2d.raw.Body;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -18,11 +26,12 @@ import java.util.List;
 /**
  * User: GreenTea Date: 10.07.12 Time: 0:16
  */
-public class Coin implements IGameObject
+public class Coin implements IBonus
 {
    private static Image coinImage;
    private static List<Color> colors = Arrays.asList(Color.red, Color.green, Color.blue);
 
+   private Body body;
    private Vector2D rotationVector = Vector2D.fromAngleAndLength(90, 2);
 
    private static void init()
@@ -77,7 +86,7 @@ public class Coin implements IGameObject
       g.drawImage(coinImage, viewPos.getX() - dxy, viewPos.getY() - dxy, Color.white);
    }
 
-   public List<ParticleEntity> createTakeCoinParticles()
+   private List<ParticleEntity> createTakeCoinParticles()
    {
       List<ParticleEntity> res = new ArrayList<>();
 
@@ -114,4 +123,26 @@ public class Coin implements IGameObject
       return pos;
    }
 
+   @Override
+   public void onBonusTaken(IMatch match, Jumper jumper)
+   {
+      match.getScoresManager().signalCoinTaken(jumper);
+
+      EffectsContainer.getInstance()
+              .addEffect(new FlyUpTextEffect(new FlyUpTextEffect.IGetPositionCallback()
+              {
+                 @Override
+                 public ROVector2f getPosition()
+                 {
+                    return getPos().toVector2f();
+                 }
+              }, "+" + (int) GameConstants.COIN_SCORES, ViewConstants.takeCoinEffectDuration,
+                      ViewConstants.takeCoinEffectColor, ViewConstants.takeCoinEffectFont,
+                      ViewConstants.takeCoinEffectHeight));
+
+      AudioSystem.getInstance().playFarSound(AudioSystem.TAKE_COIN_SOUND,
+              match.getMyJumper().getBody().getPosition(), jumper.getBody().getPosition());
+
+      EffectsContainer.getInstance().addAllEffects(createTakeCoinParticles());
+   }
 }

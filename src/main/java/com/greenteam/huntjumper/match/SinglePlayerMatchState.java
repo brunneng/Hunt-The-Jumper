@@ -1,6 +1,5 @@
 package com.greenteam.huntjumper.match;
 
-import com.greenteam.huntjumper.AbstractGameState;
 import com.greenteam.huntjumper.HuntJumperGame;
 import com.greenteam.huntjumper.audio.AudioSystem;
 import com.greenteam.huntjumper.contoller.AbstractJumperController;
@@ -13,6 +12,8 @@ import com.greenteam.huntjumper.effects.particles.TypedParticleGenerator;
 import com.greenteam.huntjumper.map.AvailabilityMap;
 import com.greenteam.huntjumper.map.Map;
 import com.greenteam.huntjumper.model.*;
+import com.greenteam.huntjumper.model.bonuses.Coin;
+import com.greenteam.huntjumper.model.bonuses.IBonus;
 import com.greenteam.huntjumper.parameters.GameConstants;
 import com.greenteam.huntjumper.parameters.ViewConstants;
 import com.greenteam.huntjumper.utils.Point;
@@ -43,7 +44,7 @@ import static com.greenteam.huntjumper.parameters.ViewConstants.timerEllipseInde
 /**
  * User: GreenTea Date: 03.06.12 Time: 16:33
  */
-public class SinglePlayerMatchState extends AbstractGameState
+public class SinglePlayerMatchState extends AbstractMatchState
 {
    private World world;
    private File mapFile;
@@ -57,7 +58,6 @@ public class SinglePlayerMatchState extends AbstractGameState
    private InitializationScreen initializationScreen;
    private ArrowsVisualizer arrowsVisualizer;
    private GameContainer gameContainer;
-   private ScoresManager scoresManager;
    private LinkedList<Integer> beforeEndNotifications = new LinkedList<Integer>();
    private boolean gameFinished = false;
 
@@ -283,7 +283,8 @@ public class SinglePlayerMatchState extends AbstractGameState
          }
 
          updateCoins(dt);
-         updateCollisions();
+         processTakingBonuses();
+         updateJumperToJumperCollisions();
          updateRolesByTimer();
          scoresManager.update(dt);
          checkGameIsFinished();
@@ -298,11 +299,11 @@ public class SinglePlayerMatchState extends AbstractGameState
          c.update(dt);
       }
 
-      processTakeCoins();
+      processTakingCoins();
       createNewCoin(dt);
    }
 
-   private void processTakeCoins()
+   private void processTakingCoins()
    {
       Iterator<Coin> i = coins.iterator();
       A: while (i.hasNext())
@@ -316,26 +317,36 @@ public class SinglePlayerMatchState extends AbstractGameState
             {
                i.remove();
 
-               scoresManager.signalCoinTaken(j);
-
-               addEffect(new FlyUpTextEffect(new FlyUpTextEffect.IGetPositionCallback()
-                        {
-                           @Override
-                           public ROVector2f getPosition()
-                           {
-                              return c.getPos().toVector2f();
-                           }
-                        },
-                       "+" + (int)GameConstants.COIN_SCORES, ViewConstants.takeCoinEffectDuration,
-                       ViewConstants.takeCoinEffectColor, ViewConstants.takeCoinEffectFont,
-                       ViewConstants.takeCoinEffectHeight));
-
-               AudioSystem.getInstance().playFarSound(AudioSystem.TAKE_COIN_SOUND,
-                       myJumper.getBody().getPosition(), j.getBody().getPosition());
-
-               EffectsContainer.getInstance().addAllEffects(c.createTakeCoinParticles());
+               c.onBonusTaken(this, j);
 
                continue A;
+            }
+         }
+      }
+   }
+
+   private void processTakingBonuses()
+   {
+      for (Jumper j : jumpers)
+      {
+         CollisionEvent[] collisions = world.getContacts(j.getBody());
+         if (collisions != null && collisions.length > 0)
+         {
+            for (CollisionEvent e : collisions)
+            {
+               Body bodyA = e.getBodyA();
+               Body bodyB = e.getBodyB();
+
+               IBonus bonus = getUserDataOfClass(bodyA, IBonus.class);
+               if (bonus == null)
+               {
+                  bonus = getUserDataOfClass(bodyB, IBonus.class);
+               }
+               if (bonus != null)
+               {
+                  bonus.onBonusTaken(this, j);
+                  world.remove(bonus.getBody());
+               }
             }
          }
       }
@@ -360,7 +371,8 @@ public class SinglePlayerMatchState extends AbstractGameState
       }
       while (!map.isCircleFree(pos, COIN_RADIUS));
 
-      coins.add(new Coin(pos));
+      Coin c = new Coin(pos);
+      coins.add(c);
    }
 
    private String makeWinnersString(List<Jumper> winners)
@@ -510,7 +522,22 @@ public class SinglePlayerMatchState extends AbstractGameState
       }
    }
 
-   public void updateCollisions()
+   private <T> T getUserDataOfClass(Body body, Class<T> clazz)
+   {
+      Object userData = body.getUserData();
+      if (userData != null)
+      {
+         if (!clazz.isAssignableFrom(userData.getClass()))
+         {
+            userData = null;
+         }
+      }
+
+      return (T)userData;
+   }
+
+
+   public void updateJumperToJumperCollisions()
    {
       Set<Jumper> executedJumpers = new HashSet<Jumper>();
       boolean myJumperEscaping = false;
@@ -534,8 +561,8 @@ public class SinglePlayerMatchState extends AbstractGameState
 
                addCollisionEffect(e, collisionVelocity);
 
-               Jumper jumperA = bodyToJumpers.get(bodyA);
-               Jumper jumperB = bodyToJumpers.get(bodyB);
+               Jumper jumperA = getUserDataOfClass(bodyA, Jumper.class);
+               Jumper jumperB = getUserDataOfClass(bodyB, Jumper.class);
 
                float collisionDist = myJumper.getBody().getPosition().distance(e.getPoint());
                boolean hasChangeRole = false;
@@ -547,39 +574,27 @@ public class SinglePlayerMatchState extends AbstractGameState
 
                   JumperRole roleA = jumperA.getJumperRole();
                   JumperRole roleB = jumperB.getJumperRole();
-
-                  if (roleA.equals(JumperRole.Hunting) &&
-                          roleB.equals(JumperRole.Escaping))
+                  if (roleA.ordinal() > roleB.ordinal())
                   {
-                     jumperA.setJumperRole(JumperRole.Escaping);
-                     jumperB.setJumperRole(JumperRole.Hunting);
-                     hasChangeRole = true;
-                     myJumperEscaping = myJumper.equals(jumperA);
+                     JumperRole tmpRole = roleB;
+                     roleB = roleA;
+                     roleA = tmpRole;
+
+                     Jumper tmpJumper = jumperB;
+                     jumperB = jumperA;
+                     jumperA = tmpJumper;
                   }
-                  else if (roleB.equals(JumperRole.Hunting) &&
-                          roleA.equals(JumperRole.Escaping))
+
+                  if (roleA.equals(JumperRole.Escaping) &&
+                      roleB.equals(JumperRole.Hunting))
                   {
                      jumperB.setJumperRole(JumperRole.Escaping);
                      jumperA.setJumperRole(JumperRole.Hunting);
                      hasChangeRole = true;
                      myJumperEscaping = myJumper.equals(jumperB);
                   }
-                  else if (roleA.equals(JumperRole.HuntingForEveryone) &&
-                          roleB.equals(JumperRole.EscapingFromHunter))
-                  {
-                     jumperA.setJumperRole(JumperRole.Escaping);
-                     for (Jumper otherJumper : jumpers)
-                     {
-                        if (!otherJumper.equals(jumperA))
-                        {
-                           otherJumper.setJumperRole(JumperRole.Hunting);
-                        }
-                     }
-                     hasChangeRole = true;
-                     myJumperEscaping = myJumper.equals(jumperA);
-                  }
-                  else if (roleB.equals(JumperRole.HuntingForEveryone) &&
-                          roleA.equals(JumperRole.EscapingFromHunter))
+                  else if (roleA.equals(JumperRole.EscapingFromHunter) &&
+                           roleB.equals(JumperRole.HuntingForEveryone))
                   {
                      jumperB.setJumperRole(JumperRole.Escaping);
                      for (Jumper otherJumper : jumpers)
@@ -731,5 +746,4 @@ public class SinglePlayerMatchState extends AbstractGameState
    {
       return jumpers;
    }
-
 }

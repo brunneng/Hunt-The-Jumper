@@ -55,6 +55,7 @@ public class Jumper implements IGameObject
       body.setMaxVelocity(MAX_VELOCITY, MAX_VELOCITY);
       body.setPosition(startPos.getX(), startPos.getY());
       body.setRestitution(1.0f);
+      body.setUserData(this);
       this.jumperRole = jumperRole;
       this.controller = controller;
    }
