@@ -5,6 +5,10 @@ import com.greenteam.huntjumper.contoller.AbstractJumperController;
 import com.greenteam.huntjumper.match.Camera;
 import com.greenteam.huntjumper.match.IGameObject;
 import com.greenteam.huntjumper.match.TimeAccumulator;
+import com.greenteam.huntjumper.model.bonuses.IJumperBonusEffect;
+import com.greenteam.huntjumper.model.parameters.IParametersUser;
+import com.greenteam.huntjumper.model.parameters.ParameterType;
+import com.greenteam.huntjumper.model.parameters.ParametersHolder;
 import com.greenteam.huntjumper.parameters.GameConstants;
 import com.greenteam.huntjumper.parameters.ViewConstants;
 import com.greenteam.huntjumper.utils.*;
@@ -13,10 +17,7 @@ import net.phys2d.raw.Body;
 import net.phys2d.raw.shapes.Circle;
 import org.newdawn.slick.*;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static com.greenteam.huntjumper.parameters.GameConstants.*;
 import static com.greenteam.huntjumper.parameters.ViewConstants.*;
@@ -25,7 +26,7 @@ import static com.greenteam.huntjumper.utils.Vector2D.fromRadianAngleAndLength;
 /**
  * User: GreenTea Date: 14.01.12 Time: 21:11
  */
-public class Jumper implements IGameObject
+public class Jumper implements IGameObject, IParametersUser
 {
    private String playerName;
 
@@ -39,9 +40,12 @@ public class Jumper implements IGameObject
    private TimeAccumulator currentRoleTimeAccumulator = new TimeAccumulator();
    private List<IRoleChangedListener> roleChangedListeners = new ArrayList<IRoleChangedListener>();
 
+   private ParametersHolder parameters = new ParametersHolder();
+
    private LinkedList<PreviousPosition> fadePositions = new LinkedList<PreviousPosition>();
    private TimeAccumulator fadePositionsTimer = new TimeAccumulator(FADE_POSITIONS_TIME_INTERVAL);
 
+   private Map<IJumperBonusEffect, TimeAccumulator> bonusEffects = new HashMap<>();
 
    public Jumper(String playerName, Color color, ROVector2f startPos,
                  AbstractJumperController controller, JumperRole jumperRole)
@@ -58,11 +62,30 @@ public class Jumper implements IGameObject
       body.setUserData(this);
       this.jumperRole = jumperRole;
       this.controller = controller;
+      prepareParameters(parameters);
+   }
+
+   @Override
+   public void prepareParameters(ParametersHolder parametersHolder)
+   {
+      controller.prepareParameters(parametersHolder);
    }
 
    public Vector2D vectorTo(Jumper j)
    {
       return new Vector2D(getBody().getPosition(), j.getBody().getPosition());
+   }
+
+   public <T> T getParameterValue(ParameterType type)
+   {
+      return (T)parameters.getParameter(type).getValue();
+   }
+
+   public void addBonusEffect(IJumperBonusEffect effect)
+   {
+      TimeAccumulator ta = new TimeAccumulator(effect.getDuration());
+      bonusEffects.put(effect, ta);
+      effect.onStartEffect(this);
    }
 
    public Body getBody()
@@ -134,8 +157,30 @@ public class Jumper implements IGameObject
    {
       controller.update(this, delta);
       currentRoleTimeAccumulator.update(delta);
+      updateBonusEffects(delta);
 
       updateFadePositions(delta);
+   }
+
+   public void updateBonusEffects(int delta)
+   {
+      Iterator<Map.Entry<IJumperBonusEffect, TimeAccumulator>> i =
+              bonusEffects.entrySet().iterator();
+      while (i.hasNext())
+      {
+         Map.Entry<IJumperBonusEffect, TimeAccumulator> entry = i.next();
+         IJumperBonusEffect effect = entry.getKey();
+         TimeAccumulator ta = entry.getValue();
+         if (ta.update(delta) == 0)
+         {
+            effect.update(delta);
+         }
+         else
+         {
+            effect.onEndEffect(this);
+            i.remove();
+         }
+      }
    }
 
    private void updateFadePositions(int delta)
@@ -298,5 +343,4 @@ public class Jumper implements IGameObject
 
       g.setLineWidth(1);
    }
-
 }

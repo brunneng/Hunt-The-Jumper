@@ -49,4 +49,11 @@ public final class GameConstants
    public static final float COIN_RADIUS = 5;
    public static final float COIN_SCORES = 20;
    public static final float MAX_COINS_ON_MAP = 100;
+
+   public static final float ACCELERATION_BONUS_ESCAPE_ACCELERATION = 50f;
+   public static final float ACCELERATION_BONUS_RADIUS = 6f;
+   public static final float ACCELERATION_BONUS_MASS = 0.001f;
+
+   public static final int BONUS_APPEAR_INTERVAL = 1000;
+   public static final int MAX_BONUSES_ON_MAP = 40;
 }

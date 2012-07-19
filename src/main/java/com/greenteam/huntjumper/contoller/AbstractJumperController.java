@@ -1,6 +1,10 @@
 package com.greenteam.huntjumper.contoller;
 
 import com.greenteam.huntjumper.model.Jumper;
+import com.greenteam.huntjumper.model.parameters.IParametersUser;
+import com.greenteam.huntjumper.model.parameters.Parameter;
+import com.greenteam.huntjumper.model.parameters.ParameterType;
+import com.greenteam.huntjumper.model.parameters.ParametersHolder;
 import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.Vector2D;
 import net.phys2d.raw.Body;
@@ -16,7 +20,7 @@ import static java.lang.String.format;
 /**
  * User: GreenTea Date: 22.01.12 Time: 12:07
  */
-public abstract class AbstractJumperController implements IJumperController
+public abstract class AbstractJumperController implements IJumperController, IParametersUser
 {
    private int accumulatedImpulseTime;
    public List<Point> lastShortestPath = null;
@@ -43,6 +47,17 @@ public abstract class AbstractJumperController implements IJumperController
 
    protected abstract Move makeMove(Jumper jumper, int delta);
 
+   @Override
+   public void prepareParameters(ParametersHolder parametersHolder)
+   {
+      parametersHolder.addParameter(new Parameter<>(
+              ParameterType.ACCELERATION_COMMON_FACTOR, 1f));
+      parametersHolder.addParameter(new Parameter<>(
+              ParameterType.ACCELERATION_ANGLE_COEF_FACTOR, 1f));
+      parametersHolder.addParameter(new Parameter<>(
+              ParameterType.ACCELERATION_SPEED_COEF_FACTOR, 1f));
+   }
+
    public void update(Jumper jumper, int delta)
    {
       Move move = makeMove(jumper, delta);
@@ -56,7 +71,8 @@ public abstract class AbstractJumperController implements IJumperController
 
       final Body body = jumper.getBody();
 
-      float scale = DEFAULT_FORCE_SCALE * accumulatedImpulseTime;
+      float scale = (Float)jumper.getParameterValue(ParameterType.ACCELERATION_COMMON_FACTOR)*
+              DEFAULT_FORCE_SCALE * accumulatedImpulseTime;
       Vector2D velocity = fromVector2f(body.getVelocity());
 
       float angleCoef = 1f;
@@ -64,10 +80,12 @@ public abstract class AbstractJumperController implements IJumperController
       if (velocity.length() > 0 && forceDirection.length() > 0)
       {
          angleCoef = 1 + 0.5f*(abs(velocity.angleToVector(forceDirection)) / 180f);
-         angleCoef = angleCoef*angleCoef;
+         angleCoef = (Float)jumper.getParameterValue(ParameterType.ACCELERATION_ANGLE_COEF_FACTOR)*
+                 angleCoef*angleCoef;
 
          speedCoef = 1 + Math.min(velocity.length() / SPEED_DIVISOR, 1f);
-         speedCoef = speedCoef*speedCoef;
+         speedCoef = (Float)jumper.getParameterValue(ParameterType.ACCELERATION_SPEED_COEF_FACTOR)*
+                 speedCoef*speedCoef;
       }
       scale *= angleCoef*speedCoef;
 

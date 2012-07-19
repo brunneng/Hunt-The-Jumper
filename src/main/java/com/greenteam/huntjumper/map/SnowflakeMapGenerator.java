@@ -134,7 +134,7 @@ public class SnowflakeMapGenerator
 //      {
 //         for (int j = 0; j < am.getCountY(); ++j)
 //         {
-//            byte value = am.getValue(i, am.getCountY() - j - 1);
+//            byte value = am.getParameterValue(i, am.getCountY() - j - 1);
 //            Color c = Color.WHITE;
 //            if (value == AvailabilityMap.WALL)
 //            {
