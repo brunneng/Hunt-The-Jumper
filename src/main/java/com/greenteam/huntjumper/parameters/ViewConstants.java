@@ -17,42 +17,42 @@ public final class ViewConstants
    public static final int VIEW_WIDTH = 1024;
    public static final int VIEW_HEIGHT = 768;
    public static final String GAME_NAME = "Hunt the Jumper";
-   public static final Color defaultMapColor = new Color(114, 114, 114);
-   public static final Color defaultGroundColor = new Color(214, 214, 214);
+   public static final Color DEFAULT_MAP_COLOR = new Color(114, 114, 114);
+   public static final Color DEFAULT_GROUND_COLOR = new Color(214, 214, 214);
    public static final float DRAW_NAME_MAX_RADIUS = GameConstants.JUMPER_RADIUS*7;
 
-   public static final Color jumperBorderColor = Color.black;
+   public static final Color JUMPER_BORDER_COLOR = Color.black;
 
-   public static final int scoresBoxDistFromLeft = 5;
-   public static final int scoresBoxDistFromTop = 5;
-   public static final int scoresBoxTextLeftIndent = 15;
-   public static final int scoresBoxTextTopIndent = 15;
-   public static final int scoresBoxLineIndent = 10;
-   public static final int scoresBoxRectRadius = 4;
-   public static final float scoresBoxAlpha = 0.6f;
-   public static final float scoresBoxJumpersAlpha = 0.5f;
-   public static final int scoresBoxRightBorder = 310;
-   public static final int scoresBoxScoresPosX = 200;
-   public static final int scoresBoxBackTimerPosX = 260;
-   public static final int scoresBoxBackTimerStartBlinkTime = 5000;
-   public static final int scoresBoxBackTimerBlinkPeriod = 250;
-   public static final Font scoresBoxFont = TextUtils.Arial20Font;
+   public static final int SCORES_BOX_DIST_FROM_LEFT = 5;
+   public static final int SCORES_BOX_DIST_FROM_TOP = 5;
+   public static final int SCORES_BOX_TEXT_LEFT_INDENT = 15;
+   public static final int SCORES_BOX_TEXT_TOP_INDENT = 15;
+   public static final int SCORES_BOX_LINE_INDENT = 10;
+   public static final int SCORES_BOX_RECT_RADIUS = 4;
+   public static final float SCORES_BOX_ALPHA = 0.6f;
+   public static final float SCORES_BOX_JUMPERS_ALPHA = 0.5f;
+   public static final int SCORES_BOX_RIGHT_BORDER = 310;
+   public static final int SCORES_BOX_SCORES_POS_X = 200;
+   public static final int SCORES_BOX_BACK_TIMER_POS_X = 260;
+   public static final int SCORES_BOX_BACK_TIMER_START_BLINK_TIME = 5000;
+   public static final int SCORES_BOX_BACK_TIMER_BLINK_PERIOD = 250;
+   public static final Font SCORES_BOX_FONT = TextUtils.Arial20Font;
 
-   public static final int timerIndentFromTop = 10;
-   public static final float timerEllipseVerticalRadius = 20f;
-   public static final float timerEllipseHorizontalRadius = 70f;
-   public static final float timerEllipseAlpha = 0.35f;
-   public static final int timerEllipseIndentFromText = 5;
+   public static final int TIMER_INDENT_FROM_TOP = 10;
+   public static final float TIMER_ELLIPSE_VERTICAL_RADIUS = 20f;
+   public static final float TIMER_ELLIPSE_HORIZONTAL_RADIUS = 70f;
+   public static final float TIMER_ELLIPSE_ALPHA = 0.35f;
+   public static final int TIMER_ELLIPSE_INDENT_FROM_TEXT = 5;
    
-   public static final int arrowIndentFromBoundaries = 50;
+   public static final int ARROW_INDENT_FROM_BOUNDARIES = 50;
 
-   public static final int roleChangeEffectDuration = 1000;
-   public static final int roleChangeEffectHeight = 100;
-   public static final Font roleChangeEffectFont = TextUtils.Arial30Font;
+   public static final int ROLE_CHANGE_EFFECT_DURATION = 1000;
+   public static final int ROLE_CHANGE_EFFECT_HEIGHT = 100;
+   public static final Font ROLE_CHANGE_EFFECT_FONT = TextUtils.Arial30Font;
 
-   public static final Font beforeEndNotificationFont = TextUtils.Arial20Font;
-   public static final int beforeEndNotificationDuration = 5000;
-   public static final float beforeEndNotificationBlinksPerSec = 2.5f;
+   public static final Font BEFORE_END_NOTIFICATION_FONT = TextUtils.Arial20Font;
+   public static final int BEFORE_END_NOTIFICATION_DURATION = 5000;
+   public static final float BEFORE_END_NOTIFICATION_BLINKS_PER_SEC = 2.5f;
 
    public static final float collisionVelocityOfMaxVolume = 500f;
 
@@ -89,8 +89,20 @@ public final class ViewConstants
 
    public static final Color MENU_SELECTED_COLOR = Color.orange;
 
-   public static final int takeCoinEffectDuration = 1000;
-   public static final Color takeCoinEffectColor = Color.white;
-   public static final int takeCoinEffectHeight = 75;
-   public static final Font takeCoinEffectFont = TextUtils.Arial20Font;
+   public static final int TAKE_COIN_EFFECT_DURATION = 1000;
+   public static final Color TAKE_COIN_EFFECT_COLOR = Color.white;
+   public static final int TAKE_COIN_EFFECT_HEIGHT = 75;
+   public static final Font TAKE_COIN_EFFECT_FONT = TextUtils.Arial20Font;
+
+   public static final float ACC_BONUS_FADE_ANGLE_LENGTH = 120f;
+   public static final float ACC_BONUS_FADE_DIST_FROM_JUMPER_FACTOR = 0.5f;
+   public static final int ACC_BONUS_FADE_SEGMENTS_COUNT = 10;
+   public static final float ACC_BONUS_TIME_PERCENT_TO_START_HIDE = 0.2f;
+
+   public static final int ACC_BONUS_PARTICLES_COUNT = 15;
+   public static final float ACC_BONUS_PARTICLE_ANGLE_LENGTH = 180f;
+   public static final Color ACC_BONUS_PARTICLE_COLOR = Color.gray;
+   public static final float ACC_BONUS_SPLASH_PARTICLE_RADIUS = 1f;
+   public static final float ACC_BONUS_SPLASH_VELOCITY_FACTOR = 10f;
+   public static final int ACC_BONUS_SPLASH_DURATION = 1000;
 }

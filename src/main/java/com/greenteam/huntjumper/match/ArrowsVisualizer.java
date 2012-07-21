@@ -70,7 +70,7 @@ public class ArrowsVisualizer implements IVisibleObject
       Camera c = Camera.getCamera();
       if (boundaries == null)
       {
-         final int indent = ViewConstants.arrowIndentFromBoundaries;
+         final int indent = ViewConstants.ARROW_INDENT_FROM_BOUNDARIES;
          Point p1 = new Point(indent, indent);
          Point p2 = new Point(c.getViewWidth() - indent, indent);
          Point p3 = new Point(c.getViewWidth() - indent, c.getViewHeight() - indent);

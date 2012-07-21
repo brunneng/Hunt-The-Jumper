@@ -1,6 +1,5 @@
 package com.greenteam.huntjumper.parameters;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 
@@ -43,17 +42,19 @@ public final class GameConstants
    public static final int DEFAULT_GAME_TIME = 10*60*1000;
    public static final List<Integer> NOTIFY_TIMES_BEFORE_END =
            Arrays.asList(2* DEFAULT_GAME_TIME / 3, DEFAULT_GAME_TIME / 3,
-                   ViewConstants.beforeEndNotificationDuration);
+                   ViewConstants.BEFORE_END_NOTIFICATION_DURATION);
 
    public static final int COIN_APPEAR_INTERVAL = 1000;
    public static final float COIN_RADIUS = 5;
    public static final float COIN_SCORES = 20;
    public static final float MAX_COINS_ON_MAP = 100;
 
-   public static final float ACCELERATION_BONUS_ESCAPE_ACCELERATION = 50f;
-   public static final float ACCELERATION_BONUS_RADIUS = 6f;
-   public static final float ACCELERATION_BONUS_MASS = 0.001f;
+   public static final int BONUS_APPEAR_INTERVAL = 5000;
+   public static final int MAX_BONUSES_ON_MAP = 10;
 
-   public static final int BONUS_APPEAR_INTERVAL = 1000;
-   public static final int MAX_BONUSES_ON_MAP = 40;
+   public static final float ACCELERATION_BONUS_ESCAPE_ACCELERATION = 50f;
+   public static final float ACCELERATION_BONUS_RADIUS = 10f;
+   public static final float ACCELERATION_BONUS_MASS = 0.001f;
+   public static final int ACCELERATION_BONUS_EFFECT_DURATION = 20000;
+   public static final float ACCELERATION_BONUS_EFFECT_MULTIPLIER = 1.4f;
 }

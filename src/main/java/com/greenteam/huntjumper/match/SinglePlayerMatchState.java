@@ -38,8 +38,8 @@ import static com.greenteam.huntjumper.parameters.GameConstants.COIN_RADIUS;
 import static com.greenteam.huntjumper.parameters.GameConstants.DEFAULT_GAME_TIME;
 import static com.greenteam.huntjumper.parameters.GameConstants.TIME_TO_BECOME_SUPER_HUNTER;
 import static com.greenteam.huntjumper.parameters.ViewConstants.*;
-import static com.greenteam.huntjumper.parameters.ViewConstants.timerEllipseAlpha;
-import static com.greenteam.huntjumper.parameters.ViewConstants.timerEllipseIndentFromText;
+import static com.greenteam.huntjumper.parameters.ViewConstants.TIMER_ELLIPSE_ALPHA;
+import static com.greenteam.huntjumper.parameters.ViewConstants.TIMER_ELLIPSE_INDENT_FROM_TEXT;
 
 /**
  * User: GreenTea Date: 03.06.12 Time: 16:33
@@ -218,9 +218,9 @@ public class SinglePlayerMatchState extends AbstractMatchState
             List<String> possibleMessages = messages.get(newRole);
             final String text = possibleMessages.get(Utils.rand.nextInt(possibleMessages.size()));
 
-            addEffect(new FlyUpTextEffect(myJumper, text, ViewConstants.roleChangeEffectDuration,
-                    newRole.getRoleColor().brighter(), ViewConstants.roleChangeEffectFont,
-                    ViewConstants.roleChangeEffectHeight));
+            addEffect(new FlyUpTextEffect(myJumper, text, ViewConstants.ROLE_CHANGE_EFFECT_DURATION,
+                    newRole.getRoleColor().brighter(), ViewConstants.ROLE_CHANGE_EFFECT_FONT,
+                    ViewConstants.ROLE_CHANGE_EFFECT_HEIGHT));
          }
       });
    }
@@ -499,7 +499,7 @@ public class SinglePlayerMatchState extends AbstractMatchState
       }
 
       int x = gameContainer.getWidth() / 2;
-      int y = ViewConstants.timerIndentFromTop + (int)(timerEllipseVerticalRadius*2.5f);
+      int y = ViewConstants.TIMER_INDENT_FROM_TOP + (int)(TIMER_ELLIPSE_VERTICAL_RADIUS *2.5f);
       final Point pos = new Point(x, y);
 
       Iterator<Integer> i = beforeEndNotifications.iterator();
@@ -515,7 +515,7 @@ public class SinglePlayerMatchState extends AbstractMatchState
                @Override
                public int getDuration()
                {
-                  return beforeEndNotificationDuration;
+                  return BEFORE_END_NOTIFICATION_DURATION;
                }
 
                @Override
@@ -523,7 +523,7 @@ public class SinglePlayerMatchState extends AbstractMatchState
                {
                   float ep = getExecutionPercent();
                   float angle = ep * 2 * (float) Math.PI *
-                          beforeEndNotificationBlinksPerSec * beforeEndNotificationDuration/1000;
+                          BEFORE_END_NOTIFICATION_BLINKS_PER_SEC * BEFORE_END_NOTIFICATION_DURATION /1000;
                   float alpha = (1 + (float) Math.cos(angle)) / 2;
 
                   int endAfterTime = GameConstants.DEFAULT_GAME_TIME -
@@ -532,12 +532,12 @@ public class SinglePlayerMatchState extends AbstractMatchState
 
                   float green = (float)timeToEnd / DEFAULT_GAME_TIME;
                   Color c = new Color(0, 0, 0, alpha);
-                  TextUtils.drawTextInCenter(pos, text, c, ViewConstants.beforeEndNotificationFont,
+                  TextUtils.drawTextInCenter(pos, text, c, ViewConstants.BEFORE_END_NOTIFICATION_FONT,
                           g);
 
                   c = new Color(1, green, 0, alpha);
                   Point pos2 = pos.plus(new Vector2D(1, 1));
-                  TextUtils.drawTextInCenter(pos2, text, c, ViewConstants.beforeEndNotificationFont,
+                  TextUtils.drawTextInCenter(pos2, text, c, ViewConstants.BEFORE_END_NOTIFICATION_FONT,
                           g);
                }
             });
@@ -767,17 +767,17 @@ public class SinglePlayerMatchState extends AbstractMatchState
       String timeStr = Utils.getTimeString(
               Math.min(updateTimeAccumulator.getTotalTimeInMilliseconds(),
                       GameConstants.DEFAULT_GAME_TIME));
-      int timerIndentFromTop = ViewConstants.timerIndentFromTop;
+      int timerIndentFromTop = ViewConstants.TIMER_INDENT_FROM_TOP;
 
       int textHeight = font.getHeight(timeStr);
       int width = gameContainer.getWidth();
       Point timerPos = new Point(width / 2, timerIndentFromTop + textHeight / 2);
 
-      float ellipseVRadius =  timerEllipseVerticalRadius;
-      float ellipseHRadius = timerEllipseHorizontalRadius;
-      Color ellipseColor = new Color(1f, 1f, 1f, timerEllipseAlpha);
+      float ellipseVRadius = TIMER_ELLIPSE_VERTICAL_RADIUS;
+      float ellipseHRadius = TIMER_ELLIPSE_HORIZONTAL_RADIUS;
+      Color ellipseColor = new Color(1f, 1f, 1f, TIMER_ELLIPSE_ALPHA);
       g.setColor(ellipseColor);
-      g.fill(new Ellipse(timerPos.getX(), timerPos.getY() + timerEllipseIndentFromText,
+      g.fill(new Ellipse(timerPos.getX(), timerPos.getY() + TIMER_ELLIPSE_INDENT_FROM_TEXT,
               ellipseHRadius, ellipseVRadius));
 
       TextUtils.drawTextInCenter(timerPos, timeStr, Color.black, font, g);

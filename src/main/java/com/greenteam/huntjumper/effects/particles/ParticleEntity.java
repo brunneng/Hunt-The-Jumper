@@ -119,10 +119,12 @@ public class ParticleEntity extends Effect
 
       if (startRadius < endRadius)
       {
-         return startRadius * ep + (1 - ep) * endRadius;
+         float dr = endRadius - startRadius;
+         return startRadius + dr*ep;
       }
 
-      return endRadius * ep + (1 - ep) * startRadius;
+      float dr = startRadius - endRadius;
+      return startRadius - dr*ep;
    }
 
    @Override
@@ -166,7 +168,7 @@ public class ParticleEntity extends Effect
       float y = pos.getY();
 
 
-      float a = (1f - color.a)*(1f - getExecutionPercent());
+      float a = color.a*(1f - getExecutionPercent());
       if (drawShadow)
       {
          g.setColor(Utils.toColorWithAlpha(Color.gray, a));
@@ -223,7 +225,7 @@ public class ParticleEntity extends Effect
          res.setColor(new Color(Float.valueOf(p.getProperty("red", "0")),
                  Float.valueOf(p.getProperty("green", "0")),
                  Float.valueOf(p.getProperty("blue", "0")),
-                 Float.valueOf(p.getProperty("alpha", "0"))));
+                 Float.valueOf(p.getProperty("alpha", "1"))));
          
          return res;
       }

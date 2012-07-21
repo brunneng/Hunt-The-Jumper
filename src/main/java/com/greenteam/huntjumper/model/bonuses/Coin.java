@@ -31,7 +31,6 @@ public class Coin implements IBonus
    private static Image coinImage;
    private static List<Color> colors = Arrays.asList(Color.red, Color.green, Color.blue);
 
-   private Body body;
    private Vector2D rotationVector = Vector2D.fromAngleAndLength(90, 2);
 
    private static void init()
@@ -108,7 +107,7 @@ public class Coin implements IBonus
 
    private ParticleEntity createParticleEntity(float startRadius, Vector2D dir, Color c)
    {
-      c = Utils.toColorWithAlpha(c, 0.1f);
+      c = Utils.toColorWithAlpha(c, 0.9f);
       ParticleEntity pe = new ParticleEntity();
       pe.setPosition(pos.plus(dir));
       pe.setColor(c);
@@ -136,9 +135,9 @@ public class Coin implements IBonus
                  {
                     return getPos().toVector2f();
                  }
-              }, "+" + (int) GameConstants.COIN_SCORES, ViewConstants.takeCoinEffectDuration,
-                      ViewConstants.takeCoinEffectColor, ViewConstants.takeCoinEffectFont,
-                      ViewConstants.takeCoinEffectHeight));
+              }, "+" + (int) GameConstants.COIN_SCORES, ViewConstants.TAKE_COIN_EFFECT_DURATION,
+                      ViewConstants.TAKE_COIN_EFFECT_COLOR, ViewConstants.TAKE_COIN_EFFECT_FONT,
+                      ViewConstants.TAKE_COIN_EFFECT_HEIGHT));
 
       AudioSystem.getInstance().playFarSound(AudioSystem.TAKE_COIN_SOUND,
               match.getMyJumper().getBody().getPosition(), jumper.getBody().getPosition());

@@ -81,6 +81,11 @@ public class Jumper implements IGameObject, IParametersUser
       return (T)parameters.getParameter(type).getValue();
    }
 
+   public ParametersHolder getParameters()
+   {
+      return parameters;
+   }
+
    public void addBonusEffect(IJumperBonusEffect effect)
    {
       TimeAccumulator ta = new TimeAccumulator(effect.getDuration());
@@ -174,10 +179,11 @@ public class Jumper implements IGameObject, IParametersUser
          if (ta.update(delta) == 0)
          {
             effect.update(delta);
+            effect.signalTimeLeft(ta.getCycleLength() - ta.getAccumulatorValue());
          }
          else
          {
-            effect.onEndEffect(this);
+            effect.onEndEffect();
             i.remove();
          }
       }
@@ -258,7 +264,7 @@ public class Jumper implements IGameObject, IParametersUser
 
       g.setColor(Utils.toColorWithAlpha(getColor(), alpha));
       g.fill(viewCircle);
-      g.setColor(Utils.toColorWithAlpha(ViewConstants.jumperBorderColor, alpha));
+      g.setColor(Utils.toColorWithAlpha(ViewConstants.JUMPER_BORDER_COLOR, alpha));
       g.draw(viewCircle);
 
       g.setColor(paintColor);
@@ -304,7 +310,17 @@ public class Jumper implements IGameObject, IParametersUser
 
       renderAccelerationBar(g);
       drawName(g, viewCenter, getBodyCircle().getRadius());
+      drawBonusEffects(g);
    }
+
+   private void drawBonusEffects(Graphics g)
+   {
+      for (IJumperBonusEffect effect : bonusEffects.keySet())
+      {
+         effect.draw(g);
+      }
+   }
+
 
    private void drawName(Graphics g, Point viewCenter, float radius)
    {

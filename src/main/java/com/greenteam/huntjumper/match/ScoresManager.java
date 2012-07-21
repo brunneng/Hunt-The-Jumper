@@ -1,6 +1,5 @@
 package com.greenteam.huntjumper.match;
 
-import com.greenteam.huntjumper.map.Map;
 import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.model.JumperRole;
 import com.greenteam.huntjumper.parameters.GameConstants;
@@ -43,13 +42,13 @@ public class ScoresManager implements IGameObject
       }
 
       // visualization
-      int height = scoresBoxTextTopIndent;
+      int height = SCORES_BOX_TEXT_TOP_INDENT;
       for (int i = 0; i < jumpers.size(); ++i)
       {
          Jumper j = jumpers.get(i);
-         height += scoresBoxFont.getHeight(j.getPlayerName()) + scoresBoxLineIndent;
+         height += SCORES_BOX_FONT.getHeight(j.getPlayerName()) + SCORES_BOX_LINE_INDENT;
       }
-      height += scoresBoxTextTopIndent - scoresBoxLineIndent;
+      height += SCORES_BOX_TEXT_TOP_INDENT - SCORES_BOX_LINE_INDENT;
       scoresBoxHeight = height;
    }
 
@@ -80,13 +79,13 @@ public class ScoresManager implements IGameObject
 
    public void draw(Graphics g)
    {
-      int currentShift = scoresBoxDistFromTop + scoresBoxTextTopIndent;
+      int currentShift = SCORES_BOX_DIST_FROM_TOP + SCORES_BOX_TEXT_TOP_INDENT;
       final int indent = 10;
 
-      Color boxColor = new Color(1, 1, 1, scoresBoxAlpha);
+      Color boxColor = new Color(1, 1, 1, SCORES_BOX_ALPHA);
       g.setColor(boxColor);
-      g.fill(new RoundedRectangle(scoresBoxDistFromLeft, scoresBoxDistFromTop,
-              scoresBoxRightBorder, scoresBoxHeight, scoresBoxRectRadius));
+      g.fill(new RoundedRectangle(SCORES_BOX_DIST_FROM_LEFT, SCORES_BOX_DIST_FROM_TOP,
+              SCORES_BOX_RIGHT_BORDER, scoresBoxHeight, SCORES_BOX_RECT_RADIUS));
       
       List<Jumper> sortedJumpers = new ArrayList<Jumper>(jumpers);
       Collections.sort(sortedJumpers, new Comparator<Jumper>()
@@ -108,21 +107,21 @@ public class ScoresManager implements IGameObject
       float jumperRadius = GameConstants.JUMPER_RADIUS;
       for (Jumper j : sortedJumpers)
       {
-         Point bodyPos = new Point(scoresBoxDistFromLeft + scoresBoxTextLeftIndent, currentShift +
-                 scoresBoxFont.getHeight(j.getPlayerName())*0.6f);
-         j.drawBody(g, bodyPos, scoresBoxJumpersAlpha);
+         Point bodyPos = new Point(SCORES_BOX_DIST_FROM_LEFT + SCORES_BOX_TEXT_LEFT_INDENT, currentShift +
+                 SCORES_BOX_FONT.getHeight(j.getPlayerName())*0.6f);
+         j.drawBody(g, bodyPos, SCORES_BOX_JUMPERS_ALPHA);
          
          Point namePos = new Point(
-                 scoresBoxDistFromLeft + scoresBoxTextLeftIndent + 4*jumperRadius, currentShift);
-         TextUtils.drawText(namePos, j.getPlayerName(), Color.gray, scoresBoxFont, g);
+                 SCORES_BOX_DIST_FROM_LEFT + SCORES_BOX_TEXT_LEFT_INDENT + 4*jumperRadius, currentShift);
+         TextUtils.drawText(namePos, j.getPlayerName(), Color.gray, SCORES_BOX_FONT, g);
          namePos = namePos.plus(new Vector2D(1, 0));
-         TextUtils.drawText(namePos, j.getPlayerName(), Color.black, scoresBoxFont, g);
+         TextUtils.drawText(namePos, j.getPlayerName(), Color.black, SCORES_BOX_FONT, g);
 
          int score = (int)scores[jumpers.indexOf(j)];
-         Point scoresPos = new Point(scoresBoxScoresPosX, currentShift);
-         TextUtils.drawText(scoresPos, "" + score, Color.gray, scoresBoxFont, g);
+         Point scoresPos = new Point(SCORES_BOX_SCORES_POS_X, currentShift);
+         TextUtils.drawText(scoresPos, "" + score, Color.gray, SCORES_BOX_FONT, g);
          scoresPos = scoresPos.plus(new Vector2D(1, 0));
-         TextUtils.drawText(scoresPos, "" + score, Color.black, scoresBoxFont, g);
+         TextUtils.drawText(scoresPos, "" + score, Color.black, SCORES_BOX_FONT, g);
          
          if (j.getJumperRole().equals(JumperRole.Escaping) && winners == null)
          {
@@ -130,18 +129,18 @@ public class ScoresManager implements IGameObject
                     j.getTimeInCurrentRole();
 
             boolean show = true;
-            if (timeLeft < scoresBoxBackTimerStartBlinkTime)
+            if (timeLeft < SCORES_BOX_BACK_TIMER_START_BLINK_TIME)
             {
-               show = timeLeft / scoresBoxBackTimerBlinkPeriod % 2 == 0;
+               show = timeLeft / SCORES_BOX_BACK_TIMER_BLINK_PERIOD % 2 == 0;
             }
 
             if (show)
             {
                String timeStr = Utils.getTimeString(timeLeft);
-               Point backTimerPos = new Point(scoresBoxBackTimerPosX, currentShift);
-               TextUtils.drawText(backTimerPos, timeStr, Color.gray, scoresBoxFont, g);
+               Point backTimerPos = new Point(SCORES_BOX_BACK_TIMER_POS_X, currentShift);
+               TextUtils.drawText(backTimerPos, timeStr, Color.gray, SCORES_BOX_FONT, g);
                backTimerPos = backTimerPos.plus(new Vector2D(1, 0));
-               TextUtils.drawText(backTimerPos, timeStr, Color.black, scoresBoxFont, g);
+               TextUtils.drawText(backTimerPos, timeStr, Color.black, SCORES_BOX_FONT, g);
             }
          }
          else if (winners != null)
@@ -149,17 +148,17 @@ public class ScoresManager implements IGameObject
             if (winners.contains(j))
             {
                String timeStr = "Win!";
-               Point backTimerPos = new Point(scoresBoxBackTimerPosX, currentShift);
-               TextUtils.drawText(backTimerPos, timeStr, Color.gray, scoresBoxFont, g);
+               Point backTimerPos = new Point(SCORES_BOX_BACK_TIMER_POS_X, currentShift);
+               TextUtils.drawText(backTimerPos, timeStr, Color.gray, SCORES_BOX_FONT, g);
                backTimerPos = backTimerPos.plus(new Vector2D(1, 0));
 
                Random r = Utils.rand;
                Color c = new Color(r.nextFloat(), r.nextFloat(), r.nextFloat());
-               TextUtils.drawText(backTimerPos, timeStr, c, scoresBoxFont, g);
+               TextUtils.drawText(backTimerPos, timeStr, c, SCORES_BOX_FONT, g);
             }
          }
 
-         currentShift += scoresBoxFont.getHeight(j.getPlayerName()) + indent;
+         currentShift += SCORES_BOX_FONT.getHeight(j.getPlayerName()) + indent;
       }
    }
 

@@ -10,5 +10,6 @@ public interface IJumperBonusEffect extends IGameObject
 {
    int getDuration();
    void onStartEffect(Jumper jumper);
-   void onEndEffect(Jumper jumper);
+   void onEndEffect();
+   void signalTimeLeft(int timeLeft);
 }

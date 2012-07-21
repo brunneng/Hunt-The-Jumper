@@ -82,7 +82,7 @@ public class Map implements IVisibleObject
             if (!value)
             {
                float scale = 0.2f * (rand.nextFloat() - 0.5f);
-               Color c = ViewConstants.defaultMapColor.brighter(scale);
+               Color c = ViewConstants.DEFAULT_MAP_COLOR.brighter(scale);
 
                imageBuffer.setRGBA(x - startX, y - startY,
                        c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha());
@@ -212,7 +212,7 @@ public class Map implements IVisibleObject
    public void draw(Graphics g)
    {
       Camera c = Camera.getCamera();
-      g.setColor(ViewConstants.defaultGroundColor);
+      g.setColor(ViewConstants.DEFAULT_GROUND_COLOR);
 
       if (viewRect == null)
       {
@@ -227,7 +227,7 @@ public class Map implements IVisibleObject
       prepareBackImages(c, viewPoint);
       drawBackImages(viewPoint);
 
-      g.setColor(ViewConstants.defaultMapColor);
+      g.setColor(ViewConstants.DEFAULT_MAP_COLOR);
       g.setAntiAlias(true);
       g.setLineWidth(2);
       for (StaticBody b : allPolygons)

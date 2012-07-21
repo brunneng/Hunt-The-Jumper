@@ -14,7 +14,7 @@ public class ParametersHolder
       parameters.put(parameter.getType(), parameter);
    }
 
-   public Parameter getParameter(ParameterType type)
+   public <T> Parameter<T> getParameter(ParameterType type)
    {
       return parameters.get(type);
    }
