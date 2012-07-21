@@ -46,14 +46,14 @@ public class BotController extends AbstractJumperController
          return true;
       }
 
-      Vector2D v = new Vector2D(start, end);
+      Vector2D stepVector = new Vector2D(start, end).setLength(step);
       float currLen = step;
 
       boolean res = true;
+      Point testPoint = start;
       while (currLen < dist)
       {
-         v.setLength(currLen);
-         Point testPoint = start.plus(v);
+         testPoint = testPoint.plus(stepVector);
          if (!infoSource.getMap().isPointFree(testPoint))
          {
             res = false;

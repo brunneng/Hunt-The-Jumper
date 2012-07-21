@@ -7,15 +7,19 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 /**
  * User: GreenTea Date: 01.01.11 Time: 18:11
  */
-public class  Vector2D implements Cloneable
+public class Vector2D implements Cloneable
 {
+   private final float NOT_INITIALIZED_ANGLE = 10000;
+
    public static Vector2D fromAngleAndLength(float angle, float length)
    {
       float angleInRadians = (float)Math.toRadians(angle);
       float x = length * (float)Math.cos(angleInRadians);
       float y = length * (float)Math.sin(angleInRadians);
 
-      return new Vector2D(x, y);
+      Vector2D res = new Vector2D(x, y);
+      res.angle = normalizeAngle(angle);
+      return res;
    }
 
    public static Vector2D fromRadianAngleAndLength(float angleInRadians, float length)
@@ -23,15 +27,19 @@ public class  Vector2D implements Cloneable
       float x = length * (float)Math.cos(angleInRadians);
       float y = length * (float)Math.sin(angleInRadians);
 
-      return new Vector2D(x, y);
+      Vector2D res = new Vector2D(x, y);
+      res.angle = normalizeAngle((float)Math.toDegrees(angleInRadians));
+      return res;
    }
 
    private float x;
    private float y;
+   private float angle = NOT_INITIALIZED_ANGLE;
 
    public Vector2D()
    {
-
+      x = 0;
+      y = 0;
    }
 
    public Vector2D(float x, float y)
@@ -74,19 +82,9 @@ public class  Vector2D implements Cloneable
       return x;
    }
 
-   public void setX(float x)
-   {
-      this.x = x;
-   }
-
    public float getY()
    {
       return y;
-   }
-
-   public void setY(float y)
-   {
-      this.y = y;
    }
 
    public Vector2D setLength(float length)
@@ -138,6 +136,11 @@ public class  Vector2D implements Cloneable
     */
    public float angle()
    {
+      if (angle < NOT_INITIALIZED_ANGLE)
+      {
+         return angle;
+      }
+
       float z = (float)Math.sqrt(x*x + y*y);
       float sin = y / z;
       float asin = (float)Math.asin(sin);
@@ -156,7 +159,8 @@ public class  Vector2D implements Cloneable
          resAngle = 2*(float)Math.PI + asin;
       }
 
-      return (float)(180 / Math.PI) * resAngle;
+      angle = (float)(180 / Math.PI) * resAngle;
+      return angle;
    }
 
    /**
@@ -169,7 +173,12 @@ public class  Vector2D implements Cloneable
       float a1 = angle();
       float a2 = other.angle();
 
-      float resAngle = a2 - a1;
+      return normalizeAngle(a2 - a1);
+   }
+
+   private static float normalizeAngle(float angle)
+   {
+      float resAngle = angle;
       if (resAngle > 180)
       {
          resAngle -= 360;
@@ -178,7 +187,6 @@ public class  Vector2D implements Cloneable
       {
          resAngle += 360;
       }
-
       return resAngle;
    }
 
