@@ -21,7 +21,7 @@ public class BotController extends AbstractJumperController
    public static interface WorldInformationSource
    {
       List<JumperInfo> getOpponents(Jumper jumper);
-      List<Point> getCoins();
+      List<Point> getPositiveBonuses();
       Map getMap();
    }
 
@@ -102,7 +102,8 @@ public class BotController extends AbstractJumperController
                  jumperRole.equals(JumperRole.Escaping) ? null : JumperRole.HuntingForEveryone,
                  current.position);
          JumperInfo escapeTarget = JumperInfo.getMostFar(opponentsInfos, null, current.position);
-         if (current.position.distanceTo(escapeTarget.position) > 1500)
+         if (current.position.distanceTo(escapeTarget.position) >
+                 GameConstants.MIN_DIST_TO_ESCAPE_TO_FAR_JUMPER)
          {
             Point target = moveByShortestPath(current, escapeTarget, delta,
                     jumperRole.equals(JumperRole.EscapingFromHunter));
@@ -140,7 +141,7 @@ public class BotController extends AbstractJumperController
    }
 
    private Point moveByShortestPath(JumperInfo current, JumperInfo targetInfo, int delta,
-                                    boolean huntForCoin)
+                                    boolean huntForBonus)
    {
       if (pathFindingTimer.update(delta) < 0 && previousTarget != null)
       {
@@ -149,14 +150,14 @@ public class BotController extends AbstractJumperController
 
       Point currPos = current.position;
       Point target = targetInfo.position;
-      if (huntForCoin)
+      if (huntForBonus)
       {
-         Point nearestCoinPos = currPos.findNearestPoint(infoSource.getCoins());
-         if (nearestCoinPos != null &&
-                 currPos.distanceTo(nearestCoinPos) < currPos.distanceTo(targetInfo.position) &&
-                 currPos.distanceTo(nearestCoinPos) < 500)
+         Point nearestBonusPos = currPos.findNearestPoint(infoSource.getPositiveBonuses());
+         if (nearestBonusPos != null &&
+                 currPos.distanceTo(nearestBonusPos) < currPos.distanceTo(targetInfo.position) &&
+                 currPos.distanceTo(nearestBonusPos) < GameConstants.MIN_DIST_FOR_BOT_TO_TAKE_COIN)
          {
-            target = nearestCoinPos;
+            target = nearestBonusPos;
          }
       }
 

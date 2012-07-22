@@ -13,6 +13,7 @@ import com.greenteam.huntjumper.map.AvailabilityMap;
 import com.greenteam.huntjumper.map.Map;
 import com.greenteam.huntjumper.model.*;
 import com.greenteam.huntjumper.model.bonuses.AbstractPhysBonus;
+import com.greenteam.huntjumper.model.bonuses.AbstractPositiveBonus;
 import com.greenteam.huntjumper.model.bonuses.AccelerationBonus;
 import com.greenteam.huntjumper.model.bonuses.Coin;
 import com.greenteam.huntjumper.parameters.GameConstants;
@@ -180,12 +181,20 @@ public class SinglePlayerMatchState extends AbstractMatchState
                     }
 
                     @Override
-                    public List<Point> getCoins()
+                    public List<Point> getPositiveBonuses()
                     {
                        List<Point> res = new ArrayList<>(coins.size());
                        for (Coin c : coins)
                        {
                           res.add(new Point(c.getPos()));
+                       }
+
+                       for (AbstractPhysBonus bonus : bonuses)
+                       {
+                          if (bonus instanceof AbstractPositiveBonus)
+                          {
+                             res.add(bonus.getPos());
+                          }
                        }
 
                        return res;

@@ -1,6 +1,7 @@
 package com.greenteam.huntjumper.model.bonuses;
 
 import com.greenteam.huntjumper.IMatch;
+import com.greenteam.huntjumper.audio.AudioSystem;
 import com.greenteam.huntjumper.effects.particles.ParticleEntity;
 import com.greenteam.huntjumper.match.Camera;
 import com.greenteam.huntjumper.match.EffectsContainer;
@@ -28,7 +29,7 @@ public class AccelerationBonus extends AbstractPositiveBonus
 
    public AccelerationBonus(WorldInformationSource world, Point pos)
    {
-      super(world, GameConstants.ACCELERATION_BONUS_ESCAPE_ACCELERATION);
+      super(world, GameConstants.BONUS_ACCELERATION_FACTOR);
       body = new Body(new Circle(GameConstants.ACCELERATION_BONUS_RADIUS),
               GameConstants.ACCELERATION_BONUS_MASS);
       body.setPosition(pos.getX(), pos.getY());
@@ -80,6 +81,9 @@ public class AccelerationBonus extends AbstractPositiveBonus
 
          EffectsContainer.getInstance().addEffect(pe);
       }
+
+      AudioSystem.getInstance().playFarSound(AudioSystem.TAKE_ACC_BONUS_SOUND,
+              match.getMyJumper().getBody().getPosition(), jumper.getBody().getPosition());
    }
 
    @Override

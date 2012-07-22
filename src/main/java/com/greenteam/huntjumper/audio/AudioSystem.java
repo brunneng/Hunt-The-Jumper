@@ -23,6 +23,7 @@ public final class AudioSystem
    public static final String HUNTING_SOUND = "HUNTING_SOUND";
    public static final String ESCAPING_SOUND = "ESCAPING_SOUND";
    public static final String TAKE_COIN_SOUND = "TAKE_BONUS_SOUND";
+   public static final String TAKE_ACC_BONUS_SOUND = "TAKE_ACC_BONUS_SOUND";
 
    private static AudioSystem system;
 
@@ -66,6 +67,11 @@ public final class AudioSystem
                  ClassLoader.getSystemResourceAsStream("sounds/rattle_high_01.wav"));
          wavEffects.put(TAKE_COIN_SOUND, AudioLoader.getAudio("WAV", in));
          wavEffectsVolume.put(TAKE_COIN_SOUND, 0.4f);
+
+         in = new BufferedInputStream(
+                 ClassLoader.getSystemResourceAsStream("sounds/wind1.wav"));
+         wavEffects.put(TAKE_ACC_BONUS_SOUND, AudioLoader.getAudio("WAV", in));
+         wavEffectsVolume.put(TAKE_ACC_BONUS_SOUND, 1.5f);
 
          SoundStore.get().setMaxSources(5);
          SoundStore.get().setSoundVolume(NORMAL_SOUND_VOLUME);
