@@ -160,8 +160,17 @@ public class BotController extends AbstractJumperController
          }
       }
 
-      List<Point> shortestPath = infoSource.getMap().findShortestPath(
-              target, currPos);
+      float dist = currPos.distanceTo(target);
+      boolean isShortDist = dist < GameConstants.JUMPER_RADIUS*
+              GameConstants.PATH_FINDING_ENABLE_DETAIL_SEARCH_FACTOR;
+      List<Point> shortestPath = isShortDist ?
+              infoSource.getMap().findDetailShortestPath(target, currPos) :
+              infoSource.getMap().findApproximateShortestPath(target, currPos);
+
+      if (isShortDist && (shortestPath == null || shortestPath.size() == 0))
+      {
+         shortestPath = infoSource.getMap().findApproximateShortestPath(target, currPos);
+      }
 
       if (shortestPath != null && shortestPath.size() > 0)
       {
@@ -177,4 +186,6 @@ public class BotController extends AbstractJumperController
 
       return target;
    }
+
+
 }

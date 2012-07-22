@@ -28,8 +28,8 @@ public class Map implements IVisibleObject
 
    private AvailabilityMap map;
 
-   private int cellSize;
-   private PathFinder pathFinder;
+   private PathFinder smallMapPathFinder;
+   private PathFinder detailMapPathFinder;
    
    public Map(AvailabilityMap map)
    {
@@ -60,8 +60,11 @@ public class Map implements IVisibleObject
       int imagesY = 1 + (map.countX / SMALL_IMAGE_SIZE);
       mapImages = new Image[imagesX][imagesY];
 
-      InitializationScreen.getInstance().setStatus("Init path finder");
-      initPathFinder();
+      InitializationScreen.getInstance().setStatus("Init path finders");
+      smallMapPathFinder = createPathFinder(GameConstants.PATH_FINDING_MAP_CELL_SIZE);
+
+      detailMapPathFinder = createPathFinder((int)GameConstants.JUMPER_RADIUS);
+      detailMapPathFinder.setMaxSearchDepth(GameConstants.PATH_FINDING_DETAIL_SEARCH_MAX_DEPTH);
    }
 
    private Image createSmallImage(int sx, int sy)
@@ -93,9 +96,8 @@ public class Map implements IVisibleObject
       return imageBuffer.getImage();
    }
 
-   private void initPathFinder()
+   private PathFinder createPathFinder(int cellSize)
    {
-      cellSize = GameConstants.PATH_FINDING_MAP_CELL_SIZE;
       int countX = (map.countX / cellSize) + 1;
       int countY = (map.countY / cellSize) + 1;
 
@@ -105,7 +107,7 @@ public class Map implements IVisibleObject
          for (int y = 0; y < countY; ++y)
          {
             byte cell = PathFinder.FREE;
-            if (!isCellFree(x*cellSize, y*cellSize, cellSize))
+            if (!isCellFree(x* cellSize, y* cellSize, cellSize))
             {
                cell = PathFinder.WALL;
             }
@@ -113,7 +115,7 @@ public class Map implements IVisibleObject
          }
       }
 
-      pathFinder = new PathFinder(pathFindingMap);
+      return new PathFinder(pathFindingMap, cellSize);
    }
 
    private boolean isNotFree(IntPoint p)
@@ -142,29 +144,40 @@ public class Map implements IVisibleObject
       return free;
    }
    
-   private IntPoint toPathFindingCell(Point objectPos)
+   private IntPoint toPathFindingCell(Point objectPos, int cellSize)
    {
       Point tPos = objectPos.plus(map.getTranslationVector());
-      IntPoint p = new IntPoint((int)(tPos.getX() / cellSize), (int)(tPos.getY() / cellSize));
+      IntPoint p = new IntPoint((int)(tPos.getX() / cellSize), (int)(tPos.getY() /
+              cellSize));
       return p;
    }
 
-   private Point toMapPoint(IntPoint pathFindingCell)
+   private Point toMapPoint(IntPoint pathFindingCell, int cellSize)
    {
       Point p = new Point(
-              pathFindingCell.x * cellSize + cellSize/2,
-              pathFindingCell.y * cellSize + cellSize/2);
+              pathFindingCell.x * cellSize + cellSize /2,
+              pathFindingCell.y * cellSize + cellSize /2);
       
       return p.plus(map.getTranslationVector().negate());
    }
 
-   public List<Point> findShortestPath(Point start, Point end)
+   public List<Point> findApproximateShortestPath(Point start, Point end)
+   {
+      return findShortestPath(start, end, smallMapPathFinder);
+   }
+
+   public List<Point> findDetailShortestPath(Point start, Point end)
+   {
+      return findShortestPath(start, end, detailMapPathFinder);
+   }
+
+   private List<Point> findShortestPath(Point start, Point end, PathFinder pathFinder)
    {
       List<Point> res = null;
 
-      IntPoint startCell = toPathFindingCell(start);
+      IntPoint startCell = toPathFindingCell(start, pathFinder.getCellSize());
       List<Direction> shortestPath = pathFinder.findShortestPath(
-              startCell, toPathFindingCell(end));
+              startCell, toPathFindingCell(end, pathFinder.getCellSize()));
       if (shortestPath != null)
       {
          res = new ArrayList<Point>();
@@ -173,7 +186,7 @@ public class Map implements IVisibleObject
          for (Direction d : shortestPath)
          {
             currentCell = currentCell.plus(d);
-            res.add(toMapPoint(currentCell));
+            res.add(toMapPoint(currentCell, pathFinder.getCellSize()));
          }
       }
 

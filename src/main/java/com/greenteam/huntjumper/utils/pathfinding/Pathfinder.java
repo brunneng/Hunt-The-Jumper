@@ -116,7 +116,7 @@ public class PathFinder
 
       List<Direction> shortestPath = null;
       Date startTime = new Date();
-      PathFinder pathFinder = new PathFinder(map);
+      PathFinder pathFinder = new PathFinder(map, 1);
       int count = 5;
       for (int i = 0; i < count; ++i)
       {
@@ -139,17 +139,20 @@ public class PathFinder
    private IntPoint start;
    private IntPoint end;
    private CellInfo[] cellInfos;
+   private int cellSize;
+   private int maxSearchDepth = DEFAULT_MAX_SEARCH_DEPTH;
 
    private List<Direction> shortestPath;
 
    private int currentCellInfoNumber = 0;
    private TreeSet<CellInfo> cellsPool = new TreeSet<CellInfo>();
 
-   public PathFinder(byte[][] map)
+   public PathFinder(byte[][] map, int cellSize)
    {
       this.map = map;
       maxY = map.length;
       maxX = map[0].length;
+      this.cellSize = cellSize;
    }
 
    private CellInfo getNearestCellFromPool()
@@ -159,7 +162,7 @@ public class PathFinder
 
    public List<Direction> findShortestPath(IntPoint start, IntPoint end)
    {
-      if (start.distanceToInCells(end) > DEFAULT_MAX_SEARCH_DEPTH)
+      if (start.distanceToInCells(end) > maxSearchDepth)
       {
          return null;
       }
@@ -231,7 +234,7 @@ public class PathFinder
             if (nextCell.pathFromStartLen == 0 && !next.equals(start))
             {
                int minPathToEndLen = nextPathFromStartLen + minDistanceToEndInCells(next);
-               if (minPathToEndLen > DEFAULT_MAX_SEARCH_DEPTH)
+               if (minPathToEndLen > maxSearchDepth)
                {
                   continue;
                }
@@ -294,5 +297,15 @@ public class PathFinder
       }
 
       return cell;
+   }
+
+   public int getCellSize()
+   {
+      return cellSize;
+   }
+
+   public void setMaxSearchDepth(int maxSearchDepth)
+   {
+      this.maxSearchDepth = maxSearchDepth;
    }
 }
