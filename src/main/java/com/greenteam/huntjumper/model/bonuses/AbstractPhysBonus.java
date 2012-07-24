@@ -18,10 +18,12 @@ public abstract class AbstractPhysBonus implements IBonus
 
    protected Body body;
    protected WorldInformationSource world;
+   protected float acceleration;
 
-   public AbstractPhysBonus(WorldInformationSource worldInformationSource)
+   public AbstractPhysBonus(WorldInformationSource worldInformationSource, float acceleration)
    {
       this.world = worldInformationSource;
+      this.acceleration = acceleration;
    }
 
    public Body getBody()

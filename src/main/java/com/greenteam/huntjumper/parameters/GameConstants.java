@@ -54,13 +54,14 @@ public final class GameConstants
    public static final float MIN_DIST_FOR_BOT_TO_TAKE_COIN = 500f;
    public static final float MIN_DIST_TO_ESCAPE_TO_FAR_JUMPER = 1500f;
 
+   public static final float DEFAULT_BONUS_MASS = 0.001f;
    public static final int BONUS_APPEAR_INTERVAL = 5000;
-   public static final int MAX_BONUSES_ON_MAP = 10;
+   public static final int MAX_BONUSES_ON_MAP = 15;
    public static final float POSITIVE_BONUS_DIST_FACTOR = 150f;
-   public static final float BONUS_ACCELERATION_FACTOR = 75f;
+   public static final float MAX_BONUS_RADIUS = 10f;
 
+   public static final float BONUS_ACCELERATION_FACTOR = 75f;
    public static final float ACCELERATION_BONUS_RADIUS = 10f;
-   public static final float ACCELERATION_BONUS_MASS = 0.001f;
    public static final int ACCELERATION_BONUS_EFFECT_DURATION = 20000;
    public static final float ACCELERATION_BONUS_EFFECT_MULTIPLIER = 1.4f;
 }

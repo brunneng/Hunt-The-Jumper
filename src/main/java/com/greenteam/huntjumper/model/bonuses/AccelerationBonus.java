@@ -31,7 +31,7 @@ public class AccelerationBonus extends AbstractPositiveBonus
    {
       super(world, GameConstants.BONUS_ACCELERATION_FACTOR);
       body = new Body(new Circle(GameConstants.ACCELERATION_BONUS_RADIUS),
-              GameConstants.ACCELERATION_BONUS_MASS);
+              GameConstants.DEFAULT_BONUS_MASS);
       body.setPosition(pos.getX(), pos.getY());
       body.setUserData(this);
       body.setRestitution(1.0f);

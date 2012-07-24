@@ -12,10 +12,7 @@ import com.greenteam.huntjumper.effects.particles.TypedParticleGenerator;
 import com.greenteam.huntjumper.map.AvailabilityMap;
 import com.greenteam.huntjumper.map.Map;
 import com.greenteam.huntjumper.model.*;
-import com.greenteam.huntjumper.model.bonuses.AbstractPhysBonus;
-import com.greenteam.huntjumper.model.bonuses.AbstractPositiveBonus;
-import com.greenteam.huntjumper.model.bonuses.AccelerationBonus;
-import com.greenteam.huntjumper.model.bonuses.Coin;
+import com.greenteam.huntjumper.model.bonuses.*;
 import com.greenteam.huntjumper.parameters.GameConstants;
 import com.greenteam.huntjumper.parameters.ViewConstants;
 import com.greenteam.huntjumper.utils.Point;
@@ -33,6 +30,8 @@ import org.newdawn.slick.geom.RoundedRectangle;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import static com.greenteam.huntjumper.parameters.GameConstants.COIN_RADIUS;
@@ -323,7 +322,7 @@ public class SinglePlayerMatchState extends AbstractMatchState
       }
 
       processTakingBonuses();
-      createNewAccelerationBonus(dt);
+      createNewBonus(dt);
    }
 
    private void processTakingCoins()
@@ -406,7 +405,7 @@ public class SinglePlayerMatchState extends AbstractMatchState
       };
    }
 
-   private void createNewAccelerationBonus(int dt)
+   private void createNewBonus(int dt)
    {
       if (createBonusesAccumulator.update(dt) == 0 ||
               bonuses.size() >= GameConstants.MAX_BONUSES_ON_MAP)
@@ -414,10 +413,34 @@ public class SinglePlayerMatchState extends AbstractMatchState
          return;
       }
 
-      Point pos = getBonusPos(GameConstants.ACCELERATION_BONUS_RADIUS);
-      AccelerationBonus bonus = new AccelerationBonus(createWorldInfo(), pos);
+      Point pos = getBonusPos(GameConstants.MAX_BONUS_RADIUS);
+      AbstractPhysBonus bonus = createRandomBonus(pos);
       world.add(bonus.getBody());
       bonuses.add(bonus);
+   }
+
+   private AbstractPhysBonus createRandomBonus(Point pos)
+   {
+      List<Class<? extends AbstractPhysBonus>> bonusClasses = new ArrayList<>();
+      bonusClasses.add(AccelerationBonus.class);
+      bonusClasses.add(GravityBonus.class);
+
+      Class<? extends AbstractPhysBonus> bonusClass = bonusClasses.get(
+              Utils.rand.nextInt(bonusClasses.size()));
+
+      AbstractPhysBonus res;
+      try
+      {
+         Constructor c = bonusClass.getConstructor(
+                 AbstractPhysBonus.WorldInformationSource.class, Point.class);
+         res = (AbstractPhysBonus)c.newInstance(createWorldInfo(), pos);
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
+
+      return res;
    }
 
    private Point getBonusPos(float bonusRadius)

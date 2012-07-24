@@ -105,4 +105,10 @@ public final class ViewConstants
    public static final float ACC_BONUS_SPLASH_PARTICLE_RADIUS = 1f;
    public static final float ACC_BONUS_SPLASH_VELOCITY_FACTOR = 10f;
    public static final int ACC_BONUS_SPLASH_DURATION = 1000;
+
+   public static final float GRAVITY_BONUS_DIST_BETWEEN_RINGS = 4.4f;
+   public static final float GRAVITY_BONUS_RING_WIDTH = 1.2f;
+   public static final int GRAVITY_BONUS_TIME_2_RINGS = 1000;
+   public static final float GRAVITY_BONUS_VIEW_RADIUS = 14f;
+   public static final Color GRAVITY_BONUS_RING_COLOR = Color.black;
 }
