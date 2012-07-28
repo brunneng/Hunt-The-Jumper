@@ -46,6 +46,7 @@ public class Jumper implements IGameObject, IParametersUser
    private TimeAccumulator fadePositionsTimer = new TimeAccumulator(FADE_POSITIONS_TIME_INTERVAL);
 
    private Map<IJumperBonusEffect, TimeAccumulator> bonusEffects = new HashMap<>();
+   private List<Jumper> otherJumpers;
 
    public Jumper(String playerName, Color color, ROVector2f startPos,
                  AbstractJumperController controller, JumperRole jumperRole)
@@ -60,6 +61,7 @@ public class Jumper implements IGameObject, IParametersUser
       body.setPosition(startPos.getX(), startPos.getY());
       body.setRestitution(1.0f);
       body.setUserData(this);
+
       this.jumperRole = jumperRole;
       this.controller = controller;
       prepareParameters(parameters);
@@ -90,7 +92,7 @@ public class Jumper implements IGameObject, IParametersUser
    {
       TimeAccumulator ta = new TimeAccumulator(effect.getDuration());
       bonusEffects.put(effect, ta);
-      effect.onStartEffect(this);
+      effect.onStartEffect(this, otherJumpers);
    }
 
    public Body getBody()
@@ -156,6 +158,11 @@ public class Jumper implements IGameObject, IParametersUser
    public void setBodyCircle(Circle bodyCircle)
    {
       this.bodyCircle = bodyCircle;
+   }
+
+   public void setOtherJumpers(List<Jumper> otherJumpers)
+   {
+      this.otherJumpers = otherJumpers;
    }
 
    public void update(int delta)

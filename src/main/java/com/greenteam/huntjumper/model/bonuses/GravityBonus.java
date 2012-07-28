@@ -1,6 +1,7 @@
 package com.greenteam.huntjumper.model.bonuses;
 
 import com.greenteam.huntjumper.IMatch;
+import com.greenteam.huntjumper.audio.AudioSystem;
 import com.greenteam.huntjumper.match.Camera;
 import com.greenteam.huntjumper.match.TimeAccumulator;
 import com.greenteam.huntjumper.model.Jumper;
@@ -39,6 +40,9 @@ public class GravityBonus extends AbstractNeutralBonus
    @Override
    public void onBonusTaken(IMatch match, Jumper jumper)
    {
+      jumper.addBonusEffect(new GravityBonusEffect(new Point(body.getLastPosition())));
+      AudioSystem.getInstance().playFarSound(AudioSystem.TAKE_GRAVITY_BONUS_SOUND,
+              match.getMyJumper().getBody().getPosition(), jumper.getBody().getPosition());
    }
 
    @Override

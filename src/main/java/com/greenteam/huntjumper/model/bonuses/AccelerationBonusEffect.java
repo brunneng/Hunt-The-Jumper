@@ -18,7 +18,7 @@ import org.newdawn.slick.Graphics;
  */
 public class AccelerationBonusEffect extends AbstractBonusEffect
 {
-   TimeAccumulator rotationAccumulator;
+   private TimeAccumulator rotationAccumulator;
 
    @Override
    public int getDuration()
@@ -71,9 +71,9 @@ public class AccelerationBonusEffect extends AbstractBonusEffect
 
       float baseAlpha = 1f;
       float timeLeftPercent = timeLeft / (float)getDuration();
-      if (timeLeftPercent < ViewConstants.ACC_BONUS_TIME_PERCENT_TO_START_HIDE)
+      if (timeLeftPercent < ViewConstants.BONUS_TIME_PERCENT_TO_START_HIDE)
       {
-         baseAlpha = timeLeftPercent/ViewConstants.ACC_BONUS_TIME_PERCENT_TO_START_HIDE;
+         baseAlpha = timeLeftPercent/ViewConstants.BONUS_TIME_PERCENT_TO_START_HIDE;
       }
 
       for (int da = 0; da <= fadeAngleLength + Float.MIN_VALUE; da += fadeAngleStep)

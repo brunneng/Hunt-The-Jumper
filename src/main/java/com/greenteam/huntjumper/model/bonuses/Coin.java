@@ -89,6 +89,11 @@ public class Coin implements IBonus
    {
       List<ParticleEntity> res = new ArrayList<>();
 
+      if (coinImage == null) // in some rare cases it can be null.
+      {
+         return res;
+      }
+
       float startRadius = coinImage.getWidth() * 0.6f;
       Vector2D dir = new Vector2D(rotationVector);
       float rotationAngle = 360 / colors.size();

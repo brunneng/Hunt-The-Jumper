@@ -24,6 +24,7 @@ public final class AudioSystem
    public static final String ESCAPING_SOUND = "ESCAPING_SOUND";
    public static final String TAKE_COIN_SOUND = "TAKE_BONUS_SOUND";
    public static final String TAKE_ACC_BONUS_SOUND = "TAKE_ACC_BONUS_SOUND";
+   public static final String TAKE_GRAVITY_BONUS_SOUND = "TAKE_GRAVITY_BONUS_SOUND";
 
    private static AudioSystem system;
 
@@ -72,6 +73,11 @@ public final class AudioSystem
                  ClassLoader.getSystemResourceAsStream("sounds/wind1.wav"));
          wavEffects.put(TAKE_ACC_BONUS_SOUND, AudioLoader.getAudio("WAV", in));
          wavEffectsVolume.put(TAKE_ACC_BONUS_SOUND, 1.5f);
+
+         in = new BufferedInputStream(
+                 ClassLoader.getSystemResourceAsStream("sounds/Hit_Deep_Bass.wav"));
+         wavEffects.put(TAKE_GRAVITY_BONUS_SOUND, AudioLoader.getAudio("WAV", in));
+         wavEffectsVolume.put(TAKE_GRAVITY_BONUS_SOUND, 1.5f);
 
          SoundStore.get().setMaxSources(5);
          SoundStore.get().setSoundVolume(NORMAL_SOUND_VOLUME);

@@ -31,7 +31,6 @@ import org.newdawn.slick.geom.RoundedRectangle;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import static com.greenteam.huntjumper.parameters.GameConstants.COIN_RADIUS;
@@ -201,8 +200,20 @@ public class SinglePlayerMatchState extends AbstractMatchState
                  }), JumperRole.Hunting);
       }
 
+      initOtherJumpers();
+
       arrowsVisualizer = new ArrowsVisualizer(myJumper, jumpers);
       scoresManager = new ScoresManager(jumpers);
+   }
+
+   private void initOtherJumpers()
+   {
+      for (Jumper j : jumpers)
+      {
+         List<Jumper> other = new ArrayList<>(jumpers);
+         other.remove(j);
+         j.setOtherJumpers(other);
+      }
    }
 
    private void addRoleChangeEffect()

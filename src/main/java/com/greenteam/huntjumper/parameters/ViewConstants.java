@@ -94,10 +94,10 @@ public final class ViewConstants
    public static final int TAKE_COIN_EFFECT_HEIGHT = 75;
    public static final Font TAKE_COIN_EFFECT_FONT = TextUtils.Arial20Font;
 
+   public static final float BONUS_TIME_PERCENT_TO_START_HIDE = 0.2f;
    public static final float ACC_BONUS_FADE_ANGLE_LENGTH = 120f;
    public static final float ACC_BONUS_FADE_DIST_FROM_JUMPER_FACTOR = 0.5f;
    public static final int ACC_BONUS_FADE_SEGMENTS_COUNT = 10;
-   public static final float ACC_BONUS_TIME_PERCENT_TO_START_HIDE = 0.2f;
 
    public static final int ACC_BONUS_PARTICLES_COUNT = 15;
    public static final float ACC_BONUS_PARTICLE_ANGLE_LENGTH = 180f;
@@ -111,4 +111,5 @@ public final class ViewConstants
    public static final int GRAVITY_BONUS_TIME_2_RINGS = 1000;
    public static final float GRAVITY_BONUS_VIEW_RADIUS = 14f;
    public static final Color GRAVITY_BONUS_RING_COLOR = Color.black;
+   public static final float GRAVITY_BONUS_MOVE_TO_JUMPER_TIME = 500f;
 }

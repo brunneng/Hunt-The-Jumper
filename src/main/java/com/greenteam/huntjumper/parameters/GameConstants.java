@@ -64,4 +64,7 @@ public final class GameConstants
    public static final float ACCELERATION_BONUS_RADIUS = 10f;
    public static final int ACCELERATION_BONUS_EFFECT_DURATION = 20000;
    public static final float ACCELERATION_BONUS_EFFECT_MULTIPLIER = 1.4f;
+
+   public static final int GRAVITY_BONUS_EFFECT_DURATION = 17000;
+   public static final float GRAVITY_BONUS_FORCE_FACTOR = 15000f;
 }
