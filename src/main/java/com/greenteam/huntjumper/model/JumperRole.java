@@ -23,4 +23,9 @@ public enum JumperRole
    {
       return roleColor;
    }
+
+   public boolean isHuntingRole()
+   {
+      return this.equals(Hunting) || this.equals(HuntingForEveryone);
+   }
 }

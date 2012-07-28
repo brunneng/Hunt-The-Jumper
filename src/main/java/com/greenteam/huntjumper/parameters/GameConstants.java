@@ -56,7 +56,7 @@ public final class GameConstants
 
    public static final float DEFAULT_BONUS_MASS = 0.001f;
    public static final int BONUS_APPEAR_INTERVAL = 5000;
-   public static final int MAX_BONUSES_ON_MAP = 15;
+   public static final int MAX_BONUSES_OF_1_TYPE_ON_MAP = 8;
    public static final float POSITIVE_BONUS_DIST_FACTOR = 150f;
    public static final float MAX_BONUS_RADIUS = 10f;
 
@@ -66,5 +66,5 @@ public final class GameConstants
    public static final float ACCELERATION_BONUS_EFFECT_MULTIPLIER = 1.4f;
 
    public static final int GRAVITY_BONUS_EFFECT_DURATION = 17000;
-   public static final float GRAVITY_BONUS_FORCE_FACTOR = 15000f;
+   public static final float GRAVITY_BONUS_FORCE_FACTOR = 25000f;
 }

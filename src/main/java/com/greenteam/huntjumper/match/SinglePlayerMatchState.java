@@ -45,6 +45,13 @@ import static com.greenteam.huntjumper.parameters.ViewConstants.TIMER_ELLIPSE_IN
  */
 public class SinglePlayerMatchState extends AbstractMatchState
 {
+   private static List<Class<? extends AbstractPhysBonus>> allBonusClasses = new ArrayList<>();
+   static
+   {
+      allBonusClasses.add(AccelerationBonus.class);
+      allBonusClasses.add(GravityBonus.class);
+   }
+
    private World world;
    private File mapFile;
    private Map map;
@@ -61,11 +68,19 @@ public class SinglePlayerMatchState extends AbstractMatchState
 
    private TimeAccumulator createCoinsAccumulator = new TimeAccumulator(
            GameConstants.COIN_APPEAR_INTERVAL);
-   private TimeAccumulator createBonusesAccumulator = new TimeAccumulator(
+
+   private TimeAccumulator createPositiveBonusesAccumulator = new TimeAccumulator(
+           GameConstants.BONUS_APPEAR_INTERVAL);
+   private TimeAccumulator createNeutralBonusesAccumulator = new TimeAccumulator(
+           GameConstants.BONUS_APPEAR_INTERVAL);
+   private TimeAccumulator createNegativeBonusesAccumulator = new TimeAccumulator(
            GameConstants.BONUS_APPEAR_INTERVAL);
 
    private Set<Coin> coins = new HashSet<>();
-   private Set<AbstractPhysBonus> bonuses = new HashSet<>();
+   private Set<AbstractPositiveBonus> positiveBonuses = new HashSet<>();
+   private Set<AbstractNeutralBonus> neutralBonuses = new HashSet<>();
+   private Set<AbstractPhysBonus> negativeBonuses = new HashSet<>();
+   private Set<AbstractPhysBonus> allPhysBonuses = new HashSet<>();
 
    public SinglePlayerMatchState(File mapFile)
    {
@@ -179,20 +194,25 @@ public class SinglePlayerMatchState extends AbstractMatchState
                     }
 
                     @Override
-                    public List<Point> getPositiveBonuses()
+                    public java.util.Map<Class<? extends IBonus>, List<Point>> getBonuses()
                     {
-                       List<Point> res = new ArrayList<>(coins.size());
+                       java.util.Map<Class<? extends IBonus>, List<Point>> res = new HashMap<>();
+                       List<Point> positions = new ArrayList<>();
+                       res.put(Coin.class, positions);
                        for (Coin c : coins)
                        {
-                          res.add(new Point(c.getPos()));
+                          positions.add(c.getPos());
                        }
 
-                       for (AbstractPhysBonus bonus : bonuses)
+                       for (IBonus bonus : allPhysBonuses)
                        {
-                          if (bonus instanceof AbstractPositiveBonus)
+                          positions = res.get(bonus.getClass());
+                          if (positions == null)
                           {
-                             res.add(bonus.getPos());
+                             positions = new ArrayList<>();
+                             res.put(bonus.getClass(), positions);
                           }
+                          positions.add(bonus.getPos());
                        }
 
                        return res;
@@ -204,6 +224,15 @@ public class SinglePlayerMatchState extends AbstractMatchState
 
       arrowsVisualizer = new ArrowsVisualizer(myJumper, jumpers);
       scoresManager = new ScoresManager(jumpers);
+   }
+
+   private Set<AbstractPhysBonus> collectAllPhysBonuses()
+   {
+      Set<AbstractPhysBonus> allBonuses = new HashSet<>();
+      allBonuses.addAll(positiveBonuses);
+      allBonuses.addAll(neutralBonuses);
+      allBonuses.addAll(negativeBonuses);
+      return allBonuses;
    }
 
    private void initOtherJumpers()
@@ -327,13 +356,18 @@ public class SinglePlayerMatchState extends AbstractMatchState
 
    private void updateBonuses(int dt)
    {
-      for (AbstractPhysBonus b : bonuses)
+      for (AbstractPhysBonus b : allPhysBonuses)
       {
          b.update(dt);
       }
 
       processTakingBonuses();
-      createNewBonus(dt);
+      createNewBonus(createPositiveBonusesAccumulator,
+              dt, AbstractPositiveBonus.class, positiveBonuses);
+      createNewBonus(createNeutralBonusesAccumulator,
+              dt, AbstractNeutralBonus.class, neutralBonuses);
+//      createNewBonus(dt, AbstractPositiveBonus.class, positiveBonuses);
+      allPhysBonuses = collectAllPhysBonuses();
    }
 
    private void processTakingCoins()
@@ -379,7 +413,19 @@ public class SinglePlayerMatchState extends AbstractMatchState
                {
                   bonus.onBonusTaken(this, j);
                   world.remove(bonus.getBody());
-                  bonuses.remove(bonus);
+                  if (bonus instanceof AbstractPositiveBonus)
+                  {
+                     positiveBonuses.remove(bonus);
+                  }
+                  else if (bonus instanceof AbstractNeutralBonus)
+                  {
+                     neutralBonuses.remove(bonus);
+                  }
+                  else
+                  {
+                     negativeBonuses.remove(bonus);
+                  }
+                  allPhysBonuses.remove(bonus);
                }
             }
          }
@@ -393,7 +439,7 @@ public class SinglePlayerMatchState extends AbstractMatchState
          return;
       }
 
-      Point pos = getBonusPos(COIN_RADIUS);
+      Point pos = getRandomBonusPos(COIN_RADIUS);
       Coin c = new Coin(pos);
       coins.add(c);
    }
@@ -416,35 +462,42 @@ public class SinglePlayerMatchState extends AbstractMatchState
       };
    }
 
-   private void createNewBonus(int dt)
+   private <T extends AbstractPhysBonus> void createNewBonus(TimeAccumulator timeAccumulator,
+                                                             int dt, Class<T> bonusClazz,
+                                                             Set<T> bonuses)
    {
-      if (createBonusesAccumulator.update(dt) == 0 ||
-              bonuses.size() >= GameConstants.MAX_BONUSES_ON_MAP)
+      if (timeAccumulator.update(dt) == 0 ||
+              bonuses.size() >= GameConstants.MAX_BONUSES_OF_1_TYPE_ON_MAP)
       {
          return;
       }
 
-      Point pos = getBonusPos(GameConstants.MAX_BONUS_RADIUS);
-      AbstractPhysBonus bonus = createRandomBonus(pos);
+      Point pos = getRandomBonusPos(GameConstants.MAX_BONUS_RADIUS);
+      T bonus = createRandomBonus(pos, bonusClazz);
       world.add(bonus.getBody());
       bonuses.add(bonus);
    }
 
-   private AbstractPhysBonus createRandomBonus(Point pos)
+   private <T extends AbstractPhysBonus> T createRandomBonus(Point pos, Class<T> bonusClazz)
    {
-      List<Class<? extends AbstractPhysBonus>> bonusClasses = new ArrayList<>();
-      bonusClasses.add(AccelerationBonus.class);
-      bonusClasses.add(GravityBonus.class);
+      List<Class<T>> bonusClasses = new ArrayList<>();
+      for (Class c : allBonusClasses)
+      {
+         if (bonusClazz.isAssignableFrom(c))
+         {
+            bonusClasses.add(c);
+         }
+      }
 
       Class<? extends AbstractPhysBonus> bonusClass = bonusClasses.get(
               Utils.rand.nextInt(bonusClasses.size()));
 
-      AbstractPhysBonus res;
+      T res;
       try
       {
          Constructor c = bonusClass.getConstructor(
                  AbstractPhysBonus.WorldInformationSource.class, Point.class);
-         res = (AbstractPhysBonus)c.newInstance(createWorldInfo(), pos);
+         res = (T)c.newInstance(createWorldInfo(), pos);
       }
       catch (Exception e)
       {
@@ -454,10 +507,10 @@ public class SinglePlayerMatchState extends AbstractMatchState
       return res;
    }
 
-   private Point getBonusPos(float bonusRadius)
+   private Point getRandomBonusPos(float bonusRadius)
    {
       Random rand = Utils.rand;
-      int appearRadius = map.getWidth() / 2;
+      int appearRadius = (int)(0.9 * map.getWidth() / 2);
 
       Point pos;
       do
@@ -792,7 +845,7 @@ public class SinglePlayerMatchState extends AbstractMatchState
 
    public void drawBonuses(Graphics g)
    {
-      for (AbstractPhysBonus b : bonuses)
+      for (AbstractPhysBonus b : allPhysBonuses)
       {
          b.draw(g);
       }

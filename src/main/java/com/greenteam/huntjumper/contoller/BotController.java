@@ -5,11 +5,16 @@ import com.greenteam.huntjumper.match.TimeAccumulator;
 import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.model.JumperInfo;
 import com.greenteam.huntjumper.model.JumperRole;
+import com.greenteam.huntjumper.model.bonuses.AbstractPositiveBonus;
+import com.greenteam.huntjumper.model.bonuses.Coin;
+import com.greenteam.huntjumper.model.bonuses.GravityBonus;
+import com.greenteam.huntjumper.model.bonuses.IBonus;
 import com.greenteam.huntjumper.parameters.GameConstants;
 import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.Utils;
 import com.greenteam.huntjumper.utils.Vector2D;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,7 +26,7 @@ public class BotController extends AbstractJumperController
    public static interface WorldInformationSource
    {
       List<JumperInfo> getOpponents(Jumper jumper);
-      List<Point> getPositiveBonuses();
+      public java.util.Map<Class<? extends IBonus>, List<Point>> getBonuses();
       Map getMap();
    }
 
@@ -152,7 +157,26 @@ public class BotController extends AbstractJumperController
       Point target = targetInfo.position;
       if (huntForBonus)
       {
-         Point nearestBonusPos = currPos.findNearestPoint(infoSource.getPositiveBonuses());
+         List<Point> goodBonusesPos = new ArrayList<>();
+         java.util.Map<Class<? extends IBonus>, List<Point>> bonuses = infoSource.getBonuses();
+         for (java.util.Map.Entry<Class<? extends IBonus>, List<Point>> entry : bonuses.entrySet())
+         {
+            if (AbstractPositiveBonus.class.isAssignableFrom(entry.getKey()))
+            {
+               goodBonusesPos.addAll(entry.getValue());
+            }
+            else if (Coin.class.isAssignableFrom((entry.getKey())))
+            {
+               goodBonusesPos.addAll(entry.getValue());
+            }
+            else if (GravityBonus.class.isAssignableFrom((entry.getKey())) &&
+                        current.jumperRole.isHuntingRole())
+            {
+               goodBonusesPos.addAll(entry.getValue());
+            }
+         }
+
+         Point nearestBonusPos = currPos.findNearestPoint(goodBonusesPos);
          if (nearestBonusPos != null &&
                  currPos.distanceTo(nearestBonusPos) < currPos.distanceTo(targetInfo.position) &&
                  currPos.distanceTo(nearestBonusPos) < GameConstants.MIN_DIST_FOR_BOT_TO_TAKE_COIN)

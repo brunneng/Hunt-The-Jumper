@@ -4,6 +4,7 @@ import com.greenteam.huntjumper.IGameState;
 import com.greenteam.huntjumper.IMatch;
 import com.greenteam.huntjumper.match.IGameObject;
 import com.greenteam.huntjumper.model.Jumper;
+import com.greenteam.huntjumper.utils.Point;
 import net.phys2d.raw.Body;
 
 /**
@@ -11,5 +12,6 @@ import net.phys2d.raw.Body;
  */
 public interface IBonus extends IGameObject
 {
+   Point getPos();
    void onBonusTaken(IMatch match, Jumper jumper);
 }

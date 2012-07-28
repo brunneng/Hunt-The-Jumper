@@ -49,35 +49,12 @@ public final class AudioSystem
    {
       try
       {
-         InputStream in = new BufferedInputStream(
-                 ClassLoader.getSystemResourceAsStream("sounds/sound60.wav"));
-         wavEffects.put(COLLISION_SOUND, AudioLoader.getAudio("WAV", in));
-         wavEffectsVolume.put(COLLISION_SOUND, 1f);
-         
-         in = new BufferedInputStream(
-                 ClassLoader.getSystemResourceAsStream("sounds/sound98.wav"));
-         wavEffects.put(HUNTING_SOUND, AudioLoader.getAudio("WAV", in));
-         wavEffectsVolume.put(HUNTING_SOUND, 2.5f);
-
-         in = new BufferedInputStream(
-                 ClassLoader.getSystemResourceAsStream("sounds/beep21.wav"));
-         wavEffects.put(ESCAPING_SOUND, AudioLoader.getAudio("WAV", in));
-         wavEffectsVolume.put(ESCAPING_SOUND, 1f);
-
-         in = new BufferedInputStream(
-                 ClassLoader.getSystemResourceAsStream("sounds/rattle_high_01.wav"));
-         wavEffects.put(TAKE_COIN_SOUND, AudioLoader.getAudio("WAV", in));
-         wavEffectsVolume.put(TAKE_COIN_SOUND, 0.4f);
-
-         in = new BufferedInputStream(
-                 ClassLoader.getSystemResourceAsStream("sounds/wind1.wav"));
-         wavEffects.put(TAKE_ACC_BONUS_SOUND, AudioLoader.getAudio("WAV", in));
-         wavEffectsVolume.put(TAKE_ACC_BONUS_SOUND, 1.5f);
-
-         in = new BufferedInputStream(
-                 ClassLoader.getSystemResourceAsStream("sounds/Hit_Deep_Bass.wav"));
-         wavEffects.put(TAKE_GRAVITY_BONUS_SOUND, AudioLoader.getAudio("WAV", in));
-         wavEffectsVolume.put(TAKE_GRAVITY_BONUS_SOUND, 1.5f);
+         createSound("sound60.wav", COLLISION_SOUND, 1f);
+         createSound("sound98.wav", HUNTING_SOUND, 2.5f);
+         createSound("beep21.wav", ESCAPING_SOUND, 1f);
+         createSound("rattle_high_01.wav", TAKE_COIN_SOUND, 0.4f);
+         createSound("wind1.wav", TAKE_ACC_BONUS_SOUND, 1.5f);
+         createSound("Hit_Deep_Bass.wav", TAKE_GRAVITY_BONUS_SOUND, 1.5f);
 
          SoundStore.get().setMaxSources(5);
          SoundStore.get().setSoundVolume(NORMAL_SOUND_VOLUME);
@@ -87,6 +64,15 @@ public final class AudioSystem
          throw new RuntimeException("Can't initialize sound system", e);
       }
 
+   }
+
+   private void createSound(String fileName, String soundAlias, float volume) throws IOException
+   {
+      InputStream in;
+      in = new BufferedInputStream(
+              ClassLoader.getSystemResourceAsStream("sounds/" + fileName));
+      wavEffects.put(soundAlias, AudioLoader.getAudio("WAV", in));
+      wavEffectsVolume.put(soundAlias, volume);
    }
 
    public void update(int delta)
