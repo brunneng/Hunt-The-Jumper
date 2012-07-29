@@ -148,7 +148,7 @@ public class BotController extends AbstractJumperController
    private Point moveByShortestPath(JumperInfo current, JumperInfo targetInfo, int delta,
                                     boolean huntForBonus)
    {
-      if (pathFindingTimer.update(delta) < 0 && previousTarget != null)
+      if (pathFindingTimer.update(delta) == 0 && previousTarget != null)
       {
          return previousTarget;
       }

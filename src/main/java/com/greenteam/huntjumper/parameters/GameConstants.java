@@ -27,8 +27,8 @@ public final class GameConstants
 
    public static final float MAX_SOUNDS_DIST = JUMPER_RADIUS*50;
 
-   public static final int PATH_FINDING_AVERAGE_TIME_INTERVAL = 1000;
-   public static final int PATH_FINDING_TIME_DISPERSION = 200;
+   public static final int PATH_FINDING_AVERAGE_TIME_INTERVAL = 500;
+   public static final int PATH_FINDING_TIME_DISPERSION = 100;
    public static final int PATH_FINDING_MAP_TEST_POINTS_IN_CELL = 12;
    public static final int PATH_FINDING_MAP_CELL_SIZE = 50;
    public static final boolean PATH_FINDING_DEBUG = false;
