@@ -1,6 +1,6 @@
 package com.greenteam.huntjumper.map;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.List;
 
 /**
@@ -8,6 +8,24 @@ import java.util.List;
  */
 public class CompressedMap implements Serializable
 {
+   private static final long serialVersionUID = -7291604090886208018L;
+
+   public static CompressedMap loadMap(File mapFile) throws IOException
+   {
+      CompressedMap compressedMap;
+      try (FileInputStream fis = new FileInputStream(mapFile))
+      {
+         ObjectInputStream ois = new ObjectInputStream(fis);
+         compressedMap = (CompressedMap)ois.readObject();
+      }
+      catch (ClassNotFoundException e)
+      {
+         e.printStackTrace();
+         throw new RuntimeException(e);
+      }
+      return compressedMap;
+   }
+
    private int width;
    private int height;
 

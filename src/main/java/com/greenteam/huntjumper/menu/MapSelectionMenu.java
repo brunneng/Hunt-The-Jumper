@@ -5,15 +5,11 @@ import com.greenteam.huntjumper.IGameState;
 import com.greenteam.huntjumper.map.CompressedMap;
 import com.greenteam.huntjumper.match.SinglePlayerMatchState;
 import com.greenteam.huntjumper.parameters.ViewConstants;
-import com.greenteam.huntjumper.utils.ImageLoader;
-import com.greenteam.huntjumper.utils.Utils;
 import org.newdawn.slick.*;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 
-import java.awt.*;
 import java.awt.Color;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -85,7 +81,7 @@ public class MapSelectionMenu extends ScreenMenu
    {
       File file = selectedFile;
 
-      CompressedMap compressedMap = Utils.loadMap(file);
+      CompressedMap compressedMap = CompressedMap.loadMap(file);
       float sizeFactor = compressedMap.getWidth() / (float)(PREVIEW_IMAGE_WIDTH);
 
       int lineNum = 0;

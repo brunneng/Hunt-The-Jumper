@@ -1,4 +1,4 @@
-package com.greenteam.huntjumper.model.bonuses;
+package com.greenteam.huntjumper.model.bonuses.coin;
 
 import com.greenteam.huntjumper.IMatch;
 import com.greenteam.huntjumper.audio.AudioSystem;
@@ -7,13 +7,13 @@ import com.greenteam.huntjumper.match.Camera;
 import com.greenteam.huntjumper.match.EffectsContainer;
 import com.greenteam.huntjumper.match.FlyUpTextEffect;
 import com.greenteam.huntjumper.model.Jumper;
+import com.greenteam.huntjumper.model.bonuses.IBonus;
 import com.greenteam.huntjumper.parameters.GameConstants;
 import com.greenteam.huntjumper.parameters.ViewConstants;
 import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.Utils;
 import com.greenteam.huntjumper.utils.Vector2D;
 import net.phys2d.math.ROVector2f;
-import net.phys2d.raw.Body;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -122,7 +122,7 @@ public class Coin implements IBonus
       return pe;
    }
 
-   public Point getPos()
+   public Point getPosition()
    {
       return pos;
    }
@@ -138,7 +138,7 @@ public class Coin implements IBonus
                  @Override
                  public ROVector2f getPosition()
                  {
-                    return getPos().toVector2f();
+                    return Coin.this.getPosition().toVector2f();
                  }
               }, "+" + (int) GameConstants.COIN_SCORES, ViewConstants.TAKE_COIN_EFFECT_DURATION,
                       ViewConstants.TAKE_COIN_EFFECT_COLOR, ViewConstants.TAKE_COIN_EFFECT_FONT,

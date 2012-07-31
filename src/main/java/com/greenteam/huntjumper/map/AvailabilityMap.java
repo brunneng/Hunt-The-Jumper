@@ -100,7 +100,7 @@ public class AvailabilityMap
 
    public AvailabilityMap(File mapFile) throws IOException
    {
-      CompressedMap compressedMap = Utils.loadMap(mapFile);
+      CompressedMap compressedMap = CompressedMap.loadMap(mapFile);
       countX = compressedMap.getWidth();
       countY = compressedMap.getWidth();
       maxXdist = countX;

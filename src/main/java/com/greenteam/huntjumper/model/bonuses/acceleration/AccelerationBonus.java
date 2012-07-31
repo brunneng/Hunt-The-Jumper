@@ -1,4 +1,4 @@
-package com.greenteam.huntjumper.model.bonuses;
+package com.greenteam.huntjumper.model.bonuses.acceleration;
 
 import com.greenteam.huntjumper.IMatch;
 import com.greenteam.huntjumper.audio.AudioSystem;
@@ -7,6 +7,7 @@ import com.greenteam.huntjumper.match.Camera;
 import com.greenteam.huntjumper.match.EffectsContainer;
 import com.greenteam.huntjumper.match.TimeAccumulator;
 import com.greenteam.huntjumper.model.Jumper;
+import com.greenteam.huntjumper.model.bonuses.AbstractPositiveBonus;
 import com.greenteam.huntjumper.parameters.GameConstants;
 import com.greenteam.huntjumper.parameters.ViewConstants;
 import com.greenteam.huntjumper.utils.Point;
@@ -34,7 +35,7 @@ public class AccelerationBonus extends AbstractPositiveBonus
               GameConstants.DEFAULT_BONUS_MASS);
       body.setPosition(pos.getX(), pos.getY());
       body.setUserData(this);
-      body.setRestitution(1.0f);
+      body.setRestitution(0.95f);
 
       for (int i = 0; i < ViewConstants.ACC_BONUS_PARTICLES_COUNT; ++i)
       {

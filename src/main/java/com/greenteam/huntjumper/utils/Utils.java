@@ -1,17 +1,8 @@
 package com.greenteam.huntjumper.utils;
 
-import com.greenteam.huntjumper.map.CompressedMap;
-import com.greenteam.huntjumper.match.Camera;
-import net.phys2d.math.ROVector2f;
-import net.phys2d.raw.Body;
-import net.phys2d.raw.StaticBody;
-import net.phys2d.raw.shapes.Polygon;
+import com.greenteam.huntjumper.model.IMapObject;
 import org.newdawn.slick.Color;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -43,31 +34,6 @@ public final class Utils
       return Math.abs(f1 - f2) < ERROR;
    }
 
-   public static Vector2D getPhysVectorToCursor(Body body, Point cursor, Camera camera)
-   {
-      Point physPoint = camera != null ?
-              camera.toPhys(new Point(cursor.getX(), cursor.getY())) : cursor;
-      return new Vector2D(new Point(body.getPosition()), physPoint);
-   }
-
-   public static org.newdawn.slick.geom.Polygon toViewPolygon(StaticBody b)
-   {
-      Polygon p = (Polygon)b.getShape();
-
-      ROVector2f[] vertices = p.getVertices();
-      float[] viewVertices = new float[vertices.length * 2];
-      for (int i = 0; i < vertices.length; ++i)
-      {
-         ROVector2f v = vertices[i];
-         Point viewPoint = Camera.getCamera().toView(v);
-         viewVertices[2*i] = viewPoint.getX();
-         viewVertices[2*i + 1] = viewPoint.getY();
-      }
-
-      return new org.newdawn.slick.geom.Polygon(
-              viewVertices);
-   }
-   
    public static List<Point> getRotationPoints(Point center, float radius, float startAngle,
                                                int pointsCount)
    {
@@ -148,19 +114,42 @@ public final class Utils
       return res;
    }
 
-   public static CompressedMap loadMap(File mapFile) throws IOException
+   public static <T extends IMapObject> T findNearest(IMapObject fromObject,
+                                                      Collection<T> otherObjects)
    {
-      CompressedMap compressedMap = null;
-      try (FileInputStream fis = new FileInputStream(mapFile))
+      float minDist = Float.MAX_VALUE;
+      Point pos = fromObject.getPosition();
+      T res = null;
+      for (T mo : otherObjects)
       {
-         ObjectInputStream ois = new ObjectInputStream(fis);
-         compressedMap = (CompressedMap)ois.readObject();
+         float dist = pos.distanceTo(mo.getPosition());
+         if (dist < minDist)
+         {
+            res = mo;
+            minDist = dist;
+         }
       }
-      catch (ClassNotFoundException e)
-      {
-         e.printStackTrace();
-         throw new RuntimeException(e);
-      }
-      return compressedMap;
+
+      return res;
    }
+
+   public static <T extends IMapObject> T findMostFar(IMapObject fromObject,
+                                        Collection<T> otherObjects)
+   {
+      float maxDist = Integer.MIN_VALUE;
+      Point pos = fromObject.getPosition();
+      T res = null;
+      for (T mo : otherObjects)
+      {
+         float dist = pos.distanceTo(mo.getPosition());
+         if (dist > maxDist)
+         {
+            res = mo;
+            maxDist = dist;
+         }
+      }
+
+      return res;
+   }
+
 }

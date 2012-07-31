@@ -1,10 +1,11 @@
-package com.greenteam.huntjumper.model.bonuses;
+package com.greenteam.huntjumper.model.bonuses.gravity;
 
 import com.greenteam.huntjumper.IMatch;
 import com.greenteam.huntjumper.audio.AudioSystem;
 import com.greenteam.huntjumper.match.Camera;
 import com.greenteam.huntjumper.match.TimeAccumulator;
 import com.greenteam.huntjumper.model.Jumper;
+import com.greenteam.huntjumper.model.bonuses.AbstractNeutralBonus;
 import com.greenteam.huntjumper.parameters.GameConstants;
 import com.greenteam.huntjumper.parameters.ViewConstants;
 import com.greenteam.huntjumper.utils.Point;
@@ -48,7 +49,7 @@ public class GravityBonus extends AbstractNeutralBonus
    @Override
    public void draw(Graphics g)
    {
-      Point viewPos = Camera.getCamera().toView(getPos());
+      Point viewPos = Camera.getCamera().toView(getPosition());
 
       float distBetweenRings = ViewConstants.GRAVITY_BONUS_DIST_BETWEEN_RINGS;
 

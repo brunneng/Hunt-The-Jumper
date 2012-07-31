@@ -31,7 +31,7 @@ public abstract class AbstractPhysBonus implements IBonus
       return body;
    }
 
-   public Point getPos()
+   public Point getPosition()
    {
       return new Point(body.getPosition());
    }

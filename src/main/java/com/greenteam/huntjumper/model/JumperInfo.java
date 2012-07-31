@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * User: GreenTea Date: 25.01.12 Time: 20:49
  */
-public class JumperInfo
+public class JumperInfo implements IMapObject
 {
    public static JumperInfo getNearest(List<JumperInfo> infos, JumperRole jumperRole, Point p)
    {
@@ -59,6 +59,12 @@ public class JumperInfo
    public final Vector2D velocity;
    public final float angularVelocity;
    public final JumperRole jumperRole;
+
+   @Override
+   public Point getPosition()
+   {
+      return position;
+   }
 
    public JumperInfo(Jumper jumper)
    {

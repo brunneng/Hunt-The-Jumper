@@ -26,7 +26,7 @@ import static com.greenteam.huntjumper.utils.Vector2D.fromRadianAngleAndLength;
 /**
  * User: GreenTea Date: 14.01.12 Time: 21:11
  */
-public class Jumper implements IGameObject, IParametersUser
+public class Jumper implements IGameObject, IParametersUser, IMapObject
 {
    private String playerName;
 
@@ -163,6 +163,12 @@ public class Jumper implements IGameObject, IParametersUser
    public void setOtherJumpers(List<Jumper> otherJumpers)
    {
       this.otherJumpers = otherJumpers;
+   }
+
+   @Override
+   public Point getPosition()
+   {
+      return new Point(getBody().getPosition());
    }
 
    public void update(int delta)
@@ -333,8 +339,7 @@ public class Jumper implements IGameObject, IParametersUser
    {
       Input input = HuntJumperGame.getInstance().getGameContainer().getInput();
       Point cursorPos = new Point(input.getMouseX(), input.getMouseY());
-      float distToCursor = Utils.getPhysVectorToCursor(getBody(), cursorPos,
-              Camera.getCamera()).length();
+      float distToCursor = Camera.getCamera().getPhysVectorToCursor(getBody(), cursorPos).length();
       if (distToCursor < ViewConstants.DRAW_NAME_MAX_RADIUS)
       {
          float a = 1f - distToCursor/ ViewConstants.DRAW_NAME_MAX_RADIUS;
@@ -366,4 +371,5 @@ public class Jumper implements IGameObject, IParametersUser
 
       g.setLineWidth(1);
    }
+
 }

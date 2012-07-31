@@ -13,6 +13,10 @@ import com.greenteam.huntjumper.map.AvailabilityMap;
 import com.greenteam.huntjumper.map.Map;
 import com.greenteam.huntjumper.model.*;
 import com.greenteam.huntjumper.model.bonuses.*;
+import com.greenteam.huntjumper.model.bonuses.acceleration.AccelerationBonus;
+import com.greenteam.huntjumper.model.bonuses.coin.Coin;
+import com.greenteam.huntjumper.model.bonuses.gravity.GravityBonus;
+import com.greenteam.huntjumper.model.bonuses.inelastic.InelasticBonus;
 import com.greenteam.huntjumper.parameters.GameConstants;
 import com.greenteam.huntjumper.parameters.ViewConstants;
 import com.greenteam.huntjumper.utils.Point;
@@ -50,6 +54,7 @@ public class SinglePlayerMatchState extends AbstractMatchState
    {
       allBonusClasses.add(AccelerationBonus.class);
       allBonusClasses.add(GravityBonus.class);
+      allBonusClasses.add(InelasticBonus.class);
    }
 
    private World world;
@@ -79,7 +84,7 @@ public class SinglePlayerMatchState extends AbstractMatchState
    private Set<Coin> coins = new HashSet<>();
    private Set<AbstractPositiveBonus> positiveBonuses = new HashSet<>();
    private Set<AbstractNeutralBonus> neutralBonuses = new HashSet<>();
-   private Set<AbstractPhysBonus> negativeBonuses = new HashSet<>();
+   private Set<AbstractNegativeBonus> negativeBonuses = new HashSet<>();
    private Set<AbstractPhysBonus> allPhysBonuses = new HashSet<>();
 
    public SinglePlayerMatchState(File mapFile)
@@ -201,7 +206,7 @@ public class SinglePlayerMatchState extends AbstractMatchState
                        res.put(Coin.class, positions);
                        for (Coin c : coins)
                        {
-                          positions.add(c.getPos());
+                          positions.add(c.getPosition());
                        }
 
                        for (IBonus bonus : allPhysBonuses)
@@ -212,7 +217,7 @@ public class SinglePlayerMatchState extends AbstractMatchState
                              positions = new ArrayList<>();
                              res.put(bonus.getClass(), positions);
                           }
-                          positions.add(bonus.getPos());
+                          positions.add(bonus.getPosition());
                        }
 
                        return res;
@@ -366,7 +371,8 @@ public class SinglePlayerMatchState extends AbstractMatchState
               dt, AbstractPositiveBonus.class, positiveBonuses);
       createNewBonus(createNeutralBonusesAccumulator,
               dt, AbstractNeutralBonus.class, neutralBonuses);
-//      createNewBonus(dt, AbstractPositiveBonus.class, positiveBonuses);
+      createNewBonus(createNegativeBonusesAccumulator,
+              dt, AbstractNegativeBonus.class, negativeBonuses);
       allPhysBonuses = collectAllPhysBonuses();
    }
 
@@ -379,7 +385,7 @@ public class SinglePlayerMatchState extends AbstractMatchState
 
          for (Jumper j : jumpers)
          {
-            if (c.getPos().distanceTo(new Point(j.getBody().getPosition())) <
+            if (c.getPosition().distanceTo(new Point(j.getBody().getPosition())) <
                     GameConstants.JUMPER_RADIUS + GameConstants.COIN_RADIUS)
             {
                i.remove();

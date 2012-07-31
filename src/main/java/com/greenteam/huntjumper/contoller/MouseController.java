@@ -4,7 +4,6 @@ import com.greenteam.huntjumper.match.Camera;
 import com.greenteam.huntjumper.HuntJumperGame;
 import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.utils.Point;
-import com.greenteam.huntjumper.utils.Utils;
 import com.greenteam.huntjumper.utils.Vector2D;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Input;
@@ -27,8 +26,8 @@ public class MouseController extends AbstractJumperController
    {
       GameContainer container = HuntJumperGame.getInstance().getGameContainer();
       Input input = container.getInput();
-      Vector2D forceDirection = Utils.getPhysVectorToCursor(jumper.getBody(),
-              new Point(input.getMouseX(), input.getMouseY()), Camera.getCamera());
+      Vector2D forceDirection = Camera.getCamera().getPhysVectorToCursor(jumper.getBody(),
+              new Point(input.getMouseX(), input.getMouseY()));
 
       boolean accumulating = container.getInput().isMouseButtonDown(MOUSE_LEFT_BUTTON);
       return new Move(forceDirection, accumulating);

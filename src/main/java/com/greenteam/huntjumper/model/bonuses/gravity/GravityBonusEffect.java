@@ -1,8 +1,9 @@
-package com.greenteam.huntjumper.model.bonuses;
+package com.greenteam.huntjumper.model.bonuses.gravity;
 
 import com.greenteam.huntjumper.match.Camera;
 import com.greenteam.huntjumper.match.TimeAccumulator;
 import com.greenteam.huntjumper.model.Jumper;
+import com.greenteam.huntjumper.model.bonuses.AbstractBonusEffect;
 import com.greenteam.huntjumper.parameters.GameConstants;
 import com.greenteam.huntjumper.parameters.ViewConstants;
 import com.greenteam.huntjumper.utils.Point;

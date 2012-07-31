@@ -67,4 +67,8 @@ public final class GameConstants
 
    public static final int GRAVITY_BONUS_EFFECT_DURATION = 17000;
    public static final float GRAVITY_BONUS_FORCE_FACTOR = 25000f;
+
+   public static final float INELASTIC_BONUS_RADIUS = 10f;
+   public static final int INELASTIC_BONUS_EFFECT_DURATION = 20000;
+   public static final float INELASTIC_BONUS_EFFECT_FACTOR = 0.35f;
 }

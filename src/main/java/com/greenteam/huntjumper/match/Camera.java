@@ -7,6 +7,9 @@ import com.greenteam.huntjumper.utils.Range;
 import com.greenteam.huntjumper.utils.Utils;
 import com.greenteam.huntjumper.utils.Vector2D;
 import net.phys2d.math.ROVector2f;
+import net.phys2d.raw.Body;
+import net.phys2d.raw.StaticBody;
+import net.phys2d.raw.shapes.Polygon;
 
 import java.util.Deque;
 import java.util.LinkedList;
@@ -131,5 +134,29 @@ public class Camera implements IUpdateable
          Point newCameraPos = myJumperPos.plus(jumperToCamera);
          Camera.getCamera().setViewCenter(newCameraPos);
       }
+   }
+
+   public Vector2D getPhysVectorToCursor(Body body, Point cursor)
+   {
+      Point physPoint = toPhys(new Point(cursor.getX(), cursor.getY())) ;
+      return new Vector2D(new Point(body.getPosition()), physPoint);
+   }
+
+   public static org.newdawn.slick.geom.Polygon toViewPolygon(StaticBody b)
+   {
+      Polygon p = (Polygon)b.getShape();
+
+      ROVector2f[] vertices = p.getVertices();
+      float[] viewVertices = new float[vertices.length * 2];
+      for (int i = 0; i < vertices.length; ++i)
+      {
+         ROVector2f v = vertices[i];
+         Point viewPoint = getCamera().toView(v);
+         viewVertices[2*i] = viewPoint.getX();
+         viewVertices[2*i + 1] = viewPoint.getY();
+      }
+
+      return new org.newdawn.slick.geom.Polygon(
+              viewVertices);
    }
 }

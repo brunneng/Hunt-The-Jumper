@@ -1,7 +1,8 @@
-package com.greenteam.huntjumper.model.bonuses;
+package com.greenteam.huntjumper.model.bonuses.acceleration;
 
 import com.greenteam.huntjumper.match.Camera;
 import com.greenteam.huntjumper.match.TimeAccumulator;
+import com.greenteam.huntjumper.model.bonuses.AbstractBonusEffect;
 import com.greenteam.huntjumper.model.parameters.MultiplicationParameterEffect;
 import com.greenteam.huntjumper.model.parameters.Parameter;
 import com.greenteam.huntjumper.model.parameters.ParameterType;
