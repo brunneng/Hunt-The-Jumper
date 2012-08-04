@@ -56,7 +56,7 @@ public final class GameConstants
 
    public static final float DEFAULT_BONUS_MASS = 0.001f;
    public static final int BONUS_APPEAR_INTERVAL = 5000;
-   public static final int MAX_BONUSES_OF_1_TYPE_ON_MAP = 8;
+   public static final int MAX_BONUSES_OF_1_TYPE_ON_MAP = 5;
    public static final float POSITIVE_BONUS_DIST_FACTOR = 150f;
    public static final float MAX_BONUS_RADIUS = 10f;
 

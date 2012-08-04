@@ -248,7 +248,6 @@ public class Map implements IVisibleObject
          drawContours(g, b);
       }
       g.setLineWidth(1);
-      g.setAntiAlias(false);
    }
 
    private void drawContours(Graphics g, StaticBody b)

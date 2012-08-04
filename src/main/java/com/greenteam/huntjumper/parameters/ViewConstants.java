@@ -117,4 +117,6 @@ public final class ViewConstants
    public static final float INELASTIC_BONUS_MAX_WAVE_LENGTH = 3f;
    public static final float INELASTIC_BONUS_WAVE_AVERAGE_MOVE_SPEED = 2f;
    public static final float INELASTIC_BONUS_EFFECT_MOVE_TO_JUMPER = 500f;
+   public static final float INELASTIC_BONUS_BASE_RADIUS_FACTOR = 1.4f;
+   public static final float INELASTIC_BONUS_SECOND_LINE_WIDTH = 2f;
 }

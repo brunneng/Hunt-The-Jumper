@@ -65,7 +65,8 @@ public class InelasticBonusEffect extends AbstractBonusEffect
    @Override
    public void draw(Graphics g)
    {
-      float baseRadius = GameConstants.JUMPER_RADIUS * 1.4f;
+      float baseRadius = GameConstants.JUMPER_RADIUS *
+              ViewConstants.INELASTIC_BONUS_BASE_RADIUS_FACTOR;
       Point viewPos = Camera.getCamera().toView(jumper.getBody().getPosition());
 
       if (effectMoveToJumperAccumulator != null)
@@ -93,7 +94,7 @@ public class InelasticBonusEffect extends AbstractBonusEffect
       InelasticBonus.drawWaves(g, viewPos, waveLengths, baseRadius - 2);
 
       g.setColor(Utils.toColorWithAlpha(Color.lightGray, a));
-      g.setLineWidth(3f);
+      g.setLineWidth(ViewConstants.INELASTIC_BONUS_SECOND_LINE_WIDTH);
       InelasticBonus.drawWaves(g, viewPos, waveLengths, baseRadius);
    }
 }

@@ -106,7 +106,7 @@ public class InelasticBonus extends AbstractNegativeBonus
       drawWaves(g, viewPos, waveLengths, GameConstants.INELASTIC_BONUS_RADIUS-2);
 
       g.setColor(Color.lightGray);
-      g.setLineWidth(3f);
+      g.setLineWidth(ViewConstants.INELASTIC_BONUS_SECOND_LINE_WIDTH);
       drawWaves(g, viewPos, waveLengths, GameConstants.INELASTIC_BONUS_RADIUS);
    }
 
