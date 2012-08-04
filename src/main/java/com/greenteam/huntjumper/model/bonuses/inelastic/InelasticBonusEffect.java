@@ -1,7 +1,14 @@
 package com.greenteam.huntjumper.model.bonuses.inelastic;
 
+import com.greenteam.huntjumper.match.Camera;
+import com.greenteam.huntjumper.match.TimeAccumulator;
 import com.greenteam.huntjumper.model.bonuses.AbstractBonusEffect;
 import com.greenteam.huntjumper.parameters.GameConstants;
+import com.greenteam.huntjumper.parameters.ViewConstants;
+import com.greenteam.huntjumper.utils.Point;
+import com.greenteam.huntjumper.utils.Utils;
+import com.greenteam.huntjumper.utils.Vector2D;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
 /**
@@ -9,7 +16,21 @@ import org.newdawn.slick.Graphics;
  */
 public class InelasticBonusEffect extends AbstractBonusEffect
 {
-   float restitutionChange;
+   private TimeAccumulator effectMoveToJumperAccumulator = new TimeAccumulator((int)
+           ViewConstants.INELASTIC_BONUS_EFFECT_MOVE_TO_JUMPER);
+   private float[] waveLengths;
+   private float[] waveSpeed;
+   private Point bonusPos;
+   private float restitutionChange;
+
+   public InelasticBonusEffect(Point bonusPos)
+   {
+      this.bonusPos = bonusPos;
+
+      waveLengths = new float[ViewConstants.INELASTIC_BONUS_WAVE_POINTS_COUNT];
+      waveSpeed = new float[waveLengths.length];
+      InelasticBonus.initWaves(waveLengths, waveSpeed);
+   }
 
    @Override
    public void onStartEffect()
@@ -34,12 +55,45 @@ public class InelasticBonusEffect extends AbstractBonusEffect
    @Override
    public void update(int delta)
    {
-      //To change body of implemented methods use File | Settings | File Templates.
+      if (effectMoveToJumperAccumulator != null && effectMoveToJumperAccumulator.update(delta) != 0)
+      {
+         effectMoveToJumperAccumulator = null;
+      }
+      InelasticBonus.updateWaves(delta, waveLengths, waveSpeed);
    }
 
    @Override
    public void draw(Graphics g)
    {
-      //To change body of implemented methods use File | Settings | File Templates.
+      float baseRadius = GameConstants.JUMPER_RADIUS * 1.4f;
+      Point viewPos = Camera.getCamera().toView(jumper.getBody().getPosition());
+
+      if (effectMoveToJumperAccumulator != null)
+      {
+         float moveToJumperFactor = effectMoveToJumperAccumulator.getTotalTimeInMilliseconds() /
+                 (float)effectMoveToJumperAccumulator.getCycleLength();
+
+         baseRadius = GameConstants.INELASTIC_BONUS_RADIUS +
+                 moveToJumperFactor*(baseRadius - GameConstants.INELASTIC_BONUS_RADIUS);
+         Point viewBonusPos = Camera.getCamera().toView(bonusPos);
+         viewPos = viewBonusPos.plus(new Vector2D(viewBonusPos, viewPos).multiply(
+                 (float)Math.sqrt(moveToJumperFactor)));
+      }
+
+      float a = 1f;
+      float timeLeftPercent = timeLeft / (float)getDuration();
+      if (timeLeftPercent < ViewConstants.BONUS_TIME_PERCENT_TO_START_HIDE)
+      {
+         a = timeLeftPercent/ViewConstants.BONUS_TIME_PERCENT_TO_START_HIDE;
+      }
+      a *= 0.8f;
+
+      g.setColor(Utils.toColorWithAlpha(Color.gray, a));
+      g.setLineWidth(1);
+      InelasticBonus.drawWaves(g, viewPos, waveLengths, baseRadius - 2);
+
+      g.setColor(Utils.toColorWithAlpha(Color.lightGray, a));
+      g.setLineWidth(3f);
+      InelasticBonus.drawWaves(g, viewPos, waveLengths, baseRadius);
    }
 }

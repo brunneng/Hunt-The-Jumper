@@ -112,4 +112,9 @@ public final class ViewConstants
    public static final float GRAVITY_BONUS_VIEW_RADIUS = 14f;
    public static final Color GRAVITY_BONUS_RING_COLOR = Color.black;
    public static final float GRAVITY_BONUS_MOVE_TO_JUMPER_TIME = 500f;
+
+   public static final int INELASTIC_BONUS_WAVE_POINTS_COUNT = 16;
+   public static final float INELASTIC_BONUS_MAX_WAVE_LENGTH = 3f;
+   public static final float INELASTIC_BONUS_WAVE_AVERAGE_MOVE_SPEED = 2f;
+   public static final float INELASTIC_BONUS_EFFECT_MOVE_TO_JUMPER = 500f;
 }
