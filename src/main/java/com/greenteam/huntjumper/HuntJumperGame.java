@@ -5,6 +5,7 @@ import com.greenteam.huntjumper.menu.INextStateProvider;
 import com.greenteam.huntjumper.menu.MapSelectionMenu;
 import com.greenteam.huntjumper.menu.ScreenMenu;
 import com.greenteam.huntjumper.parameters.ViewConstants;
+import com.greenteam.huntjumper.shaders.ShadersSystem;
 import org.newdawn.slick.*;
 
 /**
@@ -33,6 +34,7 @@ public class HuntJumperGame implements Game
       gameContainer = container;
       container.setShowFPS(false);
       container.setAlwaysRender(true);
+      ShadersSystem.getInstance().init();
 
       ScreenMenu mainMenu = new ScreenMenu();
       MapSelectionMenu singlePlayer = new MapSelectionMenu("single player", "maps/");

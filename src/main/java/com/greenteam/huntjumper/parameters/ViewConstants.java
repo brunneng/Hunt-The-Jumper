@@ -89,6 +89,7 @@ public final class ViewConstants
 
    public static final Color MENU_SELECTED_COLOR = Color.orange;
 
+   public static final float COIN_SPHERE_RECT_WIDTH = 9f;
    public static final int TAKE_COIN_EFFECT_DURATION = 1000;
    public static final Color TAKE_COIN_EFFECT_COLOR = Color.white;
    public static final int TAKE_COIN_EFFECT_HEIGHT = 75;

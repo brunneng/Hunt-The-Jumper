@@ -25,6 +25,7 @@ public final class AudioSystem
    public static final String TAKE_COIN_SOUND = "TAKE_BONUS_SOUND";
    public static final String TAKE_ACC_BONUS_SOUND = "TAKE_ACC_BONUS_SOUND";
    public static final String TAKE_GRAVITY_BONUS_SOUND = "TAKE_GRAVITY_BONUS_SOUND";
+   public static final String TAKE_INELASTIC_BONUS_SOUND = "TAKE_INELASTIC_BONUS_SOUND";
 
    private static AudioSystem system;
 
@@ -55,6 +56,7 @@ public final class AudioSystem
          createSound("rattle_high_01.wav", TAKE_COIN_SOUND, 0.4f);
          createSound("wind1.wav", TAKE_ACC_BONUS_SOUND, 1.5f);
          createSound("Hit_Deep_Bass.wav", TAKE_GRAVITY_BONUS_SOUND, 1.5f);
+         createSound("Mud1.wav", TAKE_INELASTIC_BONUS_SOUND, 0.7f);
 
          SoundStore.get().setMaxSources(5);
          SoundStore.get().setSoundVolume(NORMAL_SOUND_VOLUME);

@@ -10,6 +10,8 @@ import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.model.bonuses.IBonus;
 import com.greenteam.huntjumper.parameters.GameConstants;
 import com.greenteam.huntjumper.parameters.ViewConstants;
+import com.greenteam.huntjumper.shaders.Shader;
+import com.greenteam.huntjumper.shaders.ShadersSystem;
 import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.Utils;
 import com.greenteam.huntjumper.utils.Vector2D;
@@ -18,6 +20,7 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.opengl.shader.ShaderProgram;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,26 +31,20 @@ import java.util.List;
  */
 public class Coin implements IBonus
 {
-   private static Image coinImage;
-   private static List<Color> colors = Arrays.asList(Color.red, Color.green, Color.blue);
+   private static ShaderProgram program;
 
+   private static final float width = ViewConstants.COIN_SPHERE_RECT_WIDTH;
+   private static List<Color> colors = Arrays.asList(Color.red, Color.green, Color.blue);
    private Vector2D rotationVector = Vector2D.fromAngleAndLength(90, 2);
 
    private static void init()
    {
-      if (coinImage != null)
+      if (program != null)
       {
          return;
       }
 
-      try
-      {
-         coinImage = new Image("images/coin.png");
-      }
-      catch (SlickException e)
-      {
-         e.printStackTrace();
-      }
+      program = ShadersSystem.getInstance().getProgram(Shader.COIN);
    }
 
    private Point pos;
@@ -69,32 +66,44 @@ public class Coin implements IBonus
       init();
 
       Point viewPos = Camera.getCamera().toView(pos);
-      float dxy = coinImage.getWidth() / 2f;
+      float dxy = width / 2f;
 
       Vector2D dir = new Vector2D(rotationVector);
       float rotationAngle = 360 / colors.size();
+
+      ShadersSystem shadersSystem = ShadersSystem.getInstance();
       for (Color c : colors)
       {
-         g.drawImage(
-                 coinImage, viewPos.getX()+dir.getX() - dxy,
-                 viewPos.getY()+dir.getY() - dxy,
-                 c);
+         program.bind();
+         shadersSystem.setResolution(program, width, width);
+         shadersSystem.setPosition(program, viewPos.getX() + dir.getX(),
+                 viewPos.getY() + dir.getY());
+         shadersSystem.setColor(program, c);
+
+         g.fillRect(viewPos.getX() + dir.getX() - dxy, viewPos.getY() + dir.getY() - dxy, width,
+                 width);
          dir = dir.rotate(rotationAngle);
+         ShaderProgram.unbind();
       }
 
-      g.drawImage(coinImage, viewPos.getX() - dxy, viewPos.getY() - dxy, Color.white);
+      program.bind();
+      shadersSystem.setResolution(program, width, width);
+      shadersSystem.setPosition(program, viewPos.getX(), viewPos.getY());
+      shadersSystem.setColor(program, Color.white);
+
+      g.fillRect(viewPos.getX() - dxy, viewPos.getY() - dxy,
+              width, width);
+      ShaderProgram.unbind();
+
+
+      //g.drawImage(coinImage, viewPos.getX() - dxy, viewPos.getY() - dxy, Color.white);
    }
 
    private List<ParticleEntity> createTakeCoinParticles()
    {
       List<ParticleEntity> res = new ArrayList<>();
 
-      if (coinImage == null) // in some rare cases it can be null.
-      {
-         return res;
-      }
-
-      float startRadius = coinImage.getWidth() * 0.6f;
+      float startRadius = width * 0.6f;
       Vector2D dir = new Vector2D(rotationVector);
       float rotationAngle = 360 / colors.size();
       for (Color c : colors)

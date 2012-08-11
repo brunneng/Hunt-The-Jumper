@@ -1,6 +1,7 @@
 package com.greenteam.huntjumper.model.bonuses.inelastic;
 
 import com.greenteam.huntjumper.IMatch;
+import com.greenteam.huntjumper.audio.AudioSystem;
 import com.greenteam.huntjumper.match.Camera;
 import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.model.bonuses.AbstractNegativeBonus;
@@ -53,6 +54,8 @@ public class InelasticBonus extends AbstractNegativeBonus
    @Override
    public void onBonusTaken(IMatch match, Jumper jumper)
    {
+      AudioSystem.getInstance().playFarSound(AudioSystem.TAKE_INELASTIC_BONUS_SOUND,
+              match.getMyJumper().getBody().getPosition(), jumper.getBody().getPosition());
       jumper.addBonusEffect(new InelasticBonusEffect(new Point(getBody().getLastPosition())));
    }
 
