@@ -32,7 +32,7 @@ public class HuntJumperGame implements Game
    {
       game = this;
       gameContainer = container;
-      container.setShowFPS(false);
+      container.setShowFPS(true);
       container.setAlwaysRender(true);
       ShadersSystem.getInstance().init();
 

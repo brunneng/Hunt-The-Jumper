@@ -1,6 +1,7 @@
 package com.greenteam.huntjumper.shaders;
 
 import com.greenteam.huntjumper.match.Camera;
+import com.greenteam.huntjumper.utils.Point;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.opengl.shader.ShaderProgram;
@@ -28,21 +29,7 @@ public class ShadersSystem
 
    public ShaderProgram getProgram(Shader shaderKey)
    {
-      ShaderProgram res = programs.get(shaderKey);
-//      if (res == null)
-//      {
-//         try
-//         {
-//            res = new ShaderProgram(shaderKey.getPathToVertexShader(),
-//                    shaderKey.getPathToPixelShader());
-//            programs.put(shaderKey, res);
-//         }
-//         catch (SlickException e)
-//         {
-//            throw new RuntimeException(e);
-//         }
-//      }
-      return res;
+      return programs.get(shaderKey);
    }
 
    public void init()
@@ -72,6 +59,11 @@ public class ShadersSystem
    {
       program.setUniform2f("position", x,
               Camera.getCamera().getViewHeight()- y);
+   }
+
+   public void setPosition(ShaderProgram program, Point p)
+   {
+      setPosition(program, p.getX(), p.getY());
    }
 
    public void setColor(ShaderProgram program, Color c)

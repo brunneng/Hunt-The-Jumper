@@ -16,6 +16,7 @@ import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.Utils;
 import com.greenteam.huntjumper.utils.Vector2D;
 import net.phys2d.math.ROVector2f;
+import org.lwjgl.opengl.GL42;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -66,37 +67,18 @@ public class Coin implements IBonus
       init();
 
       Point viewPos = Camera.getCamera().toView(pos);
-      float dxy = width / 2f;
-
-      Vector2D dir = new Vector2D(rotationVector);
-      float rotationAngle = 360 / colors.size();
 
       ShadersSystem shadersSystem = ShadersSystem.getInstance();
-      for (Color c : colors)
-      {
-         program.bind();
-         shadersSystem.setResolution(program, width, width);
-         shadersSystem.setPosition(program, viewPos.getX() + dir.getX(),
-                 viewPos.getY() + dir.getY());
-         shadersSystem.setColor(program, c);
-
-         g.fillRect(viewPos.getX() + dir.getX() - dxy, viewPos.getY() + dir.getY() - dxy, width,
-                 width);
-         dir = dir.rotate(rotationAngle);
-         ShaderProgram.unbind();
-      }
-
       program.bind();
-      shadersSystem.setResolution(program, width, width);
       shadersSystem.setPosition(program, viewPos.getX(), viewPos.getY());
-      shadersSystem.setColor(program, Color.white);
+      program.setUniform1f("sphereRadius", width/2f);
+      program.setUniform1f("angle", rotationVector.angle());
+      program.setUniform1f("len", rotationVector.length());
 
-      g.fillRect(viewPos.getX() - dxy, viewPos.getY() - dxy,
-              width, width);
+      float dxy = width/2f + rotationVector.length();
+      g.fillRect(viewPos.getX() - dxy, viewPos.getY() - dxy, 2*dxy, 2*dxy);
+
       ShaderProgram.unbind();
-
-
-      //g.drawImage(coinImage, viewPos.getX() - dxy, viewPos.getY() - dxy, Color.white);
    }
 
    private List<ParticleEntity> createTakeCoinParticles()
