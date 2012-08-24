@@ -851,6 +851,7 @@ public class SinglePlayerMatchState extends AbstractMatchState
    Image passLocalImage;
    private void drawLight(Graphics g) throws SlickException
    {
+      g.setAntiAlias(false);
       if (lightPassability == null)
       {
          lightPassability = new Image(VIEW_WIDTH, VIEW_HEIGHT);
@@ -870,36 +871,45 @@ public class SinglePlayerMatchState extends AbstractMatchState
 
       initLightShader();
       ShadersSystem shadersSystem = ShadersSystem.getInstance();
-      final float lightRadius = 300;
+      final float lightRadius = 256;
       for (Jumper j : jumpers)
       {
          Point viewPos = Camera.getCamera().toView(j.getPosition());
-//         ligthProgram.bind();
-//         shadersSystem.setPosition(ligthProgram, viewPos.getX(), viewPos.getY());
-//         shadersSystem.setResolution(ligthProgram, lightRadius*2f, lightRadius*2f);
-//         ligthProgram.setUniform1f("lightCircle", j.getBodyCircle().getRadius() + 2);
-//         ligthProgram.setUniform3f("color", 1f, 1f, 1f);
+         ligthProgram.bind();
+         shadersSystem.setPosition(ligthProgram, viewPos.getX(), viewPos.getY());
+         shadersSystem.setResolution(ligthProgram, VIEW_HEIGHT, VIEW_HEIGHT);
+         ligthProgram.setUniform1f("lightCircle", j.getBodyCircle().getRadius() + 2);
+         ligthProgram.setUniform3f("color", 1f, 1f, 1f);
 
          if (passLocalImage == null)
          {
             passLocalImage = new Image((int)lightRadius*2, (int)lightRadius*2);
          }
-         passGraphics.copyArea(passLocalImage,
-                 Math.round(viewPos.getX() - lightRadius),
-                 Math.round(viewPos.getY() - 44));
+         
+//         passGraphics.copyArea(passLocalImage,
+//                 Math.round(viewPos.getX() - lightRadius),
+//                 Math.round(viewPos.getY() - 44));
 
-         //passLocalImage.bind();
-//         ligthProgram.setUniform1i("passability", 0);
+         Graphics passLocalImageGraphics = passLocalImage.getGraphics();
+         passLocalImageGraphics.setAntiAlias(false);
+         passLocalImageGraphics.drawImage(lightPassability, 0f, 0f, lightRadius*2, lightRadius*2,
+                 viewPos.getX() - lightRadius,
+                 viewPos.getY() - lightRadius,
+                 viewPos.getX() + lightRadius,
+                 viewPos.getY() + lightRadius);
+         passLocalImageGraphics.flush();
 
-//         g.fillRect(viewPos.getX() - lightRadius, viewPos.getY() - lightRadius,
-//                 2*lightRadius, 2*lightRadius);
-         g.setAntiAlias(false);
-         g.drawImage(passLocalImage, viewPos.getX() - lightRadius, viewPos.getY() - lightRadius);
-         g.setAntiAlias(true);
+         passLocalImage.bind();
+         ligthProgram.setUniform1i("passability", 0);
+
+         g.fillRect(viewPos.getX() - lightRadius, viewPos.getY() - lightRadius,
+                 2*lightRadius, 2*lightRadius);
+//         g.drawImage(passLocalImage, viewPos.getX() - lightRadius, viewPos.getY() - lightRadius);
       }
 
 //      ShaderProgram.unbind();
 //      g.drawImage(lightPassability, 0, 0);
+      g.setAntiAlias(true);
    }
 
    private void drawJumpers(Graphics g)
