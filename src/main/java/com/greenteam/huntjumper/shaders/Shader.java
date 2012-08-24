@@ -5,7 +5,8 @@ package com.greenteam.huntjumper.shaders;
  */
 public enum Shader
 {
-   COIN("shaders/bonuses/coin/coin.frag");
+   COIN("shaders/bonuses/coin/coin.frag"),
+   LIGHT("shaders/light/light.frag");
 
    private final String pathToVertexShader;
    private final String pathToPixelShader;

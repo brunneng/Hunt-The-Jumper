@@ -19,6 +19,8 @@ import com.greenteam.huntjumper.model.bonuses.gravity.GravityBonus;
 import com.greenteam.huntjumper.model.bonuses.inelastic.InelasticBonus;
 import com.greenteam.huntjumper.parameters.GameConstants;
 import com.greenteam.huntjumper.parameters.ViewConstants;
+import com.greenteam.huntjumper.shaders.Shader;
+import com.greenteam.huntjumper.shaders.ShadersSystem;
 import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.TextUtils;
 import com.greenteam.huntjumper.utils.Utils;
@@ -31,6 +33,7 @@ import net.phys2d.raw.World;
 import org.newdawn.slick.*;
 import org.newdawn.slick.geom.Ellipse;
 import org.newdawn.slick.geom.RoundedRectangle;
+import org.newdawn.slick.opengl.shader.ShaderProgram;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,8 +44,6 @@ import static com.greenteam.huntjumper.parameters.GameConstants.COIN_RADIUS;
 import static com.greenteam.huntjumper.parameters.GameConstants.DEFAULT_GAME_TIME;
 import static com.greenteam.huntjumper.parameters.GameConstants.TIME_TO_BECOME_SUPER_HUNTER;
 import static com.greenteam.huntjumper.parameters.ViewConstants.*;
-import static com.greenteam.huntjumper.parameters.ViewConstants.TIMER_ELLIPSE_ALPHA;
-import static com.greenteam.huntjumper.parameters.ViewConstants.TIMER_ELLIPSE_INDENT_FROM_TEXT;
 
 /**
  * User: GreenTea Date: 03.06.12 Time: 16:33
@@ -55,6 +56,17 @@ public class SinglePlayerMatchState extends AbstractMatchState
       allBonusClasses.add(AccelerationBonus.class);
       allBonusClasses.add(GravityBonus.class);
       allBonusClasses.add(InelasticBonus.class);
+   }
+
+   private static ShaderProgram ligthProgram;
+   private static void initLightShader()
+   {
+      if (ligthProgram != null)
+      {
+         return;
+      }
+
+      ligthProgram = ShadersSystem.getInstance().getProgram(Shader.LIGHT);
    }
 
    private World world;
@@ -825,12 +837,69 @@ public class SinglePlayerMatchState extends AbstractMatchState
 
       map.draw(g);
       drawJumpers(g);
+      drawLight(g);
+
       drawCoins(g);
       drawBonuses(g);
 
       arrowsVisualizer.draw(g);
       drawInterface(g);
       EffectsContainer.getInstance().drawEffects(g);
+   }
+
+   Image lightPassability;
+   Image passLocalImage;
+   private void drawLight(Graphics g) throws SlickException
+   {
+      if (lightPassability == null)
+      {
+         lightPassability = new Image(VIEW_WIDTH, VIEW_HEIGHT);
+      }
+      Graphics passGraphics = lightPassability.getGraphics();
+      passGraphics.setAntiAlias(false);
+
+      passGraphics.setColor(ILightproof.LIGHT_FREE_COLOR);
+      passGraphics.fillRect(0, 0, VIEW_WIDTH, VIEW_HEIGHT);
+
+      map.drawBorder(passGraphics);
+      for (Jumper j : jumpers)
+      {
+         j.drawBorder(passGraphics);
+      }
+      passGraphics.flush();
+
+      initLightShader();
+      ShadersSystem shadersSystem = ShadersSystem.getInstance();
+      final float lightRadius = 300;
+      for (Jumper j : jumpers)
+      {
+         Point viewPos = Camera.getCamera().toView(j.getPosition());
+//         ligthProgram.bind();
+//         shadersSystem.setPosition(ligthProgram, viewPos.getX(), viewPos.getY());
+//         shadersSystem.setResolution(ligthProgram, lightRadius*2f, lightRadius*2f);
+//         ligthProgram.setUniform1f("lightCircle", j.getBodyCircle().getRadius() + 2);
+//         ligthProgram.setUniform3f("color", 1f, 1f, 1f);
+
+         if (passLocalImage == null)
+         {
+            passLocalImage = new Image((int)lightRadius*2, (int)lightRadius*2);
+         }
+         passGraphics.copyArea(passLocalImage,
+                 Math.round(viewPos.getX() - lightRadius),
+                 Math.round(viewPos.getY() - 44));
+
+         //passLocalImage.bind();
+//         ligthProgram.setUniform1i("passability", 0);
+
+//         g.fillRect(viewPos.getX() - lightRadius, viewPos.getY() - lightRadius,
+//                 2*lightRadius, 2*lightRadius);
+         g.setAntiAlias(false);
+         g.drawImage(passLocalImage, viewPos.getX() - lightRadius, viewPos.getY() - lightRadius);
+         g.setAntiAlias(true);
+      }
+
+//      ShaderProgram.unbind();
+//      g.drawImage(lightPassability, 0, 0);
    }
 
    private void drawJumpers(Graphics g)

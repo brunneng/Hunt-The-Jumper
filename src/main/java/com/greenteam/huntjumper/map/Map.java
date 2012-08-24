@@ -1,6 +1,7 @@
 package com.greenteam.huntjumper.map;
 
 import com.greenteam.huntjumper.match.Camera;
+import com.greenteam.huntjumper.match.ILightproof;
 import com.greenteam.huntjumper.match.IVisibleObject;
 import com.greenteam.huntjumper.match.InitializationScreen;
 import com.greenteam.huntjumper.parameters.GameConstants;
@@ -9,7 +10,10 @@ import com.greenteam.huntjumper.utils.*;
 import com.greenteam.huntjumper.utils.pathfinding.PathFinder;
 import net.phys2d.math.ROVector2f;
 import net.phys2d.raw.StaticBody;
-import org.newdawn.slick.*;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
+import org.newdawn.slick.ImageBuffer;
 import org.newdawn.slick.geom.Rectangle;
 
 import java.util.ArrayList;
@@ -19,7 +23,7 @@ import java.util.Random;
 /**
  * User: GreenTea Date: 05.02.12 Time: 19:36
  */
-public class Map implements IVisibleObject
+public class Map implements IVisibleObject, ILightproof
 {
    private List<StaticBody> allPolygons;
 
@@ -250,6 +254,18 @@ public class Map implements IVisibleObject
       g.setLineWidth(1);
    }
 
+   @Override
+   public void drawBorder(Graphics g)
+   {
+      g.setColor(LIGTH_BORDER_COLOR);
+      g.setLineWidth(2);
+      for (StaticBody b : allPolygons)
+      {
+         drawContours(g, b);
+      }
+      g.setLineWidth(1);
+   }
+
    private void drawContours(Graphics g, StaticBody b)
    {
       net.phys2d.raw.shapes.Polygon poly = (net.phys2d.raw.shapes.Polygon)b.getShape();
@@ -275,6 +291,7 @@ public class Map implements IVisibleObject
       {
          g.drawLine(currPoint.getX(), currPoint.getY(), firstPoint.getX(), firstPoint.getY());
       }
+
    }
 
    //static int imagesCount = 0;

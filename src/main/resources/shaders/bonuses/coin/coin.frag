@@ -12,7 +12,7 @@ const float PI = 3.14159265358979323;
 
 vec4 blend(vec4 c1, vec4 c2)
 {
-    vec4 res = vec4(0, 0, 0, 0);
+    vec4 res;
     if (c2.w > c1.w)
     {
         vec4 tmp = c2;
@@ -26,7 +26,11 @@ vec4 blend(vec4 c1, vec4 c2)
     }
     else
     {
-        res = vec4(clamp(c1.xyz + c2.xyz * (c2.w / c1.w), 0, 1), c1.w);
+        float weight = (c2.w / c1.w);
+        res = vec4(max(c1.x, c2.x*weight),
+                   max(c1.y, c2.y*weight),
+                   max(c1.z, c2.z*weight),
+                   c1.w);
     }
     return res;
 }
@@ -54,9 +58,8 @@ void main()
     vec2 centerPos = position;
     vec2 vecFromCenter = gl_FragCoord.xy - centerPos;
     float a = 1.0 - clamp(length(vecFromCenter) / sphereRadius, 0, 1);
-    a = a*a;
-    vec4 newColor = vec4(0.6, 0.6, 0.6, a);
+    vec4 newColor = vec4(0.95, 0.95, 0.95, a);
     colorOut = blend(colorOut, newColor);
 
-    colorOut.w *= 0.9;
+    colorOut.w *= 0.95;
 }

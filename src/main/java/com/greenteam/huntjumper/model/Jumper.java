@@ -4,6 +4,7 @@ import com.greenteam.huntjumper.*;
 import com.greenteam.huntjumper.contoller.AbstractJumperController;
 import com.greenteam.huntjumper.match.Camera;
 import com.greenteam.huntjumper.match.IGameObject;
+import com.greenteam.huntjumper.match.ILightproof;
 import com.greenteam.huntjumper.match.TimeAccumulator;
 import com.greenteam.huntjumper.model.bonuses.IJumperBonusEffect;
 import com.greenteam.huntjumper.model.parameters.IParametersUser;
@@ -26,7 +27,7 @@ import static com.greenteam.huntjumper.utils.Vector2D.fromRadianAngleAndLength;
 /**
  * User: GreenTea Date: 14.01.12 Time: 21:11
  */
-public class Jumper implements IGameObject, IParametersUser, IMapObject
+public class Jumper implements IGameObject, IParametersUser, IMapObject, ILightproof
 {
    private String playerName;
 
@@ -266,6 +267,21 @@ public class Jumper implements IGameObject, IParametersUser, IMapObject
 
          g.setLineWidth(1);
       }
+   }
+
+   @Override
+   public void drawBorder(Graphics g)
+   {
+      g.setColor(LIGTH_BORDER_COLOR);
+      g.setLineWidth(2f);
+
+      float radius = getBodyCircle().getRadius();
+      Point pos = Camera.getCamera().toView(getBody().getPosition());
+      org.newdawn.slick.geom.Circle viewCircle = new org.newdawn.slick.geom.Circle(
+              pos.getX(), pos.getY(), radius);
+      g.draw(viewCircle);
+
+      g.setLineWidth(1f);
    }
 
    public void drawBody(Graphics g, Point pos, float alpha)
