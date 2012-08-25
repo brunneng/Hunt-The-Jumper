@@ -25,6 +25,7 @@ void main()
     //colorOut = vec4(color, a);
 
     vec2 pos = ( gl_FragCoord.xy / resolution.xy );
+    pos.y = 0.75 - pos.y;
     colorOut = texture2D(passability, pos);
     //colorOut = vec4(clamp(colorOut[0]+0.2, 0, 1), colorOut[1], colorOut[2], colorOut[3]);
 } 
