@@ -881,7 +881,6 @@ public class SinglePlayerMatchState extends AbstractMatchState
          ligthProgram.setUniform3f("color", 1f, 1f, 1f);
 
          lightPassability.bind();
-
          ligthProgram.setUniform1i("passability", 0);
 
          g.fillRect(viewPos.getX() - lightRadius, viewPos.getY() - lightRadius,
@@ -889,7 +888,7 @@ public class SinglePlayerMatchState extends AbstractMatchState
 //         g.drawImage(passLocalImage, viewPos.getX() - lightRadius, viewPos.getY() - lightRadius);
       }
 
-//      ShaderProgram.unbind();
+      ShaderProgram.unbind();
 //      g.drawImage(lightPassability, 0, 0);
       g.setAntiAlias(true);
    }
