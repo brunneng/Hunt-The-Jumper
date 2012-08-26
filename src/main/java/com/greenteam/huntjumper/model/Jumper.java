@@ -270,16 +270,16 @@ public class Jumper implements IGameObject, IParametersUser, IMapObject, ILightp
    }
 
    @Override
-   public void drawBorder(Graphics g)
+   public void drawLightProofBody(Graphics g)
    {
-      g.setColor(LIGTH_BORDER_COLOR);
+      g.setColor(Color.black);
       g.setLineWidth(2f);
 
       float radius = getBodyCircle().getRadius();
       Point pos = Camera.getCamera().toView(getBody().getPosition());
       org.newdawn.slick.geom.Circle viewCircle = new org.newdawn.slick.geom.Circle(
               pos.getX(), pos.getY(), radius);
-      g.draw(viewCircle);
+      g.fill(viewCircle);
 
       g.setLineWidth(1f);
    }

@@ -9,7 +9,6 @@ import org.newdawn.slick.Graphics;
 public interface ILightproof
 {
    static final Color LIGHT_FREE_COLOR = Color.white;
-   static final Color LIGTH_BORDER_COLOR = Color.black;
 
-   void drawBorder(Graphics g);
+   void drawLightProofBody(Graphics g);
 }

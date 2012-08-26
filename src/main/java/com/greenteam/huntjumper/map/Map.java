@@ -236,7 +236,14 @@ public class Map implements IVisibleObject, ILightproof
          viewRect = new Rectangle(0, 0, c.getViewWidth(), c.getViewHeight());
       }
       g.fill(viewRect);
-      
+
+      drawLightProofBody(g);
+   }
+
+   @Override
+   public void drawLightProofBody(Graphics g)
+   {
+      Camera c = Camera.getCamera();
       Vector2D tv = map.getTranslationVector();
       Point p = new Point(-tv.getX(), -tv.getY());
       Point viewPoint = c.toView(p);
@@ -246,18 +253,6 @@ public class Map implements IVisibleObject, ILightproof
 
       g.setColor(ViewConstants.DEFAULT_MAP_COLOR);
       g.setAntiAlias(true);
-      g.setLineWidth(2);
-      for (StaticBody b : allPolygons)
-      {
-         drawContours(g, b);
-      }
-      g.setLineWidth(1);
-   }
-
-   @Override
-   public void drawBorder(Graphics g)
-   {
-      g.setColor(LIGTH_BORDER_COLOR);
       g.setLineWidth(2);
       for (StaticBody b : allPolygons)
       {

@@ -836,9 +836,9 @@ public class SinglePlayerMatchState extends AbstractMatchState
       }
 
       map.draw(g);
-      drawJumpers(g);
       drawLight(g);
 
+      drawJumpers(g);
       drawCoins(g);
       drawBonuses(g);
 
@@ -861,10 +861,10 @@ public class SinglePlayerMatchState extends AbstractMatchState
       passGraphics.setColor(ILightproof.LIGHT_FREE_COLOR);
       passGraphics.fillRect(0, 0, VIEW_WIDTH, VIEW_HEIGHT);
 
-      map.drawBorder(passGraphics);
+      map.drawLightProofBody(passGraphics);
       for (Jumper j : jumpers)
       {
-         j.drawBorder(passGraphics);
+         j.drawLightProofBody(passGraphics);
       }
       passGraphics.flush();
 
