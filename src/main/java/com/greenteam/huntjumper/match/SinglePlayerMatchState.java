@@ -878,6 +878,7 @@ public class SinglePlayerMatchState extends AbstractMatchState
          shadersSystem.setPosition(ligthProgram, viewPos.getX(), viewPos.getY());
          shadersSystem.setResolution(ligthProgram, VIEW_WIDTH, VIEW_WIDTH);
          ligthProgram.setUniform1f("lightCircle", j.getBodyCircle().getRadius() + 2);
+         ligthProgram.setUniform1f("lightMaxDist", lightRadius);
          ligthProgram.setUniform3f("color", 1f, 1f, 1f);
 
          lightPassability.bind();
