@@ -83,6 +83,10 @@ public class SinglePlayerMatchState extends AbstractMatchState
    private LinkedList<Integer> beforeEndNotifications = new LinkedList<Integer>();
    private boolean gameFinished = false;
 
+   private List<ILightproof> lightproofObjects = new ArrayList<>();
+   private List<ILightSource> lightSources = new ArrayList<>();
+   private Image lightPassability;
+
    private TimeAccumulator createCoinsAccumulator = new TimeAccumulator(
            GameConstants.COIN_APPEAR_INTERVAL);
 
@@ -847,7 +851,6 @@ public class SinglePlayerMatchState extends AbstractMatchState
       EffectsContainer.getInstance().drawEffects(g);
    }
 
-   Image lightPassability;
    private void drawLight(Graphics g) throws SlickException
    {
       g.setAntiAlias(false);
@@ -861,37 +864,56 @@ public class SinglePlayerMatchState extends AbstractMatchState
       passGraphics.setColor(ILightproof.LIGHT_FREE_COLOR);
       passGraphics.fillRect(0, 0, VIEW_WIDTH, VIEW_HEIGHT);
 
-      map.drawLightProofBody(passGraphics);
-      for (Jumper j : jumpers)
+      initLightproofObjects();
+      for (ILightproof lightproof : lightproofObjects)
       {
-         j.drawLightProofBody(passGraphics);
+         lightproof.drawLightProofBody(passGraphics);
       }
       passGraphics.flush();
 
       initLightShader();
       ShadersSystem shadersSystem = ShadersSystem.getInstance();
-      final float lightRadius = 300;
-      for (Jumper j : jumpers)
+
+      initLightSources();
+      for (ILightSource lightSource : lightSources)
       {
-         Point viewPos = Camera.getCamera().toView(j.getPosition());
+         Point viewPos = Camera.getCamera().toView(lightSource.getPosition());
          ligthProgram.bind();
-         shadersSystem.setPosition(ligthProgram, viewPos.getX(), viewPos.getY());
+         shadersSystem.setPosition(ligthProgram, viewPos);
          shadersSystem.setResolution(ligthProgram, VIEW_WIDTH, VIEW_WIDTH);
-         ligthProgram.setUniform1f("lightCircle", j.getBodyCircle().getRadius() + 2);
+         shadersSystem.setColor(ligthProgram, Color.white);
+
+         ligthProgram.setUniform1f("lightCircle", lightSource.getLightCircle());
+
+         final float lightRadius = lightSource.getLightMaxRadius();
          ligthProgram.setUniform1f("lightMaxDist", lightRadius);
-         ligthProgram.setUniform3f("color", 1f, 1f, 1f);
 
          lightPassability.bind();
          ligthProgram.setUniform1i("passability", 0);
 
          g.fillRect(viewPos.getX() - lightRadius, viewPos.getY() - lightRadius,
                  2*lightRadius, 2*lightRadius);
-//         g.drawImage(passLocalImage, viewPos.getX() - lightRadius, viewPos.getY() - lightRadius);
       }
 
       ShaderProgram.unbind();
-//      g.drawImage(lightPassability, 0, 0);
       g.setAntiAlias(true);
+   }
+
+   private void initLightproofObjects()
+   {
+      lightproofObjects.clear();
+      lightproofObjects.add(map);
+      lightproofObjects.addAll(jumpers);
+   }
+
+   private void initLightSources()
+   {
+      lightSources.clear();
+      lightSources.addAll(jumpers);
+      lightSources.addAll(coins);
+      lightSources.addAll(positiveBonuses);
+      lightSources.addAll(neutralBonuses);
+      lightSources.addAll(negativeBonuses);
    }
 
    private void drawJumpers(Graphics g)

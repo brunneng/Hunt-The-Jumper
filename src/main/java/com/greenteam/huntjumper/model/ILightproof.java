@@ -1,4 +1,4 @@
-package com.greenteam.huntjumper.match;
+package com.greenteam.huntjumper.model;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;

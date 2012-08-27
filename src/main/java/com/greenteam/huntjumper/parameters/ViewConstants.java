@@ -18,7 +18,7 @@ public final class ViewConstants
    public static final int VIEW_HEIGHT = 768;
    public static final String GAME_NAME = "Hunt the Jumper";
    public static final Color DEFAULT_MAP_COLOR = new Color(114, 114, 114);
-   public static final Color DEFAULT_GROUND_COLOR = new Color(190, 190, 190);
+   public static final Color DEFAULT_GROUND_COLOR = new Color(199, 199, 199);
    public static final float DRAW_NAME_MAX_RADIUS = GameConstants.JUMPER_RADIUS*7;
 
    public static final Color JUMPER_BORDER_COLOR = Color.black;
@@ -120,4 +120,8 @@ public final class ViewConstants
    public static final float INELASTIC_BONUS_EFFECT_MOVE_TO_JUMPER = 500f;
    public static final float INELASTIC_BONUS_BASE_RADIUS_FACTOR = 1.4f;
    public static final float INELASTIC_BONUS_SECOND_LINE_WIDTH = 2f;
+
+   public static final float JUMPER_LIGHT_MAX_RADIUS = 300f;
+   public static final float COIN_LIGHT_MAX_RADIUS = 20f;
+   public static final float PHYS_BONUS_MAX_RADIUS = 30f;
 }

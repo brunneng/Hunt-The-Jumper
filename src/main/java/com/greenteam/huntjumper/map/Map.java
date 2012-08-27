@@ -1,7 +1,7 @@
 package com.greenteam.huntjumper.map;
 
 import com.greenteam.huntjumper.match.Camera;
-import com.greenteam.huntjumper.match.ILightproof;
+import com.greenteam.huntjumper.model.ILightproof;
 import com.greenteam.huntjumper.match.IVisibleObject;
 import com.greenteam.huntjumper.match.InitializationScreen;
 import com.greenteam.huntjumper.parameters.GameConstants;

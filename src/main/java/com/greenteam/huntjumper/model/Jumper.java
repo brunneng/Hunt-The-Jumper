@@ -4,7 +4,6 @@ import com.greenteam.huntjumper.*;
 import com.greenteam.huntjumper.contoller.AbstractJumperController;
 import com.greenteam.huntjumper.match.Camera;
 import com.greenteam.huntjumper.match.IGameObject;
-import com.greenteam.huntjumper.match.ILightproof;
 import com.greenteam.huntjumper.match.TimeAccumulator;
 import com.greenteam.huntjumper.model.bonuses.IJumperBonusEffect;
 import com.greenteam.huntjumper.model.parameters.IParametersUser;
@@ -27,7 +26,7 @@ import static com.greenteam.huntjumper.utils.Vector2D.fromRadianAngleAndLength;
 /**
  * User: GreenTea Date: 14.01.12 Time: 21:11
  */
-public class Jumper implements IGameObject, IParametersUser, IMapObject, ILightproof
+public class Jumper implements IGameObject, IParametersUser, IMapObject, ILightproof, ILightSource
 {
    private String playerName;
 
@@ -388,4 +387,21 @@ public class Jumper implements IGameObject, IParametersUser, IMapObject, ILightp
       g.setLineWidth(1);
    }
 
+   @Override
+   public Color getLightColor()
+   {
+      return Color.white;
+   }
+
+   @Override
+   public float getLightCircle()
+   {
+      return getBodyCircle().getRadius();
+   }
+
+   @Override
+   public float getLightMaxRadius()
+   {
+      return JUMPER_LIGHT_MAX_RADIUS;
+   }
 }

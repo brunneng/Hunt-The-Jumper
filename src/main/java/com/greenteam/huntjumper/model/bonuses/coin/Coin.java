@@ -6,6 +6,7 @@ import com.greenteam.huntjumper.effects.particles.ParticleEntity;
 import com.greenteam.huntjumper.match.Camera;
 import com.greenteam.huntjumper.match.EffectsContainer;
 import com.greenteam.huntjumper.match.FlyUpTextEffect;
+import com.greenteam.huntjumper.model.ILightSource;
 import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.model.bonuses.IBonus;
 import com.greenteam.huntjumper.parameters.GameConstants;
@@ -30,7 +31,7 @@ import java.util.List;
 /**
  * User: GreenTea Date: 10.07.12 Time: 0:16
  */
-public class Coin implements IBonus
+public class Coin implements IBonus, ILightSource
 {
    private static ShaderProgram program;
 
@@ -139,5 +140,23 @@ public class Coin implements IBonus
               match.getMyJumper().getBody().getPosition(), jumper.getBody().getPosition());
 
       EffectsContainer.getInstance().addAllEffects(createTakeCoinParticles());
+   }
+
+   @Override
+   public Color getLightColor()
+   {
+      return Color.white;
+   }
+
+   @Override
+   public float getLightCircle()
+   {
+      return 0;
+   }
+
+   @Override
+   public float getLightMaxRadius()
+   {
+      return ViewConstants.COIN_LIGHT_MAX_RADIUS;
    }
 }
