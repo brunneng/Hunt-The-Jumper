@@ -88,7 +88,7 @@ public class Map implements IVisibleObject, ILightproof
             boolean value = map.isFree(x, y);
             if (!value)
             {
-               float scale = 0.2f * (rand.nextFloat() - 0.5f);
+               float scale = 0.5f * (rand.nextFloat() - 0.5f);
                Color c = ViewConstants.DEFAULT_MAP_COLOR.brighter(scale);
 
                imageBuffer.setRGBA(x - startX, y - startY,
