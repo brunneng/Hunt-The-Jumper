@@ -40,8 +40,9 @@ void main()
     if (a > 0)
     {
         vec2 vecFromLightOne = vecFromLight / distFromLight;
-        float currLightLen = distFromLight;
+        float currLightLen = distFromLight+1;
 
+        bool testFailedForFirst = false;
         bool testFailed = false;
         while (currLightLen > lightCircle+2.5)
         {
@@ -50,22 +51,28 @@ void main()
 
             if (!isFree(testPoint))
             {
-                testFailed = true;
-                break;
+                if (currLightLen > distFromLight)
+                {
+                    testFailedForFirst = true;
+                }
+                else
+                {
+                    testFailed = true;
+                    break;
+                }
             }
 
             currLightLen -= 1;
         }
 
+        if (testFailedForFirst)
+        {
+            a = (1.0 + a)/2.0;
+        }
         if (!testFailed)
         {
             colorOut = vec4(color, a);
         }
+
     }
-
-
-    //colorOut = vec4(color, a);
-
-    //colorOut = passColor(gl_FragCoord.xy);
-    //colorOut = vec4(clamp(colorOut[0]+0.2, 0, 1), colorOut[1], colorOut[2], colorOut[3]);
 } 
