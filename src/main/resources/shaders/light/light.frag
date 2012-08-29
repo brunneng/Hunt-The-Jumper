@@ -40,10 +40,10 @@ void main()
     if (a > 0)
     {
         vec2 vecFromLightOne = vecFromLight / distFromLight;
-        float currLightLen = lightCircle+2.5;
+        float currLightLen = distFromLight;
 
         bool testFailed = false;
-        while (currLightLen < distFromLight)
+        while (currLightLen > lightCircle+2.5)
         {
             vec2 currVecFromLight = vecFromLightOne*currLightLen;
             vec2 testPoint = position + currVecFromLight;
@@ -54,7 +54,7 @@ void main()
                 break;
             }
 
-            currLightLen += 1;
+            currLightLen -= 1;
         }
 
         if (!testFailed)
