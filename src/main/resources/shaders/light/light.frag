@@ -62,7 +62,7 @@ void main()
                 }
             }
 
-            currLightLen -= 1;
+            currLightLen -= 2;
         }
 
         if (testFailedForFirst)
