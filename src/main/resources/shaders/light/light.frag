@@ -62,7 +62,14 @@ void main()
                 }
             }
 
-            currLightLen -= 2;
+            if (currLightLen > distFromLight)
+            {
+                currLightLen -= 1;
+            }
+            else
+            {
+                currLightLen -= 4;
+            }
         }
 
         if (testFailedForFirst)

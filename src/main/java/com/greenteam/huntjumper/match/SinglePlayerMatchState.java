@@ -31,6 +31,7 @@ import net.phys2d.raw.CollisionEvent;
 import net.phys2d.raw.StaticBody;
 import net.phys2d.raw.World;
 import org.newdawn.slick.*;
+import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Ellipse;
 import org.newdawn.slick.geom.RoundedRectangle;
 import org.newdawn.slick.opengl.shader.ShaderProgram;
@@ -881,7 +882,7 @@ public class SinglePlayerMatchState extends AbstractMatchState
          ligthProgram.bind();
          shadersSystem.setPosition(ligthProgram, viewPos);
          shadersSystem.setResolution(ligthProgram, VIEW_WIDTH, VIEW_WIDTH);
-         shadersSystem.setColor(ligthProgram, Color.white);
+         shadersSystem.setColor(ligthProgram, lightSource.getLightColor());
 
          ligthProgram.setUniform1f("lightCircle", lightSource.getLightCircle());
 

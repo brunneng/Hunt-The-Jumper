@@ -18,7 +18,7 @@ public final class ViewConstants
    public static final int VIEW_HEIGHT = 768;
    public static final String GAME_NAME = "Hunt the Jumper";
    public static final Color DEFAULT_MAP_COLOR = new Color(84, 84, 84);
-   public static final Color DEFAULT_GROUND_COLOR = new Color(199, 199, 199);
+   public static final Color DEFAULT_GROUND_COLOR = /*Color.black;*/new Color(199, 199, 199);
    public static final float DRAW_NAME_MAX_RADIUS = GameConstants.JUMPER_RADIUS*7;
 
    public static final Color JUMPER_BORDER_COLOR = Color.black;

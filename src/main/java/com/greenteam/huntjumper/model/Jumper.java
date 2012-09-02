@@ -390,7 +390,7 @@ public class Jumper implements IGameObject, IParametersUser, IMapObject, ILightp
    @Override
    public Color getLightColor()
    {
-      return Color.white;
+      return Color.white;//getColor().darker(0.6f);
    }
 
    @Override
