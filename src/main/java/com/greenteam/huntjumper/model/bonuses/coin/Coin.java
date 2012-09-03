@@ -68,6 +68,10 @@ public class Coin implements IBonus, ILightSource
       init();
 
       Point viewPos = Camera.getCamera().toView(pos);
+      if (!Camera.getCamera().inViewScreenWithReserve(viewPos))
+      {
+         return;
+      }
 
       ShadersSystem shadersSystem = ShadersSystem.getInstance();
       program.bind();

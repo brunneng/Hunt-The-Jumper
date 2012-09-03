@@ -68,6 +68,11 @@ public class GravityBonusEffect extends AbstractBonusEffect
    {
       float baseRadius = GameConstants.JUMPER_RADIUS;
       Point viewPos = Camera.getCamera().toView(jumper.getBody().getPosition());
+      if (!Camera.getCamera().inViewScreenWithReserve(viewPos))
+      {
+         return;
+      }
+
       float moveToJumperFactor = ringsMoveAccumulator.getTotalTimeInMilliseconds() /
               ViewConstants.GRAVITY_BONUS_MOVE_TO_JUMPER_TIME;
       if (moveToJumperFactor < 1f)

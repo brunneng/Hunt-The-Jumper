@@ -102,7 +102,10 @@ public class InelasticBonus extends AbstractNegativeBonus
    public void draw(Graphics g)
    {
       Point viewPos = Camera.getCamera().toView(body.getPosition());
-
+      if (!Camera.getCamera().inViewScreenWithReserve(viewPos))
+      {
+         return;
+      }
 
       g.setColor(Color.gray);
       g.setLineWidth(1);

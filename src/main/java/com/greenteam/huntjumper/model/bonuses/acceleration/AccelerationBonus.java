@@ -101,7 +101,11 @@ public class AccelerationBonus extends AbstractPositiveBonus
    @Override
    public void draw(Graphics g)
    {
-      Point pos = Camera.getCamera().toView(getBody().getPosition());
+      Point viewPos = Camera.getCamera().toView(getBody().getPosition());
+      if (!Camera.getCamera().inViewScreenWithReserve(viewPos))
+      {
+         return;
+      }
 
       float dr = GameConstants.ACCELERATION_BONUS_RADIUS / particlesAccumulators.size();
       for (int i = 0, particlesAccumulatorsSize = particlesAccumulators.size();
@@ -119,14 +123,14 @@ public class AccelerationBonus extends AbstractPositiveBonus
          g.setLineWidth(1f);
 
          Vector2D drawVector = Vector2D.fromAngleAndLength(angle, radiusToCenter);
-         Point prevPoint = pos.plus(drawVector);
+         Point prevPoint = viewPos.plus(drawVector);
          Point currPoint;
 
          g.setLineWidth(particleRadius);
          for (int da = 0; da <= fadeAngleLength + Float.MIN_VALUE; da += fadeAngleStep)
          {
             drawVector = drawVector.rotate(-fadeAngleStep);
-            currPoint = pos.plus(drawVector);
+            currPoint = viewPos.plus(drawVector);
 
             float alpha = (1f - da / fadeAngleLength);
             Color c = Utils.toColorWithAlpha(fadeColor, alpha);

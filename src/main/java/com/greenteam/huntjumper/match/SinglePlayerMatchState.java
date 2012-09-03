@@ -31,7 +31,6 @@ import net.phys2d.raw.CollisionEvent;
 import net.phys2d.raw.StaticBody;
 import net.phys2d.raw.World;
 import org.newdawn.slick.*;
-import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Ellipse;
 import org.newdawn.slick.geom.RoundedRectangle;
 import org.newdawn.slick.opengl.shader.ShaderProgram;
@@ -879,6 +878,11 @@ public class SinglePlayerMatchState extends AbstractMatchState
       for (ILightSource lightSource : lightSources)
       {
          Point viewPos = Camera.getCamera().toView(lightSource.getPosition());
+         if (!Camera.getCamera().inViewScreenWithReserve(viewPos))
+         {
+            continue;
+         }
+
          ligthProgram.bind();
          shadersSystem.setPosition(ligthProgram, viewPos);
          shadersSystem.setResolution(ligthProgram, VIEW_WIDTH, VIEW_WIDTH);

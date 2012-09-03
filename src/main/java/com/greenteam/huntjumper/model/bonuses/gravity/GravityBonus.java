@@ -50,6 +50,10 @@ public class GravityBonus extends AbstractNeutralBonus
    public void draw(Graphics g)
    {
       Point viewPos = Camera.getCamera().toView(getPosition());
+      if (!Camera.getCamera().inViewScreenWithReserve(viewPos))
+      {
+         return;
+      }
 
       float distBetweenRings = ViewConstants.GRAVITY_BONUS_DIST_BETWEEN_RINGS;
 

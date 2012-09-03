@@ -312,7 +312,13 @@ public class Jumper implements IGameObject, IParametersUser, IMapObject, ILightp
    public void draw(Graphics g)
    {
       drawFade(g);
+
       Point viewCenter = Camera.getCamera().toView(getBody().getPosition());
+      if (!Camera.getCamera().inViewScreenWithReserve(viewCenter))
+      {
+         return;
+      }
+
       drawBody(g, viewCenter, 1f);
 
       if (GameConstants.PATH_FINDING_DEBUG)

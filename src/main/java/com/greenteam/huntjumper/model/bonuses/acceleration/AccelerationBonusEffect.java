@@ -54,6 +54,10 @@ public class AccelerationBonusEffect extends AbstractBonusEffect
    public void draw(Graphics g)
    {
       Point pos = Camera.getCamera().toView(jumper.getBody().getPosition());
+      if (!Camera.getCamera().inViewScreenWithReserve(pos))
+      {
+         return;
+      }
 
       float angle = 360f*rotationAccumulator.getAccumulatorValue() /
               rotationAccumulator.getCycleLength();

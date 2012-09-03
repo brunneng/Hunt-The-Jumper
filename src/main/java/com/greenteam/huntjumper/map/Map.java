@@ -266,15 +266,19 @@ public class Map implements IVisibleObject, ILightproof
       net.phys2d.raw.shapes.Polygon poly = (net.phys2d.raw.shapes.Polygon)b.getShape();
       ROVector2f[] vertices = poly.getVertices();
 
+      Camera c = Camera.getCamera();
       Point firstPoint = null;
       Point currPoint = null;
       for (int i = 0; i < vertices.length; ++i)
       {
          ROVector2f v = vertices[i];
-         Point nextPoint = Camera.getCamera().toView(v);
+         Point nextPoint = c.toView(v);
          if (currPoint != null)
          {
-            g.drawLine(currPoint.getX(), currPoint.getY(), nextPoint.getX(), nextPoint.getY());
+            if (c.inViewScreenWithReserve(currPoint) || c.inViewScreenWithReserve(nextPoint))
+            {
+               g.drawLine(currPoint.getX(), currPoint.getY(), nextPoint.getX(), nextPoint.getY());
+            }
          }
          currPoint = nextPoint;
          if (firstPoint == null)

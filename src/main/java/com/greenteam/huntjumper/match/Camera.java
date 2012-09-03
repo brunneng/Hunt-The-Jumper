@@ -100,6 +100,15 @@ public class Camera implements IUpdateable
       return new Point(viewPoint.getX() + minX, viewPoint.getY() + minY);
    }
 
+   public boolean inViewScreenWithReserve(Point viewPoint)
+   {
+      final float distReserve = 100f;
+      return viewPoint.getX() > -distReserve &&
+             viewPoint.getY() > -distReserve &&
+             viewPoint.getX() < getViewWidth() + distReserve &&
+             viewPoint.getY() < getViewHeight() + distReserve;
+   }
+
    public boolean contains(ROVector2f p)
    {
       Range xRange = new Range(minX, minX + getViewWidth());

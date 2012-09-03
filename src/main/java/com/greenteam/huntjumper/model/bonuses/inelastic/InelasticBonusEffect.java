@@ -68,6 +68,10 @@ public class InelasticBonusEffect extends AbstractBonusEffect
       float baseRadius = GameConstants.JUMPER_RADIUS *
               ViewConstants.INELASTIC_BONUS_BASE_RADIUS_FACTOR;
       Point viewPos = Camera.getCamera().toView(jumper.getBody().getPosition());
+      if (!Camera.getCamera().inViewScreenWithReserve(viewPos))
+      {
+         return;
+      }
 
       if (effectMoveToJumperAccumulator != null)
       {
