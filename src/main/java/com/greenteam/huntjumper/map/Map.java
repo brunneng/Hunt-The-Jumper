@@ -10,10 +10,7 @@ import com.greenteam.huntjumper.utils.*;
 import com.greenteam.huntjumper.utils.pathfinding.PathFinder;
 import net.phys2d.math.ROVector2f;
 import net.phys2d.raw.StaticBody;
-import org.newdawn.slick.Color;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Image;
-import org.newdawn.slick.ImageBuffer;
+import org.newdawn.slick.*;
 import org.newdawn.slick.geom.Rectangle;
 
 import java.util.ArrayList;
@@ -25,6 +22,24 @@ import java.util.Random;
  */
 public class Map implements IVisibleObject, ILightproof
 {
+   private static Image wallImage;
+
+   private static void init()
+   {
+      if (wallImage != null)
+      {
+         return;
+      }
+
+      try
+      {
+         wallImage = new Image("images/wall_texture.png", Color.white);
+      }
+      catch (SlickException e)
+      {
+      }
+   }
+
    private List<StaticBody> allPolygons;
 
    private final int SMALL_IMAGE_SIZE = 128;
@@ -71,8 +86,11 @@ public class Map implements IVisibleObject, ILightproof
       detailMapPathFinder.setMaxSearchDepth(GameConstants.PATH_FINDING_DETAIL_SEARCH_MAX_DEPTH);
    }
 
+   static long sumTime = 0;
    private Image createSmallImage(int sx, int sy)
    {
+      init();
+
       Random rand = Utils.rand;
       ImageBuffer imageBuffer = new ImageBuffer(SMALL_IMAGE_SIZE, SMALL_IMAGE_SIZE);
 
@@ -81,6 +99,10 @@ public class Map implements IVisibleObject, ILightproof
       int endX = Math.min(startX + SMALL_IMAGE_SIZE, map.countX);
       int endY = Math.min(startY + SMALL_IMAGE_SIZE, map.countY);
 
+      int dx = rand.nextInt(SMALL_IMAGE_SIZE);
+      int dy = rand.nextInt(SMALL_IMAGE_SIZE);
+
+      long start = System.currentTimeMillis();
       for (int x = startX; x < endX; ++x)
       {
          for (int y = startY; y < endY; ++y)
@@ -88,14 +110,18 @@ public class Map implements IVisibleObject, ILightproof
             boolean value = map.isFree(x, y);
             if (!value)
             {
-               float scale = 0.5f * (rand.nextFloat() - 0.5f);
-               Color c = ViewConstants.DEFAULT_MAP_COLOR.brighter(scale);
+               Color c = wallImage.getColor((x + dx) % wallImage.getWidth(),
+                       (y + dy) % wallImage.getHeight());
 
                imageBuffer.setRGBA(x - startX, y - startY,
                        c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha());
             }
          }
       }
+
+      long time = System.currentTimeMillis() - start;
+      sumTime += time;
+      System.out.println(sumTime);
 
       return imageBuffer.getImage();
    }
