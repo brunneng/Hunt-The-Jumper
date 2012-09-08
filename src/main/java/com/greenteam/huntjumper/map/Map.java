@@ -33,7 +33,7 @@ public class Map implements IVisibleObject, ILightproof
 
       try
       {
-         wallImage = new Image("images/wall_texture3.png", Color.white);
+         wallImage = new Image("images/wall_texture4.png", Color.white);
       }
       catch (SlickException e)
       {
