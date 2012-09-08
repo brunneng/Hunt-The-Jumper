@@ -33,7 +33,7 @@ public class Map implements IVisibleObject, ILightproof
 
       try
       {
-         wallImage = new Image("images/wall_texture.png", Color.white);
+         wallImage = new Image("images/wall_texture3.png", Color.white);
       }
       catch (SlickException e)
       {
@@ -86,7 +86,6 @@ public class Map implements IVisibleObject, ILightproof
       detailMapPathFinder.setMaxSearchDepth(GameConstants.PATH_FINDING_DETAIL_SEARCH_MAX_DEPTH);
    }
 
-   static long sumTime = 0;
    private Image createSmallImage(int sx, int sy)
    {
       init();
@@ -99,10 +98,9 @@ public class Map implements IVisibleObject, ILightproof
       int endX = Math.min(startX + SMALL_IMAGE_SIZE, map.countX);
       int endY = Math.min(startY + SMALL_IMAGE_SIZE, map.countY);
 
-      int dx = rand.nextInt(SMALL_IMAGE_SIZE);
-      int dy = rand.nextInt(SMALL_IMAGE_SIZE);
+      int dx = rand.nextInt(wallImage.getWidth());
+      int dy = rand.nextInt(wallImage.getHeight());
 
-      long start = System.currentTimeMillis();
       for (int x = startX; x < endX; ++x)
       {
          for (int y = startY; y < endY; ++y)
@@ -118,10 +116,6 @@ public class Map implements IVisibleObject, ILightproof
             }
          }
       }
-
-      long time = System.currentTimeMillis() - start;
-      sumTime += time;
-      System.out.println(sumTime);
 
       return imageBuffer.getImage();
    }
