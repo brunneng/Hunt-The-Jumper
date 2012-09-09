@@ -34,6 +34,7 @@ public class Jumper implements IGameObject, IParametersUser, IMapObject, ILightp
    private Color paintColor;
    private Circle bodyCircle;
    private Body body;
+   private org.newdawn.slick.geom.Circle viewCircle;
 
    private JumperRole jumperRole;
    private AbstractJumperController controller;
@@ -274,10 +275,13 @@ public class Jumper implements IGameObject, IParametersUser, IMapObject, ILightp
       g.setColor(Color.black);
       g.setLineWidth(2f);
 
-      float radius = getBodyCircle().getRadius();
       Point pos = Camera.getCamera().toView(getBody().getPosition());
-      org.newdawn.slick.geom.Circle viewCircle = new org.newdawn.slick.geom.Circle(
-              pos.getX(), pos.getY(), radius);
+      if (!Camera.getCamera().inViewScreenWithReserve(pos))
+      {
+         return;
+      }
+
+      updateViewCircle(pos);
       g.fill(viewCircle);
 
       g.setLineWidth(1f);
@@ -287,8 +291,7 @@ public class Jumper implements IGameObject, IParametersUser, IMapObject, ILightp
    {
       float radius = getBodyCircle().getRadius();
 
-      org.newdawn.slick.geom.Circle viewCircle = new org.newdawn.slick.geom.Circle(
-              pos.getX(), pos.getY(), radius);
+      updateViewCircle(pos);
 
       g.setColor(Utils.toColorWithAlpha(getColor(), alpha));
       g.fill(viewCircle);
@@ -308,7 +311,23 @@ public class Jumper implements IGameObject, IParametersUser, IMapObject, ILightp
          rotationDirection = rotationDirection.rotate(anglePerSegment);
       }
    }
-   
+
+   private void updateViewCircle(Point pos)
+   {
+      float radius =getBodyCircle().getRadius();
+      if (viewCircle == null)
+      {
+         viewCircle = new org.newdawn.slick.geom.Circle(
+                 pos.getX(), pos.getY(), radius);
+      }
+      else
+      {
+         viewCircle.setCenterX(pos.getX());
+         viewCircle.setCenterY(pos.getY());
+         viewCircle.setRadius(radius);
+      }
+   }
+
    public void draw(Graphics g)
    {
       drawFade(g);

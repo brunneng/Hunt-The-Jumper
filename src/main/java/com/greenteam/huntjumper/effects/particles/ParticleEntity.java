@@ -164,6 +164,11 @@ public class ParticleEntity extends Effect
       float curRadius = getCurrentRadius();
       
       Point pos = Camera.getCamera().toView(position);
+      if (!Camera.getCamera().inViewScreenWithReserve(pos))
+      {
+         return;
+      }
+
       float x = pos.getX();
       float y = pos.getY();
 

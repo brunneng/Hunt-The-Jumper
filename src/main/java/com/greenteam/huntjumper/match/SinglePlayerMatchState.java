@@ -328,6 +328,7 @@ public class SinglePlayerMatchState extends AbstractMatchState
       }).start();
    }
 
+   long sumTime = 0;
    public void update(int delta) throws SlickException
    {
       if (!initialized)
@@ -840,7 +841,10 @@ public class SinglePlayerMatchState extends AbstractMatchState
       }
 
       map.draw(g);
+      //long time = System.currentTimeMillis();
       drawLight(g);
+      //time = System.currentTimeMillis() - time;
+      //sumTime += time;
 
       drawJumpers(g);
       drawCoins(g);
@@ -848,7 +852,10 @@ public class SinglePlayerMatchState extends AbstractMatchState
 
       arrowsVisualizer.draw(g);
       drawInterface(g);
+
       EffectsContainer.getInstance().drawEffects(g);
+
+      //System.out.println(sumTime);
    }
 
    private void drawLight(Graphics g) throws SlickException
