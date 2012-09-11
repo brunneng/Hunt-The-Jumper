@@ -293,12 +293,10 @@ public class Map implements IVisibleObject, ILightproof
       {
          ROVector2f v = vertices[i];
          Point nextPoint = c.toView(v);
-         if (currPoint != null)
+         if (currPoint != null &&
+                 (c.inViewScreenWithReserve(currPoint) || c.inViewScreenWithReserve(nextPoint)))
          {
-            if (c.inViewScreenWithReserve(currPoint) || c.inViewScreenWithReserve(nextPoint))
-            {
-               g.drawLine(currPoint.getX(), currPoint.getY(), nextPoint.getX(), nextPoint.getY());
-            }
+            g.drawLine(currPoint.getX(), currPoint.getY(), nextPoint.getX(), nextPoint.getY());
          }
          currPoint = nextPoint;
          if (firstPoint == null)
@@ -306,7 +304,8 @@ public class Map implements IVisibleObject, ILightproof
             firstPoint = currPoint;
          }
       }
-      if (currPoint != null)
+      if (currPoint != null &&
+              (c.inViewScreenWithReserve(currPoint) || c.inViewScreenWithReserve(firstPoint)))
       {
          g.drawLine(currPoint.getX(), currPoint.getY(), firstPoint.getX(), firstPoint.getY());
       }

@@ -76,7 +76,7 @@ public class SinglePlayerMatchState extends AbstractMatchState
 
    private Jumper myJumper;
 
-   private TimeAccumulator updateTimeAccumulator = new TimeAccumulator();
+   private TimeAccumulator updateTimeAccumulator = new TimeAccumulator(10);
    private InitializationScreen initializationScreen;
    private ArrowsVisualizer arrowsVisualizer;
    private GameContainer gameContainer;
@@ -85,6 +85,7 @@ public class SinglePlayerMatchState extends AbstractMatchState
 
    private List<ILightproof> lightproofObjects = new ArrayList<>();
    private List<ILightSource> lightSources = new ArrayList<>();
+   private boolean needUpdateLightPassibility = true;
    private Image lightPassability;
 
    private TimeAccumulator createCoinsAccumulator = new TimeAccumulator(
@@ -840,11 +841,9 @@ public class SinglePlayerMatchState extends AbstractMatchState
          return;
       }
 
+//      long time = System.currentTimeMillis();
       map.draw(g);
-      //long time = System.currentTimeMillis();
       drawLight(g);
-      //time = System.currentTimeMillis() - time;
-      //sumTime += time;
 
       drawJumpers(g);
       drawCoins(g);
@@ -854,8 +853,9 @@ public class SinglePlayerMatchState extends AbstractMatchState
       drawInterface(g);
 
       EffectsContainer.getInstance().drawEffects(g);
-
-      //System.out.println(sumTime);
+//      time = System.currentTimeMillis() - time;
+//      sumTime += time;
+//      System.out.println(sumTime);
    }
 
    private void drawLight(Graphics g) throws SlickException
@@ -865,18 +865,23 @@ public class SinglePlayerMatchState extends AbstractMatchState
       {
          lightPassability = new Image(VIEW_WIDTH, VIEW_HEIGHT);
       }
-      Graphics passGraphics = lightPassability.getGraphics();
-      passGraphics.setAntiAlias(false);
 
-      passGraphics.setColor(ILightproof.LIGHT_FREE_COLOR);
-      passGraphics.fillRect(0, 0, VIEW_WIDTH, VIEW_HEIGHT);
-
-      initLightproofObjects();
-      for (ILightproof lightproof : lightproofObjects)
+      if (needUpdateLightPassibility)
       {
-         lightproof.drawLightProofBody(passGraphics);
+         Graphics passGraphics = lightPassability.getGraphics();
+         passGraphics.setAntiAlias(false);
+
+         passGraphics.setColor(ILightproof.LIGHT_FREE_COLOR);
+         passGraphics.fillRect(0, 0, VIEW_WIDTH, VIEW_HEIGHT);
+
+         initLightproofObjects();
+         for (ILightproof lightproof : lightproofObjects)
+         {
+            lightproof.drawLightProofBody(passGraphics);
+         }
+         passGraphics.flush();
+         needUpdateLightPassibility = false;
       }
-      passGraphics.flush();
 
       initLightShader();
       ShadersSystem shadersSystem = ShadersSystem.getInstance();

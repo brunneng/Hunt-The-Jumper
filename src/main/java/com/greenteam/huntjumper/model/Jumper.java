@@ -34,6 +34,9 @@ public class Jumper implements IGameObject, IParametersUser, IMapObject, ILightp
    private Color paintColor;
    private Circle bodyCircle;
    private Body body;
+
+   private org.newdawn.slick.geom.Circle[] viewCirclesCache = new org.newdawn.slick.geom.Circle[2];
+   private int currentCircleIndex = 0;
    private org.newdawn.slick.geom.Circle viewCircle;
 
    private JumperRole jumperRole;
@@ -314,17 +317,38 @@ public class Jumper implements IGameObject, IParametersUser, IMapObject, ILightp
 
    private void updateViewCircle(Point pos)
    {
-      float radius =getBodyCircle().getRadius();
-      if (viewCircle == null)
+      float radius = getBodyCircle().getRadius();
+      boolean circleFound = false;
+      for (int i = 0; i < viewCirclesCache.length; ++i)
       {
-         viewCircle = new org.newdawn.slick.geom.Circle(
-                 pos.getX(), pos.getY(), radius);
+         org.newdawn.slick.geom.Circle currCircle = viewCirclesCache[i];
+         if (currCircle != null &&
+                 Utils.equals(currCircle.getRadius(), radius) &&
+                 Utils.equals(currCircle.getCenterX(), pos.getX()) &&
+                 Utils.equals(currCircle.getCenterY(), pos.getY()))
+         {
+            viewCircle = currCircle;
+            circleFound = true;
+            break;
+         }
       }
-      else
+      if (!circleFound)
       {
-         viewCircle.setCenterX(pos.getX());
-         viewCircle.setCenterY(pos.getY());
-         viewCircle.setRadius(radius);
+         if (viewCirclesCache[currentCircleIndex] == null)
+         {
+            viewCirclesCache[currentCircleIndex] = new org.newdawn.slick.geom.Circle(
+                    pos.getX(), pos.getY(), radius);
+            viewCircle = viewCirclesCache[currentCircleIndex];
+         }
+         else
+         {
+            viewCircle = viewCirclesCache[currentCircleIndex];
+            viewCircle.setCenterX(pos.getX());
+            viewCircle.setCenterY(pos.getY());
+            viewCircle.setRadius(radius);
+         }
+
+         currentCircleIndex = (currentCircleIndex + 1) % viewCirclesCache.length;
       }
    }
 
@@ -373,7 +397,6 @@ public class Jumper implements IGameObject, IParametersUser, IMapObject, ILightp
          effect.draw(g);
       }
    }
-
 
    private void drawName(Graphics g, Point viewCenter, float radius)
    {
