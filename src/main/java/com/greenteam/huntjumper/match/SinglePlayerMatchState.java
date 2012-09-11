@@ -362,6 +362,7 @@ public class SinglePlayerMatchState extends AbstractMatchState
          updateRolesByTimer();
          scoresManager.update(dt);
          checkGameIsFinished();
+         needUpdateLightPassibility = true;
       }
       AudioSystem.getInstance().update(delta);
    }
@@ -858,9 +859,8 @@ public class SinglePlayerMatchState extends AbstractMatchState
 //      System.out.println(sumTime);
    }
 
-   private void drawLight(Graphics g) throws SlickException
+   private void tryUpdateLightPassibility() throws SlickException
    {
-      g.setAntiAlias(false);
       if (lightPassability == null)
       {
          lightPassability = new Image(VIEW_WIDTH, VIEW_HEIGHT);
@@ -882,6 +882,13 @@ public class SinglePlayerMatchState extends AbstractMatchState
          passGraphics.flush();
          needUpdateLightPassibility = false;
       }
+   }
+
+   private void drawLight(Graphics g) throws SlickException
+   {
+      g.setAntiAlias(false);
+
+      tryUpdateLightPassibility();
 
       initLightShader();
       ShadersSystem shadersSystem = ShadersSystem.getInstance();
