@@ -4,6 +4,8 @@ import com.greenteam.huntjumper.match.SinglePlayerMatchState;
 import com.greenteam.huntjumper.menu.INextStateProvider;
 import com.greenteam.huntjumper.menu.MapSelectionMenu;
 import com.greenteam.huntjumper.menu.ScreenMenu;
+import com.greenteam.huntjumper.parameters.GameConstants;
+import com.greenteam.huntjumper.parameters.ParametersUtils;
 import com.greenteam.huntjumper.parameters.ViewConstants;
 import com.greenteam.huntjumper.shaders.ShadersSystem;
 import org.newdawn.slick.*;
@@ -30,6 +32,8 @@ public class HuntJumperGame implements Game
    @Override
    public void init(GameContainer container) throws SlickException
    {
+      ParametersUtils.overrideParameters(GameConstants.class, "game.properties");
+
       game = this;
       gameContainer = container;
       container.setShowFPS(true);
