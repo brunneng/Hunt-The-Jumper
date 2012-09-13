@@ -42,10 +42,10 @@ public class ShadersSystem
 
    public void init()
    {
-      supported = GLContext.getCapabilities().OpenGL15;
+      supported = GLContext.getCapabilities().OpenGL32;
       if (!supported)
       {
-         System.out.println("WARNING: OpenGL version 1.5 is not supported. Disable using shaders.");
+         System.out.println("WARNING: OpenGL version 3.2 is not supported. Disable using shaders.");
       }
       else
       {
