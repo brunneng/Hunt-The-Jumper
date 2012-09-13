@@ -34,6 +34,7 @@ import java.util.List;
 public class Coin implements IBonus, ILightSource
 {
    private static ShaderProgram program;
+   private static Image coinImage;
 
    private static final float width = ViewConstants.COIN_SPHERE_RECT_WIDTH;
    private static List<Color> colors = Arrays.asList(Color.red, Color.green, Color.blue);
@@ -41,12 +42,26 @@ public class Coin implements IBonus, ILightSource
 
    private static void init()
    {
-      if (program != null)
+      if (program != null || coinImage != null)
       {
          return;
       }
 
-      program = ShadersSystem.getInstance().getProgram(Shader.COIN);
+      if (ShadersSystem.getInstance().isSupported())
+      {
+         program = ShadersSystem.getInstance().getProgram(Shader.COIN);
+      }
+      else
+      {
+         try
+         {
+            coinImage = new Image("images/coin.png");
+         }
+         catch (SlickException e)
+         {
+            e.printStackTrace();
+         }
+      }
    }
 
    private Point pos;
@@ -74,16 +89,36 @@ public class Coin implements IBonus, ILightSource
       }
 
       ShadersSystem shadersSystem = ShadersSystem.getInstance();
-      program.bind();
-      shadersSystem.setPosition(program, viewPos.getX(), viewPos.getY());
-      program.setUniform1f("sphereRadius", width/2f);
-      program.setUniform1f("angle", rotationVector.angle());
-      program.setUniform1f("len", rotationVector.length());
+      if (shadersSystem.isSupported())
+      {
+         program.bind();
+         shadersSystem.setPosition(program, viewPos.getX(), viewPos.getY());
+         program.setUniform1f("sphereRadius", width/2f);
+         program.setUniform1f("angle", rotationVector.angle());
+         program.setUniform1f("len", rotationVector.length());
 
-      float dxy = width/2f + rotationVector.length();
-      g.fillRect(viewPos.getX() - dxy, viewPos.getY() - dxy, 2*dxy, 2*dxy);
+         float dxy = width/2f + rotationVector.length();
+         g.fillRect(viewPos.getX() - dxy, viewPos.getY() - dxy, 2*dxy, 2*dxy);
 
-      ShaderProgram.unbind();
+         ShaderProgram.unbind();
+      }
+      else
+      {
+         float dxy = coinImage.getWidth() / 2f;
+
+         Vector2D dir = new Vector2D(rotationVector);
+         float rotationAngle = 360 / colors.size();
+         for (Color c : colors)
+         {
+            g.drawImage(
+                    coinImage, viewPos.getX()+dir.getX() - dxy,
+                    viewPos.getY()+dir.getY() - dxy,
+                    c);
+            dir = dir.rotate(rotationAngle);
+         }
+
+         g.drawImage(coinImage, viewPos.getX() - dxy, viewPos.getY() - dxy, Color.white);
+      }
    }
 
    private List<ParticleEntity> createTakeCoinParticles()

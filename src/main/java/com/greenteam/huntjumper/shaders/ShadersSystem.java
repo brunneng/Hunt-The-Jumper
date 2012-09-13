@@ -2,6 +2,8 @@ package com.greenteam.huntjumper.shaders;
 
 import com.greenteam.huntjumper.match.Camera;
 import com.greenteam.huntjumper.utils.Point;
+import org.lwjgl.opengl.ContextCapabilities;
+import org.lwjgl.opengl.GLContext;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.opengl.shader.ShaderProgram;
@@ -17,6 +19,7 @@ public class ShadersSystem
    private static ShadersSystem instance = new ShadersSystem();
 
    private Map<Shader, ShaderProgram> programs = new EnumMap<Shader, ShaderProgram>(Shader.class);
+   private boolean supported;
 
    public static ShadersSystem getInstance()
    {
@@ -32,20 +35,32 @@ public class ShadersSystem
       return programs.get(shaderKey);
    }
 
+   public boolean isSupported()
+   {
+      return supported;
+   }
+
    public void init()
    {
-      ShaderProgram.setStrictMode(false);
-      for (Shader s : Shader.values())
+      supported = GLContext.getCapabilities().OpenGL15;
+      if (!supported)
       {
-         try
+         System.out.println("WARNING: OpenGL version 1.5 is not supported. Disable using shaders.");
+      }
+      else
+      {
+         for (Shader s : Shader.values())
          {
-            ShaderProgram program = ShaderProgram.loadProgram(s.getPathToVertexShader(),
-                    s.getPathToPixelShader());
-            programs.put(s, program);
-         }
-         catch (SlickException e)
-         {
-            throw new RuntimeException(e);
+            try
+            {
+               ShaderProgram program = ShaderProgram.loadProgram(s.getPathToVertexShader(),
+                       s.getPathToPixelShader());
+               programs.put(s, program);
+            }
+            catch (SlickException e)
+            {
+               throw new RuntimeException(e);
+            }
          }
       }
    }

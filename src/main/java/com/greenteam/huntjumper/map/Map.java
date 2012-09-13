@@ -6,6 +6,7 @@ import com.greenteam.huntjumper.match.IVisibleObject;
 import com.greenteam.huntjumper.match.InitializationScreen;
 import com.greenteam.huntjumper.parameters.GameConstants;
 import com.greenteam.huntjumper.parameters.ViewConstants;
+import com.greenteam.huntjumper.shaders.ShadersSystem;
 import com.greenteam.huntjumper.utils.*;
 import com.greenteam.huntjumper.utils.pathfinding.PathFinder;
 import net.phys2d.math.ROVector2f;
@@ -249,7 +250,9 @@ public class Map implements IVisibleObject, ILightproof
    public void draw(Graphics g)
    {
       Camera c = Camera.getCamera();
-      g.setColor(ViewConstants.DEFAULT_GROUND_COLOR);
+      g.setColor(ShadersSystem.getInstance().isSupported() ?
+              ViewConstants.DEFAULT_GROUND_COLOR_WITH_SHADERS :
+              ViewConstants.DEFAULT_GROUND_COLOR_NO_SHADERS);
 
       if (viewRect == null)
       {

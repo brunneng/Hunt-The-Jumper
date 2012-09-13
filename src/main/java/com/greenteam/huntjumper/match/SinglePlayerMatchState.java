@@ -62,7 +62,7 @@ public class SinglePlayerMatchState extends AbstractMatchState
    private static ShaderProgram ligthProgram;
    private static void initLightShader()
    {
-      if (ligthProgram != null)
+      if (ligthProgram != null || !ShadersSystem.getInstance().isSupported())
       {
          return;
       }
@@ -887,12 +887,17 @@ public class SinglePlayerMatchState extends AbstractMatchState
 
    private void drawLight(Graphics g) throws SlickException
    {
+      ShadersSystem shadersSystem = ShadersSystem.getInstance();
+      if (!shadersSystem.isSupported())
+      {
+         return;
+      }
+
       g.setAntiAlias(false);
 
       tryUpdateLightPassibility();
 
       initLightShader();
-      ShadersSystem shadersSystem = ShadersSystem.getInstance();
 
       initLightSources();
       for (ILightSource lightSource : lightSources)
