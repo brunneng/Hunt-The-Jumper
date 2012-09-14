@@ -45,7 +45,7 @@ public class ShadersSystem
       supported = GLContext.getCapabilities().OpenGL32;
       if (!supported)
       {
-         System.out.println("WARNING: OpenGL version 3.2 is not supported. Disable using shaders.");
+         System.out.println("WARNING: OpenGL version 3.2 is not supported. Disable shaders system.");
       }
       else
       {

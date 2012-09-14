@@ -245,7 +245,6 @@ public class Map implements IVisibleObject, ILightproof
    }
 
    private Rectangle viewRect; // memory optimization
-
    @Override
    public void draw(Graphics g)
    {
@@ -316,6 +315,7 @@ public class Map implements IVisibleObject, ILightproof
    }
 
    //static int imagesCount = 0;
+   private boolean firstPrepareBackImages = true;
    private void prepareBackImages(Camera c, Point viewPoint)
    {
       int topLeftSx = -(int)viewPoint.getX() / SMALL_IMAGE_SIZE;
@@ -328,7 +328,7 @@ public class Map implements IVisibleObject, ILightproof
       int sYLen = (c.getViewHeight() / SMALL_IMAGE_SIZE) + border*2;
       int bottomRightSx = topLeftSx + sXLen;
       int bottomRightSy = topLeftSy + sYLen;
-      for (int sx = 0; sx < mapImages.length; ++sx)
+      A: for (int sx = 0; sx < mapImages.length; ++sx)
       {
          for (int sy = 0; sy < mapImages[sx].length; ++sy)
          {
@@ -340,9 +340,15 @@ public class Map implements IVisibleObject, ILightproof
             {
                //System.out.println("image created " + imagesCount++);
                mapImages[sx][sy] = createSmallImage(sx, sy);
+               if (!firstPrepareBackImages)
+               {
+                  break A;
+               }
             }
          }
       }
+
+      firstPrepareBackImages = false;
    }
 
    private void drawBackImages(Point viewPoint)
