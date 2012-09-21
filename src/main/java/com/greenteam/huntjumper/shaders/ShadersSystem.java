@@ -1,6 +1,7 @@
 package com.greenteam.huntjumper.shaders;
 
 import com.greenteam.huntjumper.match.Camera;
+import com.greenteam.huntjumper.parameters.GameConstants;
 import com.greenteam.huntjumper.utils.Point;
 import org.lwjgl.opengl.ContextCapabilities;
 import org.lwjgl.opengl.GLContext;
@@ -20,6 +21,7 @@ public class ShadersSystem
 
    private Map<Shader, ShaderProgram> programs = new EnumMap<Shader, ShaderProgram>(Shader.class);
    private boolean supported;
+   private boolean enabled = true;
 
    public static ShadersSystem getInstance()
    {
@@ -35,9 +37,9 @@ public class ShadersSystem
       return programs.get(shaderKey);
    }
 
-   public boolean isSupported()
+   public boolean isReady()
    {
-      return supported;
+      return supported && enabled;
    }
 
    public void init()
@@ -49,17 +51,25 @@ public class ShadersSystem
       }
       else
       {
-         for (Shader s : Shader.values())
+         if (GameConstants.DISABLE_SHADERS)
          {
-            try
+            enabled = false;
+            System.out.println("INFO: Shaders disabled from config.");
+         }
+         else
+         {
+            for (Shader s : Shader.values())
             {
-               ShaderProgram program = ShaderProgram.loadProgram(s.getPathToVertexShader(),
-                       s.getPathToPixelShader());
-               programs.put(s, program);
-            }
-            catch (SlickException e)
-            {
-               throw new RuntimeException(e);
+               try
+               {
+                  ShaderProgram program = ShaderProgram.loadProgram(s.getPathToVertexShader(),
+                          s.getPathToPixelShader());
+                  programs.put(s, program);
+               }
+               catch (SlickException e)
+               {
+                  throw new RuntimeException(e);
+               }
             }
          }
       }

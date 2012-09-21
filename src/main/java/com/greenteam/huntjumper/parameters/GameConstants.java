@@ -77,4 +77,6 @@ public class GameConstants
    public static float INELASTIC_BONUS_RADIUS = 10f;
    public static int INELASTIC_BONUS_EFFECT_DURATION = 20000;
    public static float INELASTIC_BONUS_EFFECT_FACTOR = 0.35f;
+
+   public static boolean DISABLE_SHADERS = false;
 }

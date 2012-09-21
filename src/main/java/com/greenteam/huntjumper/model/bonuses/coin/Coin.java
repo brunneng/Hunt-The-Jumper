@@ -17,7 +17,6 @@ import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.Utils;
 import com.greenteam.huntjumper.utils.Vector2D;
 import net.phys2d.math.ROVector2f;
-import org.lwjgl.opengl.GL42;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -47,7 +46,7 @@ public class Coin implements IBonus, ILightSource
          return;
       }
 
-      if (ShadersSystem.getInstance().isSupported())
+      if (ShadersSystem.getInstance().isReady())
       {
          program = ShadersSystem.getInstance().getProgram(Shader.COIN);
       }
@@ -89,7 +88,7 @@ public class Coin implements IBonus, ILightSource
       }
 
       ShadersSystem shadersSystem = ShadersSystem.getInstance();
-      if (shadersSystem.isSupported())
+      if (shadersSystem.isReady())
       {
          program.bind();
          shadersSystem.setPosition(program, viewPos.getX(), viewPos.getY());

@@ -249,7 +249,7 @@ public class Map implements IVisibleObject, ILightproof
    public void draw(Graphics g)
    {
       Camera c = Camera.getCamera();
-      g.setColor(ShadersSystem.getInstance().isSupported() ?
+      g.setColor(ShadersSystem.getInstance().isReady() ?
               ViewConstants.DEFAULT_GROUND_COLOR_WITH_SHADERS :
               ViewConstants.DEFAULT_GROUND_COLOR_NO_SHADERS);
 
@@ -339,6 +339,8 @@ public class Map implements IVisibleObject, ILightproof
             else if (mapImages[sx][sy] == null)
             {
                //System.out.println("image created " + imagesCount++);
+
+               destroyImage(sx, sy);
                mapImages[sx][sy] = createSmallImage(sx, sy);
                if (!firstPrepareBackImages)
                {
@@ -349,6 +351,22 @@ public class Map implements IVisibleObject, ILightproof
       }
 
       firstPrepareBackImages = false;
+   }
+
+   private void destroyImage(int sx, int sy)
+   {
+      if (mapImages[sx][sy] != null)
+      {
+         try
+         {
+            mapImages[sx][sy].destroy();
+            mapImages[sx][sy] = null;
+         }
+         catch (SlickException e)
+         {
+            e.printStackTrace();
+         }
+      }
    }
 
    private void drawBackImages(Point viewPoint)

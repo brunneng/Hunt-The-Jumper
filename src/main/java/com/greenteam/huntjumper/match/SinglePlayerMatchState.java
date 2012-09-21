@@ -18,7 +18,6 @@ import com.greenteam.huntjumper.model.bonuses.coin.Coin;
 import com.greenteam.huntjumper.model.bonuses.gravity.GravityBonus;
 import com.greenteam.huntjumper.model.bonuses.inelastic.InelasticBonus;
 import com.greenteam.huntjumper.parameters.GameConstants;
-import com.greenteam.huntjumper.parameters.ParametersUtils;
 import com.greenteam.huntjumper.parameters.ViewConstants;
 import com.greenteam.huntjumper.shaders.Shader;
 import com.greenteam.huntjumper.shaders.ShadersSystem;
@@ -62,7 +61,7 @@ public class SinglePlayerMatchState extends AbstractMatchState
    private static ShaderProgram ligthProgram;
    private static void initLightShader()
    {
-      if (ligthProgram != null || !ShadersSystem.getInstance().isSupported())
+      if (ligthProgram != null || !ShadersSystem.getInstance().isReady())
       {
          return;
       }
@@ -888,7 +887,7 @@ public class SinglePlayerMatchState extends AbstractMatchState
    private void drawLight(Graphics g) throws SlickException
    {
       ShadersSystem shadersSystem = ShadersSystem.getInstance();
-      if (!shadersSystem.isSupported())
+      if (!shadersSystem.isReady())
       {
          return;
       }

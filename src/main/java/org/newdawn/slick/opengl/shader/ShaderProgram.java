@@ -160,7 +160,7 @@ public class ShaderProgram {
     * source code. The given source code is compiled, then the shaders attached
     * and linked.
     *
-    * If shaders are not supported on this system (isSupported returns false),
+    * If shaders are not supported on this system (isReady returns false),
     * a SlickException will be thrown.
     *
     * If one of the shaders does not compile successfully, a SlickException will be thrown.
@@ -212,7 +212,7 @@ public class ShaderProgram {
          throw new SlickException("no shader support found; driver does not support extension GL_ARB_shader_objects");
       int program = ARBShaderObjects.glCreateProgramObjectARB();
       if (program == 0)
-         throw new SlickException("could not create program; check ShaderProgram.isSupported()");
+         throw new SlickException("could not create program; check ShaderProgram.isReady()");
       return program;
    }
 
@@ -236,7 +236,7 @@ public class ShaderProgram {
    protected int compileShader(int type, String source) throws SlickException {
       int shader = ARBShaderObjects.glCreateShaderObjectARB(type);
       if (shader==0)
-         throw new SlickException("could not create shader object; check ShaderProgram.isSupported()");
+         throw new SlickException("could not create shader object; check ShaderProgram.isReady()");
       ARBShaderObjects.glShaderSourceARB(shader, source);
       ARBShaderObjects.glCompileShaderARB(shader);
       int comp = ARBShaderObjects.glGetObjectParameteriARB(shader, GL20.GL_COMPILE_STATUS);
