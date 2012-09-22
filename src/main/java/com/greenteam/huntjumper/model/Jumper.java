@@ -2,9 +2,7 @@ package com.greenteam.huntjumper.model;
 
 import com.greenteam.huntjumper.*;
 import com.greenteam.huntjumper.contoller.AbstractJumperController;
-import com.greenteam.huntjumper.match.Camera;
-import com.greenteam.huntjumper.match.IGameObject;
-import com.greenteam.huntjumper.match.TimeAccumulator;
+import com.greenteam.huntjumper.match.*;
 import com.greenteam.huntjumper.model.bonuses.IJumperBonusEffect;
 import com.greenteam.huntjumper.model.parameters.IParametersUser;
 import com.greenteam.huntjumper.model.parameters.ParameterType;
@@ -26,7 +24,7 @@ import static com.greenteam.huntjumper.utils.Vector2D.fromRadianAngleAndLength;
 /**
  * User: GreenTea Date: 14.01.12 Time: 21:11
  */
-public class Jumper implements IGameObject, IParametersUser, IMapObject, ILightproof, ILightSource
+public class Jumper extends AbstractMapObject implements IParametersUser, IMapObject, ILightproof, ILightSource
 {
    private String playerName;
 
@@ -55,6 +53,7 @@ public class Jumper implements IGameObject, IParametersUser, IMapObject, ILightp
    public Jumper(String playerName, Color color, ROVector2f startPos,
                  AbstractJumperController controller, JumperRole jumperRole)
    {
+      super(GameObjectIdFactory.getInstance().getNextId(MapObjectType.JUMPER));
       this.playerName = playerName;
       this.color = color;
       this.paintColor = Utils.isBright(color) ? Color.black : Color.white;

@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * User: GreenTea Date: 25.01.12 Time: 20:49
  */
-public class JumperInfo implements IMapObject
+public class JumperInfo extends AbstractMapObject
 {
    public static JumperInfo getNearest(List<JumperInfo> infos, JumperRole jumperRole, Point p)
    {
@@ -68,6 +68,7 @@ public class JumperInfo implements IMapObject
 
    public JumperInfo(Jumper jumper)
    {
+      super(jumper.getIdentifier());
       Body body = jumper.getBody();
       position = new Point(body.getPosition());
       velocity = new Vector2D(body.getVelocity());

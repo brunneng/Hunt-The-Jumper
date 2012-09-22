@@ -1,6 +1,7 @@
 package com.greenteam.huntjumper.utils;
 
 import com.greenteam.huntjumper.model.IMapObject;
+import net.phys2d.raw.Body;
 import org.newdawn.slick.Color;
 
 import java.util.ArrayList;
@@ -150,6 +151,20 @@ public final class Utils
       }
 
       return res;
+   }
+
+   public static <T> T getUserDataOfClass(Body body, Class<T> clazz)
+   {
+      Object userData = body.getUserData();
+      if (userData != null)
+      {
+         if (!clazz.isAssignableFrom(userData.getClass()))
+         {
+            userData = null;
+         }
+      }
+
+      return (T)userData;
    }
 
 }

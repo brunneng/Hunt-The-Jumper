@@ -1,5 +1,6 @@
 package com.greenteam.huntjumper.model;
 
+import com.greenteam.huntjumper.match.MapObjectId;
 import com.greenteam.huntjumper.utils.Point;
 
 /**
@@ -7,5 +8,6 @@ import com.greenteam.huntjumper.utils.Point;
  */
 public interface IMapObject
 {
+   MapObjectId getIdentifier();
    Point getPosition();
 }

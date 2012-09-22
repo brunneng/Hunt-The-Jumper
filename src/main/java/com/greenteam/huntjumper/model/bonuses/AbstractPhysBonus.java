@@ -1,5 +1,8 @@
 package com.greenteam.huntjumper.model.bonuses;
 
+import com.greenteam.huntjumper.match.GameObjectIdFactory;
+import com.greenteam.huntjumper.match.MapObjectType;
+import com.greenteam.huntjumper.model.AbstractMapObject;
 import com.greenteam.huntjumper.model.ILightSource;
 import com.greenteam.huntjumper.model.JumperInfo;
 import com.greenteam.huntjumper.parameters.ViewConstants;
@@ -12,7 +15,7 @@ import java.util.List;
 /**
  * User: GreenTea Date: 18.07.12 Time: 0:00
  */
-public abstract class AbstractPhysBonus implements IBonus, ILightSource
+public abstract class AbstractPhysBonus extends AbstractMapObject implements IBonus, ILightSource
 {
    public static interface WorldInformationSource
    {
@@ -25,6 +28,7 @@ public abstract class AbstractPhysBonus implements IBonus, ILightSource
 
    public AbstractPhysBonus(WorldInformationSource worldInformationSource, float acceleration)
    {
+      super(GameObjectIdFactory.getInstance().getNextId(MapObjectType.BONUS));
       this.world = worldInformationSource;
       this.acceleration = acceleration;
    }

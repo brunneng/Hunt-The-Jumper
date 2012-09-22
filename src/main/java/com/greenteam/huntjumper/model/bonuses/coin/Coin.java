@@ -3,9 +3,8 @@ package com.greenteam.huntjumper.model.bonuses.coin;
 import com.greenteam.huntjumper.IMatch;
 import com.greenteam.huntjumper.audio.AudioSystem;
 import com.greenteam.huntjumper.effects.particles.ParticleEntity;
-import com.greenteam.huntjumper.match.Camera;
-import com.greenteam.huntjumper.match.EffectsContainer;
-import com.greenteam.huntjumper.match.FlyUpTextEffect;
+import com.greenteam.huntjumper.match.*;
+import com.greenteam.huntjumper.model.AbstractMapObject;
 import com.greenteam.huntjumper.model.ILightSource;
 import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.model.bonuses.IBonus;
@@ -30,7 +29,7 @@ import java.util.List;
 /**
  * User: GreenTea Date: 10.07.12 Time: 0:16
  */
-public class Coin implements IBonus, ILightSource
+public class Coin extends AbstractMapObject implements IBonus, ILightSource
 {
    private static ShaderProgram program;
    private static Image coinImage;
@@ -67,6 +66,7 @@ public class Coin implements IBonus, ILightSource
 
    public Coin(Point pos)
    {
+      super(GameObjectIdFactory.getInstance().getNextId(MapObjectType.BONUS));
       this.pos = pos;
    }
 
