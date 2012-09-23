@@ -8,6 +8,11 @@ import com.greenteam.huntjumper.effects.Effect;
 import com.greenteam.huntjumper.effects.particles.ParticleEntity;
 import com.greenteam.huntjumper.effects.particles.ParticleType;
 import com.greenteam.huntjumper.effects.particles.TypedParticleGenerator;
+import com.greenteam.huntjumper.events.Event;
+import com.greenteam.huntjumper.events.IEventExecutionContext;
+import com.greenteam.huntjumper.events.MapObjectAddEvent;
+import com.greenteam.huntjumper.events.MapObjectRemoveEvent;
+import com.greenteam.huntjumper.map.AvailabilityMap;
 import com.greenteam.huntjumper.map.Map;
 import com.greenteam.huntjumper.model.*;
 import com.greenteam.huntjumper.model.bonuses.AbstractNegativeBonus;
@@ -20,24 +25,26 @@ import com.greenteam.huntjumper.model.bonuses.gravity.GravityBonus;
 import com.greenteam.huntjumper.model.bonuses.inelastic.InelasticBonus;
 import com.greenteam.huntjumper.parameters.GameConstants;
 import com.greenteam.huntjumper.parameters.ViewConstants;
-import com.greenteam.huntjumper.shaders.Shader;
 import com.greenteam.huntjumper.shaders.ShadersSystem;
 import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.TextUtils;
 import com.greenteam.huntjumper.utils.Utils;
 import com.greenteam.huntjumper.utils.Vector2D;
+import net.phys2d.math.Vector2f;
 import net.phys2d.raw.Body;
 import net.phys2d.raw.CollisionEvent;
+import net.phys2d.raw.StaticBody;
 import net.phys2d.raw.World;
 import org.newdawn.slick.*;
 import org.newdawn.slick.geom.Ellipse;
 import org.newdawn.slick.geom.RoundedRectangle;
-import org.newdawn.slick.opengl.shader.ShaderProgram;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.*;
 
+import static com.greenteam.huntjumper.parameters.GameConstants.COIN_RADIUS;
 import static com.greenteam.huntjumper.parameters.GameConstants.DEFAULT_GAME_TIME;
 import static com.greenteam.huntjumper.parameters.GameConstants.TIME_TO_BECOME_SUPER_HUNTER;
 import static com.greenteam.huntjumper.parameters.ViewConstants.*;
@@ -47,7 +54,8 @@ import static com.greenteam.huntjumper.parameters.ViewConstants.BEFORE_END_NOTIF
 /**
  * User: GreenTea Date: 17.07.12 Time: 22:22
  */
-public abstract class AbstractMatchState extends AbstractGameState implements IMatch
+public abstract class AbstractMatchState extends AbstractGameState implements IMatch,
+        IEventExecutionContext
 {
    private static List<Class<? extends AbstractPhysBonus>> allBonusClasses = new ArrayList<>();
    static
@@ -57,24 +65,14 @@ public abstract class AbstractMatchState extends AbstractGameState implements IM
       allBonusClasses.add(InelasticBonus.class);
    }
 
-   private static ShaderProgram ligthProgram;
-   private static void initLightShader()
-   {
-      if (ligthProgram != null || !ShadersSystem.getInstance().isReady())
-      {
-         return;
-      }
-
-      ligthProgram = ShadersSystem.getInstance().getProgram(Shader.LIGHT);
-   }
-
    protected TimeAccumulator updateTimeAccumulator = new TimeAccumulator(10);
    protected GameContainer gameContainer;
 
-   protected World world;
+   private World world;
    protected File mapFile;
    protected Map map;
-   protected List<Jumper> jumpers = new ArrayList<Jumper>();
+   private List<Jumper> jumpers = new ArrayList<Jumper>();
+   private List<Jumper> unmodifiableJumpersList = Collections.unmodifiableList(jumpers);
 
    protected Jumper myJumper;
    protected LinkedList<Integer> beforeEndNotifications = new LinkedList<Integer>();
@@ -83,15 +81,29 @@ public abstract class AbstractMatchState extends AbstractGameState implements IM
    protected ArrowsVisualizer arrowsVisualizer;
 
    protected Set<Coin> coins = new HashSet<>();
-   protected Set<AbstractPositiveBonus> positiveBonuses = new HashSet<>();
-   protected Set<AbstractNeutralBonus> neutralBonuses = new HashSet<>();
-   protected Set<AbstractNegativeBonus> negativeBonuses = new HashSet<>();
-   protected Set<AbstractPhysBonus> allPhysBonuses = new HashSet<>();
+   protected Set<AbstractPhysBonus> physBonuses = new HashSet<>();
+   private int positiveBonusesCount;
+   private int neutralBonusesCount;
+   private int negativeBonusesCount;
 
-   private List<ILightproof> lightproofObjects = new ArrayList<>();
-   private List<ILightSource> lightSources = new ArrayList<>();
-   protected boolean needUpdateLightPassibility = true;
-   private Image lightPassability;
+   private TimeAccumulator createCoinsAccumulator = new TimeAccumulator(
+           GameConstants.COIN_APPEAR_INTERVAL);
+
+   private TimeAccumulator createPositiveBonusesAccumulator = new TimeAccumulator(
+           GameConstants.BONUS_APPEAR_INTERVAL);
+
+   private TimeAccumulator createNeutralBonusesAccumulator = new TimeAccumulator(
+           GameConstants.BONUS_APPEAR_INTERVAL);
+   private TimeAccumulator createNegativeBonusesAccumulator = new TimeAccumulator(
+           GameConstants.BONUS_APPEAR_INTERVAL);
+
+   private java.util.Map<MapObjectId, IMapObject> mapObjects = new HashMap<>();
+
+   private LightDrawer lightDrawer;
+
+   protected List<Event> executedEvents = new ArrayList<>();
+   protected List<Event> eventsForExecute = new ArrayList<>();
+   protected List<Event> eventsForRollback = new ArrayList<>();
 
    protected ScoresManager scoresManager;
 
@@ -107,6 +119,36 @@ public abstract class AbstractMatchState extends AbstractGameState implements IM
       gameContainer = HuntJumperGame.getInstance().getGameContainer();
       initializationScreen = InitializationScreen.getInstance();
       beforeEndNotifications.addAll(GameConstants.NOTIFY_TIMES_BEFORE_END);
+   }
+
+   protected void initWorld(int iterationsCount)
+   {
+      world = new World(new Vector2f(0f, 0f), iterationsCount);
+   }
+
+   protected void stepWorld(int dt)
+   {
+      world.step(0.001f * dt);
+   }
+
+   protected void initMap()
+   {
+      try
+      {
+         initializationScreen.setStatus("Loading map: " + mapFile.getName(), null);
+         AvailabilityMap availabilityMap = new AvailabilityMap(mapFile);
+
+         map = new Map(availabilityMap);
+      }
+      catch (IOException e)
+      {
+         throw new RuntimeException(e);
+      }
+
+      for (StaticBody body : map.getAllPolygons())
+      {
+         world.add(body);
+      }
    }
 
    protected void initCamera()
@@ -169,6 +211,18 @@ public abstract class AbstractMatchState extends AbstractGameState implements IM
       return map.isCircleFree(p, GameConstants.JUMPER_RADIUS) &&
               p.inRange(resultJumperPositions.subList(0, currentJumperIndex),
                       GameConstants.JUMPER_RADIUS * 2).size() == 0;
+   }
+
+   protected void addJumper(Jumper jumper)
+   {
+      jumpers.add(jumper);
+      world.add(jumper.getBody());
+      mapObjects.put(jumper.getIdentifier(), jumper);
+   }
+
+   protected List<Jumper> getJumpers()
+   {
+      return unmodifiableJumpersList;
    }
 
    public List<Point> getJumperPositionsOnFreePoints(List<Point> initialJumperPositions)
@@ -347,6 +401,28 @@ public abstract class AbstractMatchState extends AbstractGameState implements IM
       }
    }
 
+   protected void processEvents()
+   {
+      for (Event e : eventsForExecute)
+      {
+         e.execute(this);
+      }
+
+      for (Event e : eventsForRollback)
+      {
+         if (e.isRollbackSupported())
+         {
+            e.rollback(this);
+         }
+      }
+
+      executedEvents.addAll(eventsForExecute);
+      eventsForExecute.clear();
+
+      executedEvents.removeAll(eventsForRollback);
+      eventsForRollback.clear();
+   }
+
    protected void updateCoins(int dt)
    {
       for (Coin c : coins)
@@ -357,7 +433,7 @@ public abstract class AbstractMatchState extends AbstractGameState implements IM
 
    protected void updateBonuses(int dt)
    {
-      for (AbstractPhysBonus b : allPhysBonuses)
+      for (AbstractPhysBonus b : physBonuses)
       {
          b.update(dt);
       }
@@ -376,7 +452,7 @@ public abstract class AbstractMatchState extends AbstractGameState implements IM
                     GameConstants.JUMPER_RADIUS + GameConstants.COIN_RADIUS)
             {
                i.remove();
-
+               eventsForExecute.add(new MapObjectRemoveEvent(c.getIdentifier(), getCurrentGameTime()));
                c.onBonusTaken(this, j);
 
                continue A;
@@ -405,44 +481,82 @@ public abstract class AbstractMatchState extends AbstractGameState implements IM
                if (bonus != null)
                {
                   bonus.onBonusTaken(this, j);
-                  world.remove(bonus.getBody());
-                  if (bonus instanceof AbstractPositiveBonus)
-                  {
-                     positiveBonuses.remove(bonus);
-                  }
-                  else if (bonus instanceof AbstractNeutralBonus)
-                  {
-                     neutralBonuses.remove(bonus);
-                  }
-                  else
-                  {
-                     negativeBonuses.remove(bonus);
-                  }
-                  allPhysBonuses.remove(bonus);
+                  eventsForExecute.add(new MapObjectRemoveEvent(bonus.getIdentifier(), getCurrentGameTime()));
                }
             }
          }
       }
    }
 
-   protected <T extends AbstractPhysBonus> T createRandomBonus(Point pos, Class<T> bonusClazz)
+   protected void createBonuses(int dt)
+   {
+      createNewBonus(createPositiveBonusesAccumulator,
+              dt, AbstractPositiveBonus.class);
+      createNewBonus(createNeutralBonusesAccumulator,
+              dt, AbstractNeutralBonus.class);
+      createNewBonus(createNegativeBonusesAccumulator,
+              dt, AbstractNegativeBonus.class);
+   }
+
+   protected void createNewCoin(int dt)
+   {
+      if (createCoinsAccumulator.update(dt) == 0 || coins.size() >= GameConstants.MAX_COINS_ON_MAP)
+      {
+         return;
+      }
+
+      Point pos = getRandomBonusPos(COIN_RADIUS);
+      Coin c = new Coin(pos);
+      eventsForExecute.add(new MapObjectAddEvent(c, getCurrentGameTime()));
+   }
+
+   private Point getRandomBonusPos(float bonusRadius)
+   {
+      Random rand = Utils.rand;
+      int appearRadius = (int)(0.9 * map.getWidth() / 2);
+
+      Point pos;
+      do
+      {
+         Vector2D createVector = Vector2D.fromAngleAndLength(rand.nextFloat() * 360,
+                 rand.nextFloat()*appearRadius);
+         pos = new Point(createVector.getX(), createVector.getY());
+      }
+      while (!map.isCircleFree(pos, bonusRadius));
+      return pos;
+   }
+
+   private <T extends AbstractPhysBonus> void createNewBonus(TimeAccumulator timeAccumulator,
+                                                             int dt, Class<T> bonusClazz)
+   {
+      if (timeAccumulator.update(dt) == 0 ||
+              getBonusesCount(bonusClazz) >= GameConstants.MAX_BONUSES_OF_1_TYPE_ON_MAP)
+      {
+         return;
+      }
+
+      Point pos = getRandomBonusPos(GameConstants.MAX_BONUS_RADIUS);
+      createRandomBonus(pos, bonusClazz);
+   }
+
+   protected <T extends AbstractPhysBonus> T createRandomBonus(Point pos, Class<T> bonusClass)
    {
       List<Class<T>> bonusClasses = new ArrayList<>();
       for (Class c : allBonusClasses)
       {
-         if (bonusClazz.isAssignableFrom(c))
+         if (bonusClass.isAssignableFrom(c))
          {
             bonusClasses.add(c);
          }
       }
 
-      Class<? extends AbstractPhysBonus> bonusClass = bonusClasses.get(
+      Class<? extends AbstractPhysBonus> concreteBonusClass = bonusClasses.get(
               Utils.rand.nextInt(bonusClasses.size()));
 
       T res;
       try
       {
-         Constructor c = bonusClass.getConstructor(
+         Constructor c = concreteBonusClass.getConstructor(
                  AbstractPhysBonus.WorldInformationSource.class, Point.class);
          res = (T)c.newInstance(createWorldInfo(), pos);
       }
@@ -451,102 +565,51 @@ public abstract class AbstractMatchState extends AbstractGameState implements IM
          throw new RuntimeException(e);
       }
 
+      addPhysBonus(res);
       return res;
    }
 
-   protected Set<AbstractPhysBonus> collectAllPhysBonuses()
+   protected void addPhysBonus(AbstractPhysBonus bonus)
    {
-      Set<AbstractPhysBonus> allBonuses = new HashSet<>();
-      allBonuses.addAll(positiveBonuses);
-      allBonuses.addAll(neutralBonuses);
-      allBonuses.addAll(negativeBonuses);
-      return allBonuses;
+      eventsForExecute.add(new MapObjectAddEvent(bonus, getCurrentGameTime()));
    }
 
-   private void initLightSources()
+   protected <T extends AbstractPhysBonus> int getBonusesCount(Class<T> bonusClazz)
    {
-      lightSources.clear();
-      lightSources.addAll(jumpers);
-      lightSources.addAll(coins);
-      lightSources.addAll(positiveBonuses);
-      lightSources.addAll(neutralBonuses);
-      lightSources.addAll(negativeBonuses);
+      if (AbstractPositiveBonus.class.isAssignableFrom(bonusClazz))
+      {
+         return positiveBonusesCount;
+      }
+      else if (AbstractNeutralBonus.class.isAssignableFrom(bonusClazz))
+      {
+         return neutralBonusesCount;
+      }
+      else if (AbstractNegativeBonus.class.isAssignableFrom(bonusClazz))
+      {
+         return negativeBonusesCount;
+      }
+
+      throw new IllegalArgumentException("Bonus class " + bonusClazz + " is not supported");
    }
 
-   private void tryUpdateLightPassibility() throws SlickException
+   protected <T extends AbstractPhysBonus> void changeBonusesCount(Class<T> bonusClazz, int dCount)
    {
-      if (lightPassability == null)
+      if (AbstractPositiveBonus.class.isAssignableFrom(bonusClazz))
       {
-         lightPassability = new Image(VIEW_WIDTH, VIEW_HEIGHT);
+         positiveBonusesCount += dCount;
       }
-
-      if (needUpdateLightPassibility)
+      else if (AbstractNeutralBonus.class.isAssignableFrom(bonusClazz))
       {
-         Graphics passGraphics = lightPassability.getGraphics();
-         passGraphics.setAntiAlias(false);
-
-         passGraphics.setColor(ILightproof.LIGHT_FREE_COLOR);
-         passGraphics.fillRect(0, 0, VIEW_WIDTH, VIEW_HEIGHT);
-
-         initLightproofObjects();
-         for (ILightproof lightproof : lightproofObjects)
-         {
-            lightproof.drawLightProofBody(passGraphics);
-         }
-         passGraphics.flush();
-         needUpdateLightPassibility = false;
+         neutralBonusesCount += dCount;
       }
-   }
-
-   private void initLightproofObjects()
-   {
-      lightproofObjects.clear();
-      lightproofObjects.add(map);
-      lightproofObjects.addAll(jumpers);
-   }
-
-   protected void drawLight(Graphics g) throws SlickException
-   {
-      ShadersSystem shadersSystem = ShadersSystem.getInstance();
-      if (!shadersSystem.isReady())
+      else if (AbstractNegativeBonus.class.isAssignableFrom(bonusClazz))
       {
-         return;
+         negativeBonusesCount += dCount;
       }
-
-      g.setAntiAlias(false);
-
-      tryUpdateLightPassibility();
-
-      initLightShader();
-
-      initLightSources();
-      for (ILightSource lightSource : lightSources)
+      else
       {
-         Point viewPos = Camera.getCamera().toView(lightSource.getPosition());
-         if (!Camera.getCamera().inViewScreenWithReserve(viewPos))
-         {
-            continue;
-         }
-
-         ligthProgram.bind();
-         shadersSystem.setPosition(ligthProgram, viewPos);
-         shadersSystem.setResolution(ligthProgram, VIEW_WIDTH, VIEW_WIDTH);
-         shadersSystem.setColor(ligthProgram, lightSource.getLightColor());
-
-         ligthProgram.setUniform1f("lightCircle", lightSource.getLightCircle());
-
-         final float lightRadius = lightSource.getLightMaxRadius();
-         ligthProgram.setUniform1f("lightMaxDist", lightRadius);
-
-         lightPassability.bind();
-         ligthProgram.setUniform1i("passability", 0);
-
-         g.fillRect(viewPos.getX() - lightRadius, viewPos.getY() - lightRadius,
-                 2*lightRadius, 2*lightRadius);
+         throw new IllegalArgumentException("Bonus class " + bonusClazz + " is not supported");
       }
-
-      ShaderProgram.unbind();
-      g.setAntiAlias(true);
    }
 
    private String makeWinnersString(List<Jumper> winners)
@@ -617,7 +680,7 @@ public abstract class AbstractMatchState extends AbstractGameState implements IM
 
    protected void showBeforeEndNotification()
    {
-      int totalTime = getGameTime();
+      int totalTime = getCurrentGameTime();
       Iterator<Integer> i = beforeEndNotifications.iterator();
       final int timeToEnd = GameConstants.DEFAULT_GAME_TIME - totalTime;
       while (i.hasNext())
@@ -647,7 +710,7 @@ public abstract class AbstractMatchState extends AbstractGameState implements IM
                           BEFORE_END_NOTIFICATION_DURATION / 1000;
                   float alpha = (1 + (float) Math.cos(angle)) / 2;
 
-                  int endAfterTime = GameConstants.DEFAULT_GAME_TIME - getGameTime();
+                  int endAfterTime = GameConstants.DEFAULT_GAME_TIME - getCurrentGameTime();
                   String text = "End after " + Utils.getTimeString(endAfterTime);
 
                   float green = (float) timeToEnd / DEFAULT_GAME_TIME;
@@ -683,7 +746,7 @@ public abstract class AbstractMatchState extends AbstractGameState implements IM
 
    public void drawBonuses(Graphics g)
    {
-      for (AbstractPhysBonus b : allPhysBonuses)
+      for (AbstractPhysBonus b : physBonuses)
       {
          b.draw(g);
       }
@@ -693,7 +756,7 @@ public abstract class AbstractMatchState extends AbstractGameState implements IM
    {
       Font font = TextUtils.Arial30Font;
       String timeStr = Utils.getTimeString(
-              Math.min(getGameTime(),
+              Math.min(getCurrentGameTime(),
                       GameConstants.DEFAULT_GAME_TIME));
       int timerIndentFromTop = ViewConstants.TIMER_INDENT_FROM_TOP;
 
@@ -711,15 +774,102 @@ public abstract class AbstractMatchState extends AbstractGameState implements IM
       TextUtils.drawTextInCenter(timerPos, timeStr, Color.black, font, g);
    }
 
-   protected int getGameTime()
-   {
-      return updateTimeAccumulator.getTotalTimeInMilliseconds();
-   }
-
    private void drawInterface(Graphics g)
    {
       scoresManager.draw(g);
       drawTimer(g);
+   }
+
+   private void drawLight(Graphics g)
+   {
+      if (lightDrawer == null && ShadersSystem.getInstance().isReady())
+      {
+         lightDrawer = new LightDrawer();
+      }
+
+      if (lightDrawer != null)
+      {
+         List<ILightproof> lightproofObjects = lightDrawer.getLightproofObjects();
+         lightproofObjects.clear();
+         lightproofObjects.addAll(jumpers);
+         lightproofObjects.add(map);
+         lightDrawer.setLightproofObjects(lightproofObjects);
+
+         List<ILightSource> lightSources = lightDrawer.getLightSources();
+         lightSources.clear();
+         lightSources.addAll(jumpers);
+         lightSources.addAll(coins);
+         lightSources.addAll(physBonuses);
+         lightDrawer.setLightSources(lightSources);
+
+         lightDrawer.draw(g);
+      }
+   }
+
+   protected void needUpdateLightPassability(boolean need)
+   {
+      if (lightDrawer != null)
+      {
+         lightDrawer.setNeedUpdateLightPassibility(need);
+      }
+   }
+
+   @Override
+   public void removeMapObject(MapObjectId identifier)
+   {
+      IMapObject removedObject = mapObjects.remove(identifier);
+      if (removedObject != null)
+      {
+         if (removedObject instanceof Coin)
+         {
+            coins.remove(removedObject);
+         }
+         else if (removedObject instanceof AbstractPhysBonus)
+         {
+            physBonuses.remove(removedObject);
+            changeBonusesCount(((AbstractPhysBonus)removedObject).getClass(), -1);
+         }
+
+         Body body = removedObject.getBody();
+         if (body != null)
+         {
+            world.remove(body);
+         }
+      }
+   }
+
+   @Override
+   public <T extends IMapObject> T getMapObject(MapObjectId identifier)
+   {
+      return (T)mapObjects.get(identifier);
+   }
+
+   @Override
+   public void addMapObject(IMapObject mapObject)
+   {
+      mapObjects.put(mapObject.getIdentifier(), mapObject);
+      Body body = mapObject.getBody();
+      if (body != null)
+      {
+         world.add(body);
+      }
+
+      if (mapObject instanceof AbstractPhysBonus)
+      {
+         AbstractPhysBonus bonus = (AbstractPhysBonus)mapObject;
+         physBonuses.add(bonus);
+         changeBonusesCount(bonus.getClass(), 1);
+      }
+      else if (mapObject instanceof Coin)
+      {
+         coins.add((Coin)mapObject);
+      }
+   }
+
+   @Override
+   public int getCurrentGameTime()
+   {
+      return updateTimeAccumulator.getTotalTimeInMilliseconds();
    }
 
    public void render(Graphics g) throws SlickException

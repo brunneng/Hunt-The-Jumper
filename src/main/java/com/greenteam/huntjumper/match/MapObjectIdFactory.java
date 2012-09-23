@@ -7,18 +7,18 @@ import java.util.Map;
 /**
  * User: GreenTea Date: 22.09.12 Time: 9:52
  */
-public class GameObjectIdFactory
+public class MapObjectIdFactory
 {
-   private static GameObjectIdFactory factory = new GameObjectIdFactory();
+   private static MapObjectIdFactory factory = new MapObjectIdFactory();
 
    private Map<MapObjectType, Integer> idCounters = new EnumMap<>(MapObjectType.class);
 
-   public static GameObjectIdFactory getInstance()
+   public static MapObjectIdFactory getInstance()
    {
       return factory;
    }
 
-   private GameObjectIdFactory()
+   private MapObjectIdFactory()
    {
    }
 

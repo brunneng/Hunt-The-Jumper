@@ -66,6 +66,12 @@ public class JumperInfo extends AbstractMapObject
       return position;
    }
 
+   @Override
+   public Body getBody()
+   {
+      throw new RuntimeException("Operation not supported");
+   }
+
    public JumperInfo(Jumper jumper)
    {
       super(jumper.getIdentifier());

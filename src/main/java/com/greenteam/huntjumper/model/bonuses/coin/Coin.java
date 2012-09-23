@@ -16,6 +16,7 @@ import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.Utils;
 import com.greenteam.huntjumper.utils.Vector2D;
 import net.phys2d.math.ROVector2f;
+import net.phys2d.raw.Body;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -66,7 +67,7 @@ public class Coin extends AbstractMapObject implements IBonus, ILightSource
 
    public Coin(Point pos)
    {
-      super(GameObjectIdFactory.getInstance().getNextId(MapObjectType.BONUS));
+      super(MapObjectIdFactory.getInstance().getNextId(MapObjectType.BONUS));
       this.pos = pos;
    }
 
@@ -155,6 +156,12 @@ public class Coin extends AbstractMapObject implements IBonus, ILightSource
    public Point getPosition()
    {
       return pos;
+   }
+
+   @Override
+   public Body getBody()
+   {
+      return null;
    }
 
    @Override

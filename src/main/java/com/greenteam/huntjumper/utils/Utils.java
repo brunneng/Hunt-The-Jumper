@@ -65,10 +65,10 @@ public final class Utils
       return total > 254;
    }
    
-   public static String getTimeString(int timeInMilliseconds)
+   public static String getTimeString(long timeInMilliseconds)
    {
-      int minutes = timeInMilliseconds / 60000;
-      int seconds = (timeInMilliseconds / 1000) % 60;
+      long minutes = timeInMilliseconds / 60000;
+      long seconds = (timeInMilliseconds / 1000) % 60;
 
       String secondsStr = (seconds < 10 ? "0" : "") + seconds;
       return minutes + " : " + secondsStr;

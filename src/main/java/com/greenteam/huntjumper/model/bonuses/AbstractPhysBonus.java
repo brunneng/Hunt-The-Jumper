@@ -1,6 +1,6 @@
 package com.greenteam.huntjumper.model.bonuses;
 
-import com.greenteam.huntjumper.match.GameObjectIdFactory;
+import com.greenteam.huntjumper.match.MapObjectIdFactory;
 import com.greenteam.huntjumper.match.MapObjectType;
 import com.greenteam.huntjumper.model.AbstractMapObject;
 import com.greenteam.huntjumper.model.ILightSource;
@@ -28,7 +28,7 @@ public abstract class AbstractPhysBonus extends AbstractMapObject implements IBo
 
    public AbstractPhysBonus(WorldInformationSource worldInformationSource, float acceleration)
    {
-      super(GameObjectIdFactory.getInstance().getNextId(MapObjectType.BONUS));
+      super(MapObjectIdFactory.getInstance().getNextId(MapObjectType.BONUS));
       this.world = worldInformationSource;
       this.acceleration = acceleration;
    }

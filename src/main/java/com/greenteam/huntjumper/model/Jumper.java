@@ -53,7 +53,7 @@ public class Jumper extends AbstractMapObject implements IParametersUser, IMapOb
    public Jumper(String playerName, Color color, ROVector2f startPos,
                  AbstractJumperController controller, JumperRole jumperRole)
    {
-      super(GameObjectIdFactory.getInstance().getNextId(MapObjectType.JUMPER));
+      super(MapObjectIdFactory.getInstance().getNextId(MapObjectType.JUMPER));
       this.playerName = playerName;
       this.color = color;
       this.paintColor = Utils.isBright(color) ? Color.black : Color.white;
