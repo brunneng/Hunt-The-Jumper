@@ -12,7 +12,7 @@ import static java.lang.String.format;
 import static org.newdawn.slick.Input.*;
 
 /**
- * Listen and react for mouse and/or keyboard events
+ * Listen and react for mouse and/or keyboard commands
  */
 public class MouseController extends AbstractJumperController
 {

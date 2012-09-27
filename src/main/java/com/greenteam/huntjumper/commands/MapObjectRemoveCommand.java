@@ -1,4 +1,4 @@
-package com.greenteam.huntjumper.events;
+package com.greenteam.huntjumper.commands;
 
 import com.greenteam.huntjumper.match.MapObjectId;
 import com.greenteam.huntjumper.model.IMapObject;
@@ -6,13 +6,13 @@ import com.greenteam.huntjumper.model.IMapObject;
 /**
  * User: GreenTea Date: 23.09.12 Time: 14:06
  */
-public class MapObjectRemoveEvent extends Event
+public class MapObjectRemoveCommand extends Command
 {
    private IMapObject removedObject;
 
-   public MapObjectRemoveEvent(MapObjectId objectId, int eventTime)
+   public MapObjectRemoveCommand(MapObjectId objectId, int commandTime)
    {
-      super(objectId, EventType.MAP_OBJECT_REMOVED, eventTime);
+      super(objectId, CommandType.MAP_OBJECT_REMOVED, commandTime);
    }
 
 

@@ -163,6 +163,11 @@ public class Jumper extends AbstractMapObject implements IParametersUser, IMapOb
       this.bodyCircle = bodyCircle;
    }
 
+   public List<Jumper> getOtherJumpers()
+   {
+      return otherJumpers;
+   }
+
    public void setOtherJumpers(List<Jumper> otherJumpers)
    {
       this.otherJumpers = otherJumpers;

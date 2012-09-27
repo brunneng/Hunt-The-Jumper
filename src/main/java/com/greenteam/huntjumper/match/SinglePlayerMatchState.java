@@ -4,7 +4,6 @@ import com.greenteam.huntjumper.audio.AudioSystem;
 import com.greenteam.huntjumper.contoller.AbstractJumperController;
 import com.greenteam.huntjumper.contoller.BotController;
 import com.greenteam.huntjumper.contoller.MouseController;
-import com.greenteam.huntjumper.map.AvailabilityMap;
 import com.greenteam.huntjumper.map.Map;
 import com.greenteam.huntjumper.model.*;
 import com.greenteam.huntjumper.model.bonuses.*;
@@ -13,17 +12,10 @@ import com.greenteam.huntjumper.parameters.GameConstants;
 import com.greenteam.huntjumper.parameters.ViewConstants;
 import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.Utils;
-import com.greenteam.huntjumper.utils.Vector2D;
-import net.phys2d.math.Vector2f;
-import net.phys2d.raw.StaticBody;
-import net.phys2d.raw.World;
 import org.newdawn.slick.*;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
-
-import static com.greenteam.huntjumper.parameters.GameConstants.COIN_RADIUS;
 
 /**
  * User: GreenTea Date: 03.06.12 Time: 16:33
@@ -190,8 +182,8 @@ public class SinglePlayerMatchState extends AbstractMatchState
          checkGameIsFinished();
          showBeforeEndNotification();
 
-         processEvents();
-         executedEvents.clear();
+         processCommands();
+         executedCommands.clear();
 
          needUpdateLightPassability(true);
       }

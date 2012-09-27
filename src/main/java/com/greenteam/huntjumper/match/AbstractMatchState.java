@@ -8,10 +8,9 @@ import com.greenteam.huntjumper.effects.Effect;
 import com.greenteam.huntjumper.effects.particles.ParticleEntity;
 import com.greenteam.huntjumper.effects.particles.ParticleType;
 import com.greenteam.huntjumper.effects.particles.TypedParticleGenerator;
-import com.greenteam.huntjumper.events.Event;
-import com.greenteam.huntjumper.events.IEventExecutionContext;
-import com.greenteam.huntjumper.events.MapObjectAddEvent;
-import com.greenteam.huntjumper.events.MapObjectRemoveEvent;
+import com.greenteam.huntjumper.commands.*;
+import com.greenteam.huntjumper.commands.MapObjectAddCommand;
+import com.greenteam.huntjumper.commands.MapObjectRemoveCommand;
 import com.greenteam.huntjumper.map.AvailabilityMap;
 import com.greenteam.huntjumper.map.Map;
 import com.greenteam.huntjumper.model.*;
@@ -101,9 +100,9 @@ public abstract class AbstractMatchState extends AbstractGameState implements IM
 
    private LightDrawer lightDrawer;
 
-   protected List<Event> executedEvents = new ArrayList<>();
-   protected List<Event> eventsForExecute = new ArrayList<>();
-   protected List<Event> eventsForRollback = new ArrayList<>();
+   protected List<Command> executedCommands = new ArrayList<>();
+   protected List<Command> commandsForExecute = new ArrayList<>();
+   protected List<Command> commandsForRollback = new ArrayList<>();
 
    protected ScoresManager scoresManager;
 
@@ -328,22 +327,18 @@ public abstract class AbstractMatchState extends AbstractGameState implements IM
                   if (roleA.equals(JumperRole.Escaping) &&
                           roleB.equals(JumperRole.Hunting))
                   {
-                     jumperB.setJumperRole(JumperRole.Escaping);
-                     jumperA.setJumperRole(JumperRole.Hunting);
+                     commandsForExecute.add(new HuntingWithEscapingCollisionCommand(
+                             jumperB.getIdentifier(), jumperA.getIdentifier(),
+                             getCurrentGameTime()));
                      hasChangeRole = true;
                      myJumperEscaping = myJumper.equals(jumperB);
                   }
                   else if (roleA.equals(JumperRole.EscapingFromHunter) &&
                           roleB.equals(JumperRole.HuntingForEveryone))
                   {
-                     jumperB.setJumperRole(JumperRole.Escaping);
-                     for (Jumper otherJumper : jumpers)
-                     {
-                        if (!otherJumper.equals(jumperB))
-                        {
-                           otherJumper.setJumperRole(JumperRole.Hunting);
-                        }
-                     }
+                     commandsForExecute.add(new HuntingForEveryOneCollisionCommand(
+                             jumperB.getIdentifier(), getCurrentGameTime()));
+
                      hasChangeRole = true;
                      myJumperEscaping = myJumper.equals(jumperB);
                   }
@@ -401,14 +396,14 @@ public abstract class AbstractMatchState extends AbstractGameState implements IM
       }
    }
 
-   protected void processEvents()
+   protected void processCommands()
    {
-      for (Event e : eventsForExecute)
+      for (Command e : commandsForExecute)
       {
          e.execute(this);
       }
 
-      for (Event e : eventsForRollback)
+      for (Command e : commandsForRollback)
       {
          if (e.isRollbackSupported())
          {
@@ -416,11 +411,11 @@ public abstract class AbstractMatchState extends AbstractGameState implements IM
          }
       }
 
-      executedEvents.addAll(eventsForExecute);
-      eventsForExecute.clear();
+      executedCommands.addAll(commandsForExecute);
+      commandsForExecute.clear();
 
-      executedEvents.removeAll(eventsForRollback);
-      eventsForRollback.clear();
+      executedCommands.removeAll(commandsForRollback);
+      commandsForRollback.clear();
    }
 
    protected void updateCoins(int dt)
@@ -452,8 +447,10 @@ public abstract class AbstractMatchState extends AbstractGameState implements IM
                     GameConstants.JUMPER_RADIUS + GameConstants.COIN_RADIUS)
             {
                i.remove();
-               eventsForExecute.add(new MapObjectRemoveEvent(c.getIdentifier(), getCurrentGameTime()));
-               c.onBonusTaken(this, j);
+               commandsForExecute.add(new BonusTakeCommand(c.getIdentifier(), j.getIdentifier(),
+                       getCurrentGameTime()));
+               commandsForExecute.add(
+                       new MapObjectRemoveCommand(c.getIdentifier(), getCurrentGameTime()));
 
                continue A;
             }
@@ -480,8 +477,11 @@ public abstract class AbstractMatchState extends AbstractGameState implements IM
                }
                if (bonus != null)
                {
-                  bonus.onBonusTaken(this, j);
-                  eventsForExecute.add(new MapObjectRemoveEvent(bonus.getIdentifier(), getCurrentGameTime()));
+                  commandsForExecute.add(
+                          new BonusTakeCommand(bonus.getIdentifier(), j.getIdentifier(),
+                                  getCurrentGameTime()));
+                  commandsForExecute.add(
+                          new MapObjectRemoveCommand(bonus.getIdentifier(), getCurrentGameTime()));
                }
             }
          }
@@ -507,7 +507,7 @@ public abstract class AbstractMatchState extends AbstractGameState implements IM
 
       Point pos = getRandomBonusPos(COIN_RADIUS);
       Coin c = new Coin(pos);
-      eventsForExecute.add(new MapObjectAddEvent(c, getCurrentGameTime()));
+      commandsForExecute.add(new MapObjectAddCommand(c, getCurrentGameTime()));
    }
 
    private Point getRandomBonusPos(float bonusRadius)
@@ -571,7 +571,7 @@ public abstract class AbstractMatchState extends AbstractGameState implements IM
 
    protected void addPhysBonus(AbstractPhysBonus bonus)
    {
-      eventsForExecute.add(new MapObjectAddEvent(bonus, getCurrentGameTime()));
+      commandsForExecute.add(new MapObjectAddCommand(bonus, getCurrentGameTime()));
    }
 
    protected <T extends AbstractPhysBonus> int getBonusesCount(Class<T> bonusClazz)
@@ -900,5 +900,11 @@ public abstract class AbstractMatchState extends AbstractGameState implements IM
    public ScoresManager getScoresManager()
    {
       return scoresManager;
+   }
+
+   @Override
+   public IMatch getMatch()
+   {
+      return this;
    }
 }

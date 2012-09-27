@@ -1,5 +1,6 @@
-package com.greenteam.huntjumper.events;
+package com.greenteam.huntjumper.commands;
 
+import com.greenteam.huntjumper.IMatch;
 import com.greenteam.huntjumper.match.MapObjectId;
 import com.greenteam.huntjumper.model.IMapObject;
 
@@ -12,4 +13,5 @@ public interface IEventExecutionContext
    <T extends IMapObject> T getMapObject(MapObjectId identifier);
    void removeMapObject(MapObjectId identifier);
    void addMapObject(IMapObject mapObject);
+   IMatch getMatch();
 }

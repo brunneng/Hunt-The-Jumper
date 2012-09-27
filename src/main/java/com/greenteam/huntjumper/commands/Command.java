@@ -1,4 +1,4 @@
-package com.greenteam.huntjumper.events;
+package com.greenteam.huntjumper.commands;
 
 import com.greenteam.huntjumper.match.MapObjectId;
 
@@ -7,17 +7,17 @@ import java.io.Serializable;
 /**
  * User: GreenTea Date: 23.09.12 Time: 11:33
  */
-public abstract class Event implements Serializable
+public abstract class Command implements Serializable
 {
    private MapObjectId objectId;
-   private int eventTime;
-   private EventType type;
+   private int commandTime;
+   private CommandType type;
 
-   protected Event(MapObjectId objectId, EventType type, int eventTime)
+   public Command(MapObjectId objectId, CommandType type, int commandTime)
    {
       this.objectId = objectId;
       this.type = type;
-      this.eventTime = eventTime;
+      this.commandTime = commandTime;
    }
 
    public MapObjectId getObjectId()
@@ -29,27 +29,27 @@ public abstract class Event implements Serializable
       this.objectId = objectId;
    }
 
-   public int getEventTime()
+   public int getCommandTime()
    {
-      return eventTime;
+      return commandTime;
    }
-   public void setEventTime(int eventTime)
+   public void setCommandTime(int commandTime)
    {
-      this.eventTime = eventTime;
+      this.commandTime = commandTime;
    }
 
-   public EventType getType()
+   public CommandType getType()
    {
       return type;
    }
-   public void setType(EventType type)
+   public void setType(CommandType type)
    {
       this.type = type;
    }
 
    protected void validateSameTime(IEventExecutionContext context)
    {
-      if (getEventTime() != context.getCurrentGameTime())
+      if (getCommandTime() != context.getCurrentGameTime())
       {
          throw new RuntimeException("Execution of event from different time is not supported");
       }
