@@ -166,6 +166,11 @@ public class ScoresManager implements IGameObject
    {
       scores[jumpers.indexOf(jumper)] += GameConstants.COIN_SCORES;
    }
+
+   public void signalCoinNotTaken(Jumper jumper)
+   {
+      scores[jumpers.indexOf(jumper)] -= GameConstants.COIN_SCORES;
+   }
    
    public float getScores(Jumper jumper)
    {

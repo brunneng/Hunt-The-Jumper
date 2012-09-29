@@ -21,9 +21,9 @@ public class GravityBonus extends AbstractNeutralBonus
 {
    TimeAccumulator ringsMoveAccumulator = new TimeAccumulator(10);
 
-   public GravityBonus(WorldInformationSource worldInformationSource, Point pos)
+   public GravityBonus(Point pos)
    {
-      super(worldInformationSource, GameConstants.BONUS_ACCELERATION_FACTOR);
+      super(GameConstants.BONUS_ACCELERATION_FACTOR);
       body = new Body(new net.phys2d.raw.shapes.Circle(10),
               GameConstants.DEFAULT_BONUS_MASS);
       body.setPosition(pos.getX(), pos.getY());
@@ -41,7 +41,8 @@ public class GravityBonus extends AbstractNeutralBonus
    @Override
    public void onBonusTaken(IMatch match, Jumper jumper)
    {
-      jumper.addBonusEffect(new GravityBonusEffect(new Point(body.getLastPosition())));
+      setAppliedEffect(new GravityBonusEffect(new Point(body.getLastPosition())));
+      jumper.addBonusEffect(getAppliedEffect());
       AudioSystem.getInstance().playFarSound(AudioSystem.TAKE_GRAVITY_BONUS_SOUND,
               match.getMyJumper().getBody().getPosition(), jumper.getBody().getPosition());
    }

@@ -2,7 +2,6 @@ package com.greenteam.huntjumper.commands;
 
 import com.greenteam.huntjumper.match.MapObjectId;
 import com.greenteam.huntjumper.model.Jumper;
-import com.greenteam.huntjumper.model.bonuses.AbstractPhysBonus;
 import com.greenteam.huntjumper.model.bonuses.IBonus;
 import org.apache.commons.lang.NotImplementedException;
 
@@ -12,17 +11,25 @@ import org.apache.commons.lang.NotImplementedException;
 public class BonusTakeCommand extends Command
 {
    private MapObjectId jumperId;
+   private MapObjectId bonusId;
 
    public BonusTakeCommand(MapObjectId bonusId, MapObjectId jumperId, int commandTime)
    {
-      super(bonusId, CommandType.BONUS_TAKEN, commandTime);
+      super(CommandType.BONUS_TAKEN, commandTime);
       this.jumperId = jumperId;
+      this.bonusId = bonusId;
    }
 
    @Override
-   public void execute(IEventExecutionContext context)
+   public MapObjectId[] getObjectIds()
    {
-      IBonus bonus = context.getMapObject(getObjectId());
+      return new MapObjectId[] {jumperId, bonusId};
+   }
+
+   @Override
+   public void execute(ICommandExecutionContext context)
+   {
+      IBonus bonus = context.getMapObject(bonusId);
       Jumper jumper = context.getMapObject(jumperId);
       bonus.onBonusTaken(context.getMatch(), jumper);
    }
@@ -34,8 +41,10 @@ public class BonusTakeCommand extends Command
    }
 
    @Override
-   public void rollback(IEventExecutionContext context)
+   public void rollback(ICommandExecutionContext context)
    {
-      throw new NotImplementedException();
+      IBonus bonus = context.getMapObject(bonusId);
+      Jumper jumper = context.getMapObject(jumperId);
+      bonus.revertTakingBonus(context.getMatch(), jumper);
    }
 }

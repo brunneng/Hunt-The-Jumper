@@ -9,9 +9,9 @@ import com.greenteam.huntjumper.utils.Vector2D;
  */
 public abstract class AbstractNegativeBonus extends AbstractPhysBonus
 {
-   public AbstractNegativeBonus(WorldInformationSource worldInformationSource, float acceleration)
+   public AbstractNegativeBonus(float acceleration)
    {
-      super(worldInformationSource, acceleration);
+      super(acceleration);
    }
 
    @Override

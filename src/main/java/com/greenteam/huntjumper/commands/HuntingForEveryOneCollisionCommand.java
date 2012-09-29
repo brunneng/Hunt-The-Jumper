@@ -9,17 +9,25 @@ import com.greenteam.huntjumper.model.JumperRole;
  */
 public class HuntingForEveryOneCollisionCommand extends Command
 {
+   private MapObjectId hunterForEveryOneId;
 
    public HuntingForEveryOneCollisionCommand(MapObjectId hunterForEveryOneId,
                                                 int commandTime)
    {
-      super(hunterForEveryOneId, CommandType.HUNTING_FOR_EVERYONE_COLLISION, commandTime);
+      super(CommandType.HUNTING_FOR_EVERYONE_COLLISION, commandTime);
+      this.hunterForEveryOneId = hunterForEveryOneId;
    }
 
    @Override
-   public void execute(IEventExecutionContext context)
+   public MapObjectId[] getObjectIds()
    {
-      Jumper hunter = context.getMapObject(getObjectId());
+      return new MapObjectId[] {hunterForEveryOneId};
+   }
+
+   @Override
+   public void execute(ICommandExecutionContext context)
+   {
+      Jumper hunter = context.getMapObject(hunterForEveryOneId);
       hunter.setJumperRole(JumperRole.Escaping);
       for (Jumper otherJumper : hunter.getOtherJumpers())
       {
@@ -34,9 +42,9 @@ public class HuntingForEveryOneCollisionCommand extends Command
    }
 
    @Override
-   public void rollback(IEventExecutionContext context)
+   public void rollback(ICommandExecutionContext context)
    {
-      Jumper hunter = context.getMapObject(getObjectId());
+      Jumper hunter = context.getMapObject(hunterForEveryOneId);
       hunter.setJumperRole(JumperRole.HuntingForEveryone);
       for (Jumper otherJumper : hunter.getOtherJumpers())
       {

@@ -26,9 +26,9 @@ public class InelasticBonus extends AbstractNegativeBonus
    private float[] waveLengths;
    private float[] waveSpeed;
 
-   public InelasticBonus(WorldInformationSource worldInformationSource, Point pos)
+   public InelasticBonus(Point pos)
    {
-      super(worldInformationSource, GameConstants.BONUS_ACCELERATION_FACTOR);
+      super(GameConstants.BONUS_ACCELERATION_FACTOR);
 
       body = new Body(new Circle(GameConstants.INELASTIC_BONUS_RADIUS),
               GameConstants.DEFAULT_BONUS_MASS);
@@ -56,7 +56,8 @@ public class InelasticBonus extends AbstractNegativeBonus
    {
       AudioSystem.getInstance().playFarSound(AudioSystem.TAKE_INELASTIC_BONUS_SOUND,
               match.getMyJumper().getBody().getPosition(), jumper.getBody().getPosition());
-      jumper.addBonusEffect(new InelasticBonusEffect(new Point(getBody().getLastPosition())));
+      setAppliedEffect(new InelasticBonusEffect(new Point(getBody().getLastPosition())));
+      jumper.addBonusEffect(getAppliedEffect());
    }
 
    @Override

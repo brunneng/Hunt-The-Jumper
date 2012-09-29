@@ -1,6 +1,7 @@
 package com.greenteam.huntjumper.match;
 
 import com.greenteam.huntjumper.audio.AudioSystem;
+import com.greenteam.huntjumper.commands.Command;
 import com.greenteam.huntjumper.contoller.AbstractJumperController;
 import com.greenteam.huntjumper.contoller.BotController;
 import com.greenteam.huntjumper.contoller.MouseController;
@@ -14,7 +15,10 @@ import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.Utils;
 import org.newdawn.slick.*;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.*;
 
 /**

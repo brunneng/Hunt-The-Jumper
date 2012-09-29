@@ -28,9 +28,9 @@ public class AccelerationBonus extends AbstractPositiveBonus
 {
    List<TimeAccumulator> particlesAccumulators = new ArrayList<>();
 
-   public AccelerationBonus(WorldInformationSource world, Point pos)
+   public AccelerationBonus(Point pos)
    {
-      super(world, GameConstants.BONUS_ACCELERATION_FACTOR);
+      super(GameConstants.BONUS_ACCELERATION_FACTOR);
       body = new Body(new Circle(GameConstants.ACCELERATION_BONUS_RADIUS),
               GameConstants.DEFAULT_BONUS_MASS);
       body.setPosition(pos.getX(), pos.getY());
@@ -46,7 +46,8 @@ public class AccelerationBonus extends AbstractPositiveBonus
    @Override
    public void onBonusTaken(IMatch match, Jumper jumper)
    {
-      jumper.addBonusEffect(new AccelerationBonusEffect());
+      setAppliedEffect(new AccelerationBonusEffect());
+      jumper.addBonusEffect(getAppliedEffect());
       Point pos = new Point(getBody().getPosition());
 
       float dr = GameConstants.ACCELERATION_BONUS_RADIUS / particlesAccumulators.size();

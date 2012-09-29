@@ -7,7 +7,7 @@ import com.greenteam.huntjumper.model.IMapObject;
 /**
  * User: GreenTea Date: 23.09.12 Time: 12:57
  */
-public interface IEventExecutionContext
+public interface ICommandExecutionContext
 {
    int getCurrentGameTime();
    <T extends IMapObject> T getMapObject(MapObjectId identifier);

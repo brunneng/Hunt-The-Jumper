@@ -9,25 +9,16 @@ import java.io.Serializable;
  */
 public abstract class Command implements Serializable
 {
-   private MapObjectId objectId;
    private int commandTime;
    private CommandType type;
 
-   public Command(MapObjectId objectId, CommandType type, int commandTime)
+   public Command(CommandType type, int commandTime)
    {
-      this.objectId = objectId;
       this.type = type;
       this.commandTime = commandTime;
    }
 
-   public MapObjectId getObjectId()
-   {
-      return objectId;
-   }
-   public void setObjectId(MapObjectId objectId)
-   {
-      this.objectId = objectId;
-   }
+   public abstract MapObjectId[] getObjectIds();
 
    public int getCommandTime()
    {
@@ -47,7 +38,7 @@ public abstract class Command implements Serializable
       this.type = type;
    }
 
-   protected void validateSameTime(IEventExecutionContext context)
+   protected void validateSameTime(ICommandExecutionContext context)
    {
       if (getCommandTime() != context.getCurrentGameTime())
       {
@@ -55,8 +46,8 @@ public abstract class Command implements Serializable
       }
    }
 
-   public abstract void execute(IEventExecutionContext context);
+   public abstract void execute(ICommandExecutionContext context);
 
    public abstract boolean isRollbackSupported();
-   public abstract void rollback(IEventExecutionContext context);
+   public abstract void rollback(ICommandExecutionContext context);
 }

@@ -14,10 +14,9 @@ import org.newdawn.slick.Graphics;
  */
 public abstract class AbstractNeutralBonus extends AbstractPhysBonus
 {
-   public AbstractNeutralBonus(WorldInformationSource worldInformationSource,
-                               float acceleration)
+   public AbstractNeutralBonus(float acceleration)
    {
-      super(worldInformationSource, acceleration);
+      super(acceleration);
    }
 
    @Override

@@ -1,23 +1,35 @@
 package com.greenteam.huntjumper.commands;
 
+import com.greenteam.huntjumper.match.MapObjectId;
 import com.greenteam.huntjumper.model.IMapObject;
+import com.greenteam.huntjumper.model.IMapObjectCreator;
 
 /**
  * User: GreenTea Date: 23.09.12 Time: 14:54
  */
 public class MapObjectAddCommand extends Command
 {
-   private IMapObject addedObject;
-   public MapObjectAddCommand(IMapObject addedObject, int commandTime)
+   transient private IMapObject addedObject;
+   private IMapObjectCreator mapObjectCreator;
+
+   public MapObjectAddCommand(IMapObjectCreator mapObjectCreator, int commandTime)
    {
-      super(addedObject.getIdentifier(), CommandType.MAP_OBJECT_ADDED, commandTime);
-      this.addedObject = addedObject;
+      super(CommandType.MAP_OBJECT_ADDED, commandTime);
+      this.mapObjectCreator = mapObjectCreator;
    }
 
    @Override
-   public void execute(IEventExecutionContext context)
+   public MapObjectId[] getObjectIds()
+   {
+      return new MapObjectId[0];
+   }
+
+   @Override
+   public void execute(ICommandExecutionContext context)
    {
       validateSameTime(context);
+
+      addedObject = mapObjectCreator.create();
       context.addMapObject(addedObject);
    }
 
@@ -28,8 +40,8 @@ public class MapObjectAddCommand extends Command
    }
 
    @Override
-   public void rollback(IEventExecutionContext context)
+   public void rollback(ICommandExecutionContext context)
    {
-      context.removeMapObject(getObjectId());
+      context.removeMapObject(addedObject.getIdentifier());
    }
 }

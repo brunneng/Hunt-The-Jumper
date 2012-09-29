@@ -210,6 +210,15 @@ public class Jumper extends AbstractMapObject implements IParametersUser, IMapOb
       }
    }
 
+   public void removeBonusEffect(IJumperBonusEffect bonusEffect)
+   {
+      if (bonusEffects.containsKey(bonusEffect))
+      {
+         bonusEffect.onEndEffect();
+         bonusEffects.remove(bonusEffect);
+      }
+   }
+
    private void updateFadePositions(int delta)
    {
       if (fadePositionsTimer.update(delta) > 0)

@@ -14,4 +14,5 @@ import net.phys2d.raw.Body;
 public interface IBonus extends IGameObject, IMapObject
 {
    void onBonusTaken(IMatch match, Jumper jumper);
+   void revertTakingBonus(IMatch match, Jumper jumper);
 }

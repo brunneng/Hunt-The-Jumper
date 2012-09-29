@@ -1,9 +1,11 @@
 package com.greenteam.huntjumper.model.bonuses;
 
+import com.greenteam.huntjumper.IMatch;
 import com.greenteam.huntjumper.match.MapObjectIdFactory;
 import com.greenteam.huntjumper.match.MapObjectType;
 import com.greenteam.huntjumper.model.AbstractMapObject;
 import com.greenteam.huntjumper.model.ILightSource;
+import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.model.JumperInfo;
 import com.greenteam.huntjumper.parameters.ViewConstants;
 import com.greenteam.huntjumper.utils.Point;
@@ -25,12 +27,17 @@ public abstract class AbstractPhysBonus extends AbstractMapObject implements IBo
    protected Body body;
    protected WorldInformationSource world;
    protected float acceleration;
+   protected AbstractBonusEffect appliedEffect;
 
-   public AbstractPhysBonus(WorldInformationSource worldInformationSource, float acceleration)
+   public AbstractPhysBonus(float acceleration)
    {
       super(MapObjectIdFactory.getInstance().getNextId(MapObjectType.BONUS));
-      this.world = worldInformationSource;
       this.acceleration = acceleration;
+   }
+
+   public void setWorld(WorldInformationSource world)
+   {
+      this.world = world;
    }
 
    public Body getBody()
@@ -59,5 +66,22 @@ public abstract class AbstractPhysBonus extends AbstractMapObject implements IBo
    public float getLightMaxRadius()
    {
       return ViewConstants.PHYS_BONUS_MAX_RADIUS;
+   }
+
+   public AbstractBonusEffect getAppliedEffect()
+   {
+      return appliedEffect;
+   }
+
+   public void setAppliedEffect(AbstractBonusEffect appliedEffect)
+   {
+      this.appliedEffect = appliedEffect;
+   }
+
+   @Override
+   public void revertTakingBonus(IMatch match, Jumper jumper)
+   {
+      jumper.removeBonusEffect(getAppliedEffect());
+      setAppliedEffect(null);
    }
 }

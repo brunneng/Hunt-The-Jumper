@@ -188,6 +188,12 @@ public class Coin extends AbstractMapObject implements IBonus, ILightSource
    }
 
    @Override
+   public void revertTakingBonus(IMatch match, Jumper jumper)
+   {
+      match.getScoresManager().signalCoinNotTaken(jumper);
+   }
+
+   @Override
    public Color getLightColor()
    {
       return Color.white;

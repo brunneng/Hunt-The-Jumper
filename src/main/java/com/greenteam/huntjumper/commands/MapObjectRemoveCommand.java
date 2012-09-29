@@ -8,20 +8,28 @@ import com.greenteam.huntjumper.model.IMapObject;
  */
 public class MapObjectRemoveCommand extends Command
 {
+   private MapObjectId removedObjectId;
    private IMapObject removedObject;
 
-   public MapObjectRemoveCommand(MapObjectId objectId, int commandTime)
+   public MapObjectRemoveCommand(MapObjectId removedObjectId, int commandTime)
    {
-      super(objectId, CommandType.MAP_OBJECT_REMOVED, commandTime);
+      super(CommandType.MAP_OBJECT_REMOVED, commandTime);
+      this.removedObjectId = removedObjectId;
    }
 
 
    @Override
-   public void execute(IEventExecutionContext context)
+   public void execute(ICommandExecutionContext context)
    {
       validateSameTime(context);
-      removedObject = context.getMapObject(getObjectId());
-      context.removeMapObject(getObjectId());
+      removedObject = context.getMapObject(removedObjectId);
+      context.removeMapObject(removedObjectId);
+   }
+
+   @Override
+   public MapObjectId[] getObjectIds()
+   {
+      return new MapObjectId[] {removedObjectId};
    }
 
    @Override
@@ -31,7 +39,7 @@ public class MapObjectRemoveCommand extends Command
    }
 
    @Override
-   public void rollback(IEventExecutionContext context)
+   public void rollback(ICommandExecutionContext context)
    {
       context.addMapObject(removedObject);
    }

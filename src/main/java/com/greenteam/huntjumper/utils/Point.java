@@ -3,6 +3,7 @@ package com.greenteam.huntjumper.utils;
 import net.phys2d.math.ROVector2f;
 import net.phys2d.math.Vector2f;
 
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,7 +12,7 @@ import java.util.List;
 /**
  * User: GreenTea Date: 01.01.11 Time: 17:40
  */
-public class Point implements Cloneable
+public class Point implements Cloneable, Serializable
 {
    public static Point plus(Point p, Vector2D v)
    {

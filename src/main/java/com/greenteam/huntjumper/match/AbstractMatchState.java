@@ -14,10 +14,7 @@ import com.greenteam.huntjumper.commands.MapObjectRemoveCommand;
 import com.greenteam.huntjumper.map.AvailabilityMap;
 import com.greenteam.huntjumper.map.Map;
 import com.greenteam.huntjumper.model.*;
-import com.greenteam.huntjumper.model.bonuses.AbstractNegativeBonus;
-import com.greenteam.huntjumper.model.bonuses.AbstractNeutralBonus;
-import com.greenteam.huntjumper.model.bonuses.AbstractPhysBonus;
-import com.greenteam.huntjumper.model.bonuses.AbstractPositiveBonus;
+import com.greenteam.huntjumper.model.bonuses.*;
 import com.greenteam.huntjumper.model.bonuses.acceleration.AccelerationBonus;
 import com.greenteam.huntjumper.model.bonuses.coin.Coin;
 import com.greenteam.huntjumper.model.bonuses.gravity.GravityBonus;
@@ -40,7 +37,6 @@ import org.newdawn.slick.geom.RoundedRectangle;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.util.*;
 
 import static com.greenteam.huntjumper.parameters.GameConstants.COIN_RADIUS;
@@ -54,7 +50,7 @@ import static com.greenteam.huntjumper.parameters.ViewConstants.BEFORE_END_NOTIF
  * User: GreenTea Date: 17.07.12 Time: 22:22
  */
 public abstract class AbstractMatchState extends AbstractGameState implements IMatch,
-        IEventExecutionContext
+        ICommandExecutionContext
 {
    private static List<Class<? extends AbstractPhysBonus>> allBonusClasses = new ArrayList<>();
    static
@@ -398,16 +394,16 @@ public abstract class AbstractMatchState extends AbstractGameState implements IM
 
    protected void processCommands()
    {
-      for (Command e : commandsForExecute)
+      for (Command c : commandsForExecute)
       {
-         e.execute(this);
+         c.execute(this);
       }
 
-      for (Command e : commandsForRollback)
+      for (Command c : commandsForRollback)
       {
-         if (e.isRollbackSupported())
+         if (c.isRollbackSupported())
          {
-            e.rollback(this);
+            c.rollback(this);
          }
       }
 
@@ -446,7 +442,6 @@ public abstract class AbstractMatchState extends AbstractGameState implements IM
             if (c.getPosition().distanceTo(new Point(j.getBody().getPosition())) <
                     GameConstants.JUMPER_RADIUS + GameConstants.COIN_RADIUS)
             {
-               i.remove();
                commandsForExecute.add(new BonusTakeCommand(c.getIdentifier(), j.getIdentifier(),
                        getCurrentGameTime()));
                commandsForExecute.add(
@@ -460,6 +455,7 @@ public abstract class AbstractMatchState extends AbstractGameState implements IM
 
    protected void processTakingBonuses()
    {
+      Set<AbstractPhysBonus> takenBonuses = null;
       for (Jumper j : jumpers)
       {
          CollisionEvent[] collisions = world.getContacts(j.getBody());
@@ -475,13 +471,19 @@ public abstract class AbstractMatchState extends AbstractGameState implements IM
                {
                   bonus = Utils.getUserDataOfClass(bodyB, AbstractPhysBonus.class);
                }
-               if (bonus != null)
+               if (bonus != null && (takenBonuses == null || !takenBonuses.contains(bonus)))
                {
                   commandsForExecute.add(
                           new BonusTakeCommand(bonus.getIdentifier(), j.getIdentifier(),
                                   getCurrentGameTime()));
                   commandsForExecute.add(
                           new MapObjectRemoveCommand(bonus.getIdentifier(), getCurrentGameTime()));
+
+                  if (takenBonuses == null)
+                  {
+                     takenBonuses = new HashSet<>();
+                  }
+                  takenBonuses.add(bonus);
                }
             }
          }
@@ -506,8 +508,8 @@ public abstract class AbstractMatchState extends AbstractGameState implements IM
       }
 
       Point pos = getRandomBonusPos(COIN_RADIUS);
-      Coin c = new Coin(pos);
-      commandsForExecute.add(new MapObjectAddCommand(c, getCurrentGameTime()));
+      commandsForExecute.add(new MapObjectAddCommand(new BonusCreator(Coin.class.getName(), pos),
+              getCurrentGameTime()));
    }
 
    private Point getRandomBonusPos(float bonusRadius)
@@ -539,7 +541,7 @@ public abstract class AbstractMatchState extends AbstractGameState implements IM
       createRandomBonus(pos, bonusClazz);
    }
 
-   protected <T extends AbstractPhysBonus> T createRandomBonus(Point pos, Class<T> bonusClass)
+   protected <T extends AbstractPhysBonus> void createRandomBonus(Point pos, Class<T> bonusClass)
    {
       List<Class<T>> bonusClasses = new ArrayList<>();
       for (Class c : allBonusClasses)
@@ -553,25 +555,12 @@ public abstract class AbstractMatchState extends AbstractGameState implements IM
       Class<? extends AbstractPhysBonus> concreteBonusClass = bonusClasses.get(
               Utils.rand.nextInt(bonusClasses.size()));
 
-      T res;
-      try
-      {
-         Constructor c = concreteBonusClass.getConstructor(
-                 AbstractPhysBonus.WorldInformationSource.class, Point.class);
-         res = (T)c.newInstance(createWorldInfo(), pos);
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException(e);
-      }
-
-      addPhysBonus(res);
-      return res;
+      addPhysBonus(new BonusCreator(concreteBonusClass.getName(), pos));
    }
 
-   protected void addPhysBonus(AbstractPhysBonus bonus)
+   protected void addPhysBonus(IMapObjectCreator bonusCreator)
    {
-      commandsForExecute.add(new MapObjectAddCommand(bonus, getCurrentGameTime()));
+      commandsForExecute.add(new MapObjectAddCommand(bonusCreator, getCurrentGameTime()));
    }
 
    protected <T extends AbstractPhysBonus> int getBonusesCount(Class<T> bonusClazz)
@@ -857,6 +846,7 @@ public abstract class AbstractMatchState extends AbstractGameState implements IM
       if (mapObject instanceof AbstractPhysBonus)
       {
          AbstractPhysBonus bonus = (AbstractPhysBonus)mapObject;
+         bonus.setWorld(createWorldInfo());
          physBonuses.add(bonus);
          changeBonusesCount(bonus.getClass(), 1);
       }

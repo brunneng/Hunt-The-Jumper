@@ -9,19 +9,27 @@ import com.greenteam.huntjumper.model.JumperRole;
  */
 public class HuntingWithEscapingCollisionCommand extends Command
 {
+   private MapObjectId huntingId;
    private MapObjectId escapingId;
 
    public HuntingWithEscapingCollisionCommand(MapObjectId huntingId, MapObjectId escapingId,
                                                int commandTime)
    {
-      super(huntingId, CommandType.HUNTING_WITH_ESCAPING_COLLISION, commandTime);
+      super(CommandType.HUNTING_WITH_ESCAPING_COLLISION, commandTime);
+      this.huntingId = huntingId;
       this.escapingId = escapingId;
    }
 
    @Override
-   public void execute(IEventExecutionContext context)
+   public MapObjectId[] getObjectIds()
    {
-      Jumper hunting = context.getMapObject(getObjectId());
+      return new MapObjectId[] {huntingId, escapingId};
+   }
+
+   @Override
+   public void execute(ICommandExecutionContext context)
+   {
+      Jumper hunting = context.getMapObject(huntingId);
       Jumper escaping = context.getMapObject(escapingId);
 
       hunting.setJumperRole(JumperRole.Escaping);
@@ -35,9 +43,9 @@ public class HuntingWithEscapingCollisionCommand extends Command
    }
 
    @Override
-   public void rollback(IEventExecutionContext context)
+   public void rollback(ICommandExecutionContext context)
    {
-      Jumper hunting = context.getMapObject(getObjectId());
+      Jumper hunting = context.getMapObject(huntingId);
       Jumper escaping = context.getMapObject(escapingId);
 
       hunting.setJumperRole(JumperRole.Hunting);
