@@ -16,7 +16,7 @@ public abstract class AbstractBonusEffect implements IJumperBonusEffect
 
    public AbstractBonusEffect(int duration, int timePassed)
    {
-      this.duration = duration - timePassed;
+      this.duration = Math.max(duration - timePassed, 1);
    }
 
    protected String getEffectName()
