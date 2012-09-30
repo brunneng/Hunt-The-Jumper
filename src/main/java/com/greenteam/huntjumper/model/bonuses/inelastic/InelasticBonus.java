@@ -2,6 +2,7 @@ package com.greenteam.huntjumper.model.bonuses.inelastic;
 
 import com.greenteam.huntjumper.IMatch;
 import com.greenteam.huntjumper.audio.AudioSystem;
+import com.greenteam.huntjumper.commands.Command;
 import com.greenteam.huntjumper.match.Camera;
 import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.model.bonuses.AbstractNegativeBonus;
@@ -15,6 +16,7 @@ import net.phys2d.raw.shapes.Circle;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -61,11 +63,10 @@ public class InelasticBonus extends AbstractNegativeBonus
    }
 
    @Override
-   public void update(int delta)
+   public List<? extends Command> update(int delta)
    {
-      super.update(delta);
-
       updateWaves(delta, waveLengths, waveSpeed);
+      return super.update(delta);
    }
 
    static void updateWaves(int delta, float[] waveLengths, float[] waveSpeed)

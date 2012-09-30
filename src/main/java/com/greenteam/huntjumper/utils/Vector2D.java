@@ -4,10 +4,12 @@ import net.phys2d.math.ROVector2f;
 import net.phys2d.math.Vector2f;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
+import java.io.Serializable;
+
 /**
  * User: GreenTea Date: 01.01.11 Time: 18:11
  */
-public class Vector2D implements Cloneable
+public class Vector2D implements Cloneable, Serializable
 {
    private final float NOT_INITIALIZED_ANGLE = 10000;
 

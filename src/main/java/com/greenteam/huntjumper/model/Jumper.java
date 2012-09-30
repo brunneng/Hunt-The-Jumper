@@ -1,6 +1,7 @@
 package com.greenteam.huntjumper.model;
 
 import com.greenteam.huntjumper.*;
+import com.greenteam.huntjumper.commands.Command;
 import com.greenteam.huntjumper.contoller.AbstractJumperController;
 import com.greenteam.huntjumper.match.*;
 import com.greenteam.huntjumper.model.bonuses.IJumperBonusEffect;
@@ -44,7 +45,7 @@ public class Jumper extends AbstractMapObject implements IParametersUser, IMapOb
 
    private ParametersHolder parameters = new ParametersHolder();
 
-   private LinkedList<PreviousPosition> fadePositions = new LinkedList<PreviousPosition>();
+   private LinkedList<PreviousFadePosition> fadePositions = new LinkedList<PreviousFadePosition>();
    private TimeAccumulator fadePositionsTimer = new TimeAccumulator(FADE_POSITIONS_TIME_INTERVAL);
 
    private Map<IJumperBonusEffect, TimeAccumulator> bonusEffects = new HashMap<>();
@@ -179,17 +180,19 @@ public class Jumper extends AbstractMapObject implements IParametersUser, IMapOb
       return new Point(getBody().getPosition());
    }
 
-   public void update(int delta)
+   public List<? extends Command> update(int delta)
    {
-      controller.update(this, delta);
+      List<? extends Command> commands = controller.update(this, delta);
       currentRoleTimeAccumulator.update(delta);
-      updateBonusEffects(delta);
+      commands = Utils.add(commands, (List) updateBonusEffects(delta));
 
       updateFadePositions(delta);
+      return commands;
    }
 
-   public void updateBonusEffects(int delta)
+   public List<? extends Command> updateBonusEffects(int delta)
    {
+      List<Command> commands = null;
       Iterator<Map.Entry<IJumperBonusEffect, TimeAccumulator>> i =
               bonusEffects.entrySet().iterator();
       while (i.hasNext())
@@ -199,7 +202,7 @@ public class Jumper extends AbstractMapObject implements IParametersUser, IMapOb
          TimeAccumulator ta = entry.getValue();
          if (ta.update(delta) == 0)
          {
-            effect.update(delta);
+            commands = Utils.add(commands, (List) effect.update(delta));
             effect.signalTimeLeft(ta.getCycleLength() - ta.getAccumulatorValue());
          }
          else
@@ -208,6 +211,7 @@ public class Jumper extends AbstractMapObject implements IParametersUser, IMapOb
             i.remove();
          }
       }
+      return commands;
    }
 
    public void removeBonusEffect(IJumperBonusEffect bonusEffect)
@@ -223,7 +227,7 @@ public class Jumper extends AbstractMapObject implements IParametersUser, IMapOb
    {
       if (fadePositionsTimer.update(delta) > 0)
       {
-         PreviousPosition prevPos = new PreviousPosition(System.currentTimeMillis(),
+         PreviousFadePosition prevPos = new PreviousFadePosition(System.currentTimeMillis(),
                  new Point(body.getPosition()));
          if (fadePositions.size() == 0)
          {
@@ -237,10 +241,10 @@ public class Jumper extends AbstractMapObject implements IParametersUser, IMapOb
             }
          }
 
-         Iterator<PreviousPosition> i = fadePositions.iterator();
+         Iterator<PreviousFadePosition> i = fadePositions.iterator();
          while (i.hasNext())
          {
-            PreviousPosition pp = i.next();
+            PreviousFadePosition pp = i.next();
             if (pp.getTime() < prevPos.getTime() - MAX_FADE_TIME)
             {
                i.remove();
@@ -263,7 +267,7 @@ public class Jumper extends AbstractMapObject implements IParametersUser, IMapOb
          float alphaStep = currAlpha / fadePositions.size();
 
          Point prevFadePos = null;
-         Iterator<PreviousPosition> i = fadePositions.descendingIterator();
+         Iterator<PreviousFadePosition> i = fadePositions.descendingIterator();
          while (i.hasNext())
          {
             Point currFadePos = Camera.getCamera().toView(i.next().getPos());

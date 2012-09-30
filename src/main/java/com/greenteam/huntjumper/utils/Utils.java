@@ -167,4 +167,24 @@ public final class Utils
       return (T)userData;
    }
 
+   public static <T> List<T> add(List<T> target, List<T> source)
+   {
+      List<T> res = target;
+      if (source != null && source.size() > 0)
+      {
+         if (target == null)
+         {
+            res = new ArrayList<>();
+         }
+         else
+         {
+            res = new ArrayList<>(target);
+         }
+
+         res.addAll(source);
+      }
+
+      return res;
+   }
+
 }

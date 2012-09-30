@@ -1,9 +1,14 @@
 package com.greenteam.huntjumper.model.bonuses;
 
+import com.greenteam.huntjumper.commands.Command;
+import com.greenteam.huntjumper.commands.MoveCommand;
 import com.greenteam.huntjumper.model.JumperInfo;
 import com.greenteam.huntjumper.parameters.GameConstants;
 import com.greenteam.huntjumper.utils.Utils;
 import com.greenteam.huntjumper.utils.Vector2D;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * User: GreenTea Date: 19.07.12 Time: 23:12
@@ -16,7 +21,7 @@ public abstract class AbstractPositiveBonus extends AbstractPhysBonus
    }
 
    @Override
-   public void update(int delta)
+   public List<? extends Command> update(int delta)
    {
       JumperInfo nearest = Utils.findNearest(this, world.getJumpers());
       float distToNearest = getPosition().distanceTo(nearest.getPosition());
@@ -34,6 +39,6 @@ public abstract class AbstractPositiveBonus extends AbstractPhysBonus
       }
 
       force.setLength(acceleration *getBody().getMass());
-      getBody().addForce(force.toVector2f());
+      return Arrays.asList(new MoveCommand(getIdentifier(), force));
    }
 }

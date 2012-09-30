@@ -2,6 +2,7 @@ package com.greenteam.huntjumper.model.bonuses.acceleration;
 
 import com.greenteam.huntjumper.IMatch;
 import com.greenteam.huntjumper.audio.AudioSystem;
+import com.greenteam.huntjumper.commands.Command;
 import com.greenteam.huntjumper.effects.particles.ParticleEntity;
 import com.greenteam.huntjumper.match.Camera;
 import com.greenteam.huntjumper.match.EffectsContainer;
@@ -89,14 +90,13 @@ public class AccelerationBonus extends AbstractPositiveBonus
    }
 
    @Override
-   public void update(int delta)
+   public List<? extends Command> update(int delta)
    {
-      super.update(delta);
-
       for (TimeAccumulator acc : particlesAccumulators)
       {
          acc.update(delta);
       }
+      return super.update(delta);
    }
 
    @Override

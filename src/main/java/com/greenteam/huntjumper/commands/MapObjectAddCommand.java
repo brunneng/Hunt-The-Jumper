@@ -12,9 +12,9 @@ public class MapObjectAddCommand extends Command
    transient private IMapObject addedObject;
    private IMapObjectCreator mapObjectCreator;
 
-   public MapObjectAddCommand(IMapObjectCreator mapObjectCreator, int commandTime)
+   public MapObjectAddCommand(IMapObjectCreator mapObjectCreator)
    {
-      super(CommandType.MAP_OBJECT_ADDED, commandTime);
+      super(CommandType.MAP_OBJECT_ADDED);
       this.mapObjectCreator = mapObjectCreator;
    }
 

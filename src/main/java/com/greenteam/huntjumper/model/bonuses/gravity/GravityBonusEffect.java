@@ -1,5 +1,7 @@
 package com.greenteam.huntjumper.model.bonuses.gravity;
 
+import com.greenteam.huntjumper.commands.Command;
+import com.greenteam.huntjumper.commands.MoveCommand;
 import com.greenteam.huntjumper.match.Camera;
 import com.greenteam.huntjumper.match.TimeAccumulator;
 import com.greenteam.huntjumper.model.Jumper;
@@ -12,6 +14,9 @@ import com.greenteam.huntjumper.utils.Vector2D;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Circle;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User: GreenTea Date: 27.07.12 Time: 22:26
@@ -38,8 +43,9 @@ public class GravityBonusEffect extends AbstractBonusEffect
    }
 
    @Override
-   public void update(int delta)
+   public List<? extends Command> update(int delta)
    {
+      List<Command> commands = new ArrayList<>();
       ringsMoveAccumulator.update(delta);
       for (Jumper other : otherJumpers)
       {
@@ -53,9 +59,10 @@ public class GravityBonusEffect extends AbstractBonusEffect
          Vector2D forceOnMe = vectorToMe.negate().unit().multiply(forceValue);
          Vector2D forceOnOther = vectorToMe.unit().multiply(forceValue);
 
-         jumper.getBody().addForce(forceOnMe.toVector2f());
-         other.getBody().addForce(forceOnOther.toVector2f());
+         commands.add(new MoveCommand(jumper.getIdentifier(), forceOnMe));
+         commands.add(new MoveCommand(other.getIdentifier(), forceOnOther));
       }
+      return commands;
    }
 
    @Override

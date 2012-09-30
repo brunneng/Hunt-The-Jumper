@@ -1,6 +1,7 @@
 package com.greenteam.huntjumper.match;
 
 import com.greenteam.huntjumper.HuntJumperGame;
+import com.greenteam.huntjumper.commands.Command;
 import com.greenteam.huntjumper.parameters.ViewConstants;
 import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.TextUtils;
@@ -9,6 +10,8 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+
+import java.util.List;
 
 /**
  * User: GreenTea Date: 11.03.12 Time: 15:58
@@ -64,7 +67,7 @@ public class InitializationScreen implements IGameObject
    }
 
    @Override
-   public void update(int delta)
+   public List<? extends Command> update(int delta)
    {
       if (percent == null)
       {
@@ -77,6 +80,7 @@ public class InitializationScreen implements IGameObject
             text = status + dots;
          }
       }
+      return null;
    }
 
    @Override

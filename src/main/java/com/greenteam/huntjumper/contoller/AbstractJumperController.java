@@ -1,5 +1,7 @@
 package com.greenteam.huntjumper.contoller;
 
+import com.greenteam.huntjumper.commands.Command;
+import com.greenteam.huntjumper.commands.MoveCommand;
 import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.model.parameters.IParametersUser;
 import com.greenteam.huntjumper.model.parameters.Parameter;
@@ -9,6 +11,7 @@ import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.Vector2D;
 import net.phys2d.raw.Body;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static com.greenteam.huntjumper.parameters.GameConstants.*;
@@ -61,7 +64,7 @@ public abstract class AbstractJumperController implements IJumperController, IPa
               DEFAULT_JUMPER_ACCELERATION_SPEED_COEF_FACTOR));
    }
 
-   public void update(Jumper jumper, int delta)
+   public List<? extends Command> update(Jumper jumper, int delta)
    {
       Move move = makeMove(jumper, delta);
       Vector2D forceDirection = new Vector2D(move.forceDirection);
@@ -69,7 +72,7 @@ public abstract class AbstractJumperController implements IJumperController, IPa
       if (move.accumulating)
       {
          incrementImpulseTime(delta);
-         return;
+         return null;
       }
 
       final Body body = jumper.getBody();
@@ -95,6 +98,7 @@ public abstract class AbstractJumperController implements IJumperController, IPa
       resetImpulse(delta);
 
       forceDirection.setLength(scale);
-      body.addForce(forceDirection.toVector2f());
+
+      return Arrays.asList(new MoveCommand(jumper.getIdentifier(), forceDirection));
    }
 }

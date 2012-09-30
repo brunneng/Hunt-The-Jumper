@@ -12,10 +12,9 @@ public class HuntingWithEscapingCollisionCommand extends Command
    private MapObjectId huntingId;
    private MapObjectId escapingId;
 
-   public HuntingWithEscapingCollisionCommand(MapObjectId huntingId, MapObjectId escapingId,
-                                               int commandTime)
+   public HuntingWithEscapingCollisionCommand(MapObjectId huntingId, MapObjectId escapingId)
    {
-      super(CommandType.HUNTING_WITH_ESCAPING_COLLISION, commandTime);
+      super(CommandType.HUNTING_WITH_ESCAPING_COLLISION);
       this.huntingId = huntingId;
       this.escapingId = escapingId;
    }

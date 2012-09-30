@@ -160,10 +160,7 @@ public class SinglePlayerMatchState extends BaseMatchState
 
          stepWorld(dt);
          Camera.getCamera().update(dt);
-         for (Jumper j : getJumpers())
-         {
-            j.update(dt);
-         }
+         updateJumpers(dt);
 
          updateCoins(dt);
          processTakingCoins();

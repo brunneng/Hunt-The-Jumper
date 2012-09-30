@@ -6,12 +6,12 @@ import net.phys2d.math.ROVector2f;
 /**
  * User: GreenTea Date: 24.06.12 Time: 1:03
  */
-public class PreviousPosition
+public class PreviousFadePosition
 {
    private long time;
    private Point pos;
 
-   public PreviousPosition(long time, Point pos)
+   public PreviousFadePosition(long time, Point pos)
    {
       this.time = time;
       this.pos = pos;

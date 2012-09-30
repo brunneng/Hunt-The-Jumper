@@ -11,10 +11,9 @@ public class HuntingForEveryOneCollisionCommand extends Command
 {
    private MapObjectId hunterForEveryOneId;
 
-   public HuntingForEveryOneCollisionCommand(MapObjectId hunterForEveryOneId,
-                                                int commandTime)
+   public HuntingForEveryOneCollisionCommand(MapObjectId hunterForEveryOneId)
    {
-      super(CommandType.HUNTING_FOR_EVERYONE_COLLISION, commandTime);
+      super(CommandType.HUNTING_FOR_EVERYONE_COLLISION);
       this.hunterForEveryOneId = hunterForEveryOneId;
    }
 

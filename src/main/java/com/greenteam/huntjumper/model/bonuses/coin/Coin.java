@@ -2,6 +2,7 @@ package com.greenteam.huntjumper.model.bonuses.coin;
 
 import com.greenteam.huntjumper.IMatch;
 import com.greenteam.huntjumper.audio.AudioSystem;
+import com.greenteam.huntjumper.commands.Command;
 import com.greenteam.huntjumper.effects.particles.ParticleEntity;
 import com.greenteam.huntjumper.match.*;
 import com.greenteam.huntjumper.model.AbstractMapObject;
@@ -72,9 +73,10 @@ public class Coin extends AbstractMapObject implements IBonus, ILightSource
    }
 
    @Override
-   public void update(int delta)
+   public List<? extends Command> update(int delta)
    {
       rotationVector = rotationVector.rotate(delta * -0.250f);
+      return null;
    }
 
    @Override

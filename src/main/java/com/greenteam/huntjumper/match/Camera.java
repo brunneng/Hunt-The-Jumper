@@ -1,5 +1,6 @@
 package com.greenteam.huntjumper.match;
 
+import com.greenteam.huntjumper.commands.Command;
 import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.parameters.ViewConstants;
 import com.greenteam.huntjumper.utils.Point;
@@ -13,6 +14,7 @@ import net.phys2d.raw.shapes.Polygon;
 
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * User: GreenTea Date: 14.01.12 Time: 22:29
@@ -118,7 +120,7 @@ public class Camera implements IUpdateable
    }
 
    @Override
-   public void update(int delta)
+   public List<? extends Command> update(int delta)
    {
       Jumper myJumper = matchState.getMyJumper();
       if (samplesTimer.update(delta) > 0)
@@ -143,6 +145,7 @@ public class Camera implements IUpdateable
          Point newCameraPos = myJumperPos.plus(jumperToCamera);
          Camera.getCamera().setViewCenter(newCameraPos);
       }
+      return null;
    }
 
    public Vector2D getPhysVectorToCursor(Body body, Point cursor)

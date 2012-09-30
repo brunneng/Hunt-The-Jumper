@@ -1,5 +1,6 @@
 package com.greenteam.huntjumper.model.bonuses.acceleration;
 
+import com.greenteam.huntjumper.commands.Command;
 import com.greenteam.huntjumper.match.Camera;
 import com.greenteam.huntjumper.match.TimeAccumulator;
 import com.greenteam.huntjumper.model.bonuses.AbstractBonusEffect;
@@ -13,6 +14,8 @@ import com.greenteam.huntjumper.utils.Utils;
 import com.greenteam.huntjumper.utils.Vector2D;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
+
+import java.util.List;
 
 /**
  * User: GreenTea Date: 21.07.12 Time: 15:56
@@ -44,9 +47,10 @@ public class AccelerationBonusEffect extends AbstractBonusEffect
    }
 
    @Override
-   public void update(int delta)
+   public List<? extends Command> update(int delta)
    {
       rotationAccumulator.update(delta);
+      return null;
    }
 
    @Override

@@ -12,10 +12,9 @@ public abstract class Command implements Serializable
    private int commandTime;
    private CommandType type;
 
-   public Command(CommandType type, int commandTime)
+   public Command(CommandType type)
    {
       this.type = type;
-      this.commandTime = commandTime;
    }
 
    public abstract MapObjectId[] getObjectIds();

@@ -11,9 +11,9 @@ public class MapObjectRemoveCommand extends Command
    private MapObjectId removedObjectId;
    private IMapObject removedObject;
 
-   public MapObjectRemoveCommand(MapObjectId removedObjectId, int commandTime)
+   public MapObjectRemoveCommand(MapObjectId removedObjectId)
    {
-      super(CommandType.MAP_OBJECT_REMOVED, commandTime);
+      super(CommandType.MAP_OBJECT_REMOVED);
       this.removedObjectId = removedObjectId;
    }
 

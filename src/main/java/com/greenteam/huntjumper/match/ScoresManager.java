@@ -1,5 +1,6 @@
 package com.greenteam.huntjumper.match;
 
+import com.greenteam.huntjumper.commands.Command;
 import com.greenteam.huntjumper.model.Jumper;
 import com.greenteam.huntjumper.model.JumperRole;
 import com.greenteam.huntjumper.parameters.GameConstants;
@@ -52,7 +53,7 @@ public class ScoresManager implements IGameObject
       scoresBoxHeight = height;
    }
 
-   public void update(int dt)
+   public List<? extends Command> update(int dt)
    {
       scoresMultiplier += minutesAccumulator.update(dt) * SCORES_GROWTH_MULTIPLIER_PER_MINUTE;
 
@@ -75,6 +76,7 @@ public class ScoresManager implements IGameObject
             scores[i] = 0;
          }
       }
+      return null;
    }
 
    public void draw(Graphics g)

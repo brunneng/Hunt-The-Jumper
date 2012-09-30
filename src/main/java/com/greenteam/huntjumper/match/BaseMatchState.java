@@ -243,6 +243,25 @@ public abstract class BaseMatchState extends AbstractGameState implements IMatch
       return res;
    }
 
+   protected void updateJumpers(int dt)
+   {
+      for (Jumper j : getJumpers())
+      {
+         addCommands(j.update(dt));
+      }
+   }
+
+   protected void addCommands(List<? extends Command> commands)
+   {
+      if (commands != null)
+      {
+         for (Command c : commands)
+         {
+            addCommand(c);
+         }
+      }
+   }
+
    public void updateRolesByTimer()
    {
       boolean makeHunterForEveryone = false;
@@ -323,17 +342,16 @@ public abstract class BaseMatchState extends AbstractGameState implements IMatch
                   if (roleA.equals(JumperRole.Escaping) &&
                           roleB.equals(JumperRole.Hunting))
                   {
-                     commandsForExecute.add(new HuntingWithEscapingCollisionCommand(
-                             jumperB.getIdentifier(), jumperA.getIdentifier(),
-                             getCurrentGameTime()));
+                     addCommand(new HuntingWithEscapingCollisionCommand(
+                             jumperB.getIdentifier(), jumperA.getIdentifier()));
                      hasChangeRole = true;
                      myJumperEscaping = myJumper.equals(jumperB);
                   }
                   else if (roleA.equals(JumperRole.EscapingFromHunter) &&
                           roleB.equals(JumperRole.HuntingForEveryone))
                   {
-                     commandsForExecute.add(new HuntingForEveryOneCollisionCommand(
-                             jumperB.getIdentifier(), getCurrentGameTime()));
+                     addCommand(new HuntingForEveryOneCollisionCommand(
+                             jumperB.getIdentifier()));
 
                      hasChangeRole = true;
                      myJumperEscaping = myJumper.equals(jumperB);
@@ -360,6 +378,12 @@ public abstract class BaseMatchState extends AbstractGameState implements IMatch
             }
          }
       }
+   }
+
+   protected void addCommand(Command command)
+   {
+      command.setCommandTime(getCurrentGameTime());
+      commandsForExecute.add(command);
    }
 
    private void addCollisionEffect(CollisionEvent e, Vector2D collisionVelocity)
@@ -426,7 +450,7 @@ public abstract class BaseMatchState extends AbstractGameState implements IMatch
    {
       for (AbstractPhysBonus b : physBonuses)
       {
-         b.update(dt);
+         addCommands(b.update(dt));
       }
    }
 
@@ -442,10 +466,8 @@ public abstract class BaseMatchState extends AbstractGameState implements IMatch
             if (c.getPosition().distanceTo(new Point(j.getBody().getPosition())) <
                     GameConstants.JUMPER_RADIUS + GameConstants.COIN_RADIUS)
             {
-               commandsForExecute.add(new BonusTakeCommand(c.getIdentifier(), j.getIdentifier(),
-                       getCurrentGameTime()));
-               commandsForExecute.add(
-                       new MapObjectRemoveCommand(c.getIdentifier(), getCurrentGameTime()));
+               addCommand(new BonusTakeCommand(c.getIdentifier(), j.getIdentifier()));
+               addCommand(new MapObjectRemoveCommand(c.getIdentifier()));
 
                continue A;
             }
@@ -473,11 +495,8 @@ public abstract class BaseMatchState extends AbstractGameState implements IMatch
                }
                if (bonus != null && (takenBonuses == null || !takenBonuses.contains(bonus)))
                {
-                  commandsForExecute.add(
-                          new BonusTakeCommand(bonus.getIdentifier(), j.getIdentifier(),
-                                  getCurrentGameTime()));
-                  commandsForExecute.add(
-                          new MapObjectRemoveCommand(bonus.getIdentifier(), getCurrentGameTime()));
+                  addCommand(new BonusTakeCommand(bonus.getIdentifier(), j.getIdentifier()));
+                  addCommand(new MapObjectRemoveCommand(bonus.getIdentifier()));
 
                   if (takenBonuses == null)
                   {
@@ -508,8 +527,7 @@ public abstract class BaseMatchState extends AbstractGameState implements IMatch
       }
 
       Point pos = getRandomBonusPos(COIN_RADIUS);
-      commandsForExecute.add(new MapObjectAddCommand(new BonusCreator(Coin.class.getName(), pos),
-              getCurrentGameTime()));
+      addCommand(new MapObjectAddCommand(new BonusCreator(Coin.class.getName(), pos)));
    }
 
    private Point getRandomBonusPos(float bonusRadius)
@@ -560,7 +578,7 @@ public abstract class BaseMatchState extends AbstractGameState implements IMatch
 
    protected void addPhysBonus(IMapObjectCreator bonusCreator)
    {
-      commandsForExecute.add(new MapObjectAddCommand(bonusCreator, getCurrentGameTime()));
+      addCommand(new MapObjectAddCommand(bonusCreator));
    }
 
    protected <T extends AbstractPhysBonus> int getBonusesCount(Class<T> bonusClazz)

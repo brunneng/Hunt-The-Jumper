@@ -13,9 +13,9 @@ public class BonusTakeCommand extends Command
    private MapObjectId jumperId;
    private MapObjectId bonusId;
 
-   public BonusTakeCommand(MapObjectId bonusId, MapObjectId jumperId, int commandTime)
+   public BonusTakeCommand(MapObjectId bonusId, MapObjectId jumperId)
    {
-      super(CommandType.BONUS_TAKEN, commandTime);
+      super(CommandType.BONUS_TAKEN);
       this.jumperId = jumperId;
       this.bonusId = bonusId;
    }

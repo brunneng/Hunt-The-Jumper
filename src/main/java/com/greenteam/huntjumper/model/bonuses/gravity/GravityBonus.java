@@ -2,6 +2,7 @@ package com.greenteam.huntjumper.model.bonuses.gravity;
 
 import com.greenteam.huntjumper.IMatch;
 import com.greenteam.huntjumper.audio.AudioSystem;
+import com.greenteam.huntjumper.commands.Command;
 import com.greenteam.huntjumper.match.Camera;
 import com.greenteam.huntjumper.match.TimeAccumulator;
 import com.greenteam.huntjumper.model.Jumper;
@@ -13,6 +14,8 @@ import com.greenteam.huntjumper.utils.Utils;
 import net.phys2d.raw.Body;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Circle;
+
+import java.util.List;
 
 /**
  * User: GreenTea Date: 24.07.12 Time: 21:07
@@ -32,10 +35,10 @@ public class GravityBonus extends AbstractNeutralBonus
    }
 
    @Override
-   public void update(int delta)
+   public List<? extends Command> update(int delta)
    {
-      super.update(delta);
       ringsMoveAccumulator.update(delta);
+      return super.update(delta);
    }
 
    @Override

@@ -1,5 +1,6 @@
 package com.greenteam.huntjumper.model.bonuses.inelastic;
 
+import com.greenteam.huntjumper.commands.Command;
 import com.greenteam.huntjumper.match.Camera;
 import com.greenteam.huntjumper.match.TimeAccumulator;
 import com.greenteam.huntjumper.model.bonuses.AbstractBonusEffect;
@@ -10,6 +11,8 @@ import com.greenteam.huntjumper.utils.Utils;
 import com.greenteam.huntjumper.utils.Vector2D;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
+
+import java.util.List;
 
 /**
  * User: GreenTea Date: 31.07.12 Time: 23:11
@@ -48,13 +51,14 @@ public class InelasticBonusEffect extends AbstractBonusEffect
    }
 
    @Override
-   public void update(int delta)
+   public List<? extends Command> update(int delta)
    {
       if (effectMoveToJumperAccumulator != null && effectMoveToJumperAccumulator.update(delta) != 0)
       {
          effectMoveToJumperAccumulator = null;
       }
       InelasticBonus.updateWaves(delta, waveLengths, waveSpeed);
+      return null;
    }
 
    @Override
