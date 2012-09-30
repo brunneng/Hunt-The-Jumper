@@ -23,8 +23,9 @@ public class InelasticBonusEffect extends AbstractBonusEffect
    private Point bonusPos;
    private float restitutionChange;
 
-   public InelasticBonusEffect(Point bonusPos)
+   public InelasticBonusEffect(Point bonusPos, int timePassed)
    {
+      super(GameConstants.INELASTIC_BONUS_EFFECT_DURATION, timePassed);
       this.bonusPos = bonusPos;
 
       waveLengths = new float[ViewConstants.INELASTIC_BONUS_WAVE_POINTS_COUNT];
@@ -38,12 +39,6 @@ public class InelasticBonusEffect extends AbstractBonusEffect
       float restitution = jumper.getBody().getRestitution();
       restitutionChange = restitution *GameConstants.INELASTIC_BONUS_EFFECT_FACTOR;
       jumper.getBody().setRestitution(restitution - restitutionChange);
-   }
-
-   @Override
-   public int getDuration()
-   {
-      return GameConstants.INELASTIC_BONUS_EFFECT_DURATION;
    }
 
    @Override

@@ -44,9 +44,9 @@ public class AccelerationBonus extends AbstractPositiveBonus
    }
 
    @Override
-   public void onBonusTaken(IMatch match, Jumper jumper)
+   public void onBonusTaken(IMatch match, Jumper jumper, int timePassed)
    {
-      setAppliedEffect(new AccelerationBonusEffect());
+      setAppliedEffect(new AccelerationBonusEffect(timePassed));
       jumper.addBonusEffect(getAppliedEffect());
       Point pos = new Point(getBody().getPosition());
 

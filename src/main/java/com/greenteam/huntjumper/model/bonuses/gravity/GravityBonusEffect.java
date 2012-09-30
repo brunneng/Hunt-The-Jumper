@@ -21,20 +21,15 @@ public class GravityBonusEffect extends AbstractBonusEffect
    private TimeAccumulator ringsMoveAccumulator = new TimeAccumulator(10);
    private Point bonusPos;
 
-   public GravityBonusEffect(Point bonusPos)
+   public GravityBonusEffect(Point bonusPos, int timePassed)
    {
+      super(GameConstants.GRAVITY_BONUS_EFFECT_DURATION, timePassed);
       this.bonusPos = bonusPos;
    }
 
    @Override
    public void onStartEffect()
    {
-   }
-
-   @Override
-   public int getDuration()
-   {
-      return GameConstants.GRAVITY_BONUS_EFFECT_DURATION;
    }
 
    @Override

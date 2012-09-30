@@ -39,9 +39,9 @@ public class GravityBonus extends AbstractNeutralBonus
    }
 
    @Override
-   public void onBonusTaken(IMatch match, Jumper jumper)
+   public void onBonusTaken(IMatch match, Jumper jumper, int timePassed)
    {
-      setAppliedEffect(new GravityBonusEffect(new Point(body.getLastPosition())));
+      setAppliedEffect(new GravityBonusEffect(new Point(body.getLastPosition()), timePassed));
       jumper.addBonusEffect(getAppliedEffect());
       AudioSystem.getInstance().playFarSound(AudioSystem.TAKE_GRAVITY_BONUS_SOUND,
               match.getMyJumper().getBody().getPosition(), jumper.getBody().getPosition());

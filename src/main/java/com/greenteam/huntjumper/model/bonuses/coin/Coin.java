@@ -165,7 +165,7 @@ public class Coin extends AbstractMapObject implements IBonus, ILightSource
    }
 
    @Override
-   public void onBonusTaken(IMatch match, Jumper jumper)
+   public void onBonusTaken(IMatch match, Jumper jumper, int timePassed)
    {
       match.getScoresManager().signalCoinTaken(jumper);
 

@@ -31,7 +31,8 @@ public class BonusTakeCommand extends Command
    {
       IBonus bonus = context.getMapObject(bonusId);
       Jumper jumper = context.getMapObject(jumperId);
-      bonus.onBonusTaken(context.getMatch(), jumper);
+      bonus.onBonusTaken(context.getMatch(), jumper,
+              context.getCurrentGameTime() - getCommandTime());
    }
 
    @Override

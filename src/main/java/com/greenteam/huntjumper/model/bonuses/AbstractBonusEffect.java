@@ -9,9 +9,15 @@ import java.util.List;
  */
 public abstract class AbstractBonusEffect implements IJumperBonusEffect
 {
+   private int duration;
    protected int timeLeft;
    protected Jumper jumper;
    protected List<Jumper> otherJumpers;
+
+   public AbstractBonusEffect(int duration, int timePassed)
+   {
+      this.duration = duration - timePassed;
+   }
 
    protected String getEffectName()
    {
@@ -31,6 +37,12 @@ public abstract class AbstractBonusEffect implements IJumperBonusEffect
       this.otherJumpers = otherJumpers;
       timeLeft = getDuration();
       onStartEffect();
+   }
+
+   @Override
+   public int getDuration()
+   {
+      return duration;
    }
 
    public abstract void onStartEffect();

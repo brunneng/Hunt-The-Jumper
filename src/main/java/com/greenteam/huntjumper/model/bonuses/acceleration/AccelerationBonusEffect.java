@@ -21,10 +21,9 @@ public class AccelerationBonusEffect extends AbstractBonusEffect
 {
    private TimeAccumulator rotationAccumulator;
 
-   @Override
-   public int getDuration()
+   public AccelerationBonusEffect(int timePassed)
    {
-      return GameConstants.ACCELERATION_BONUS_EFFECT_DURATION;
+      super(GameConstants.ACCELERATION_BONUS_EFFECT_DURATION, timePassed);
    }
 
    @Override
