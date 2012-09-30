@@ -49,7 +49,7 @@ import static com.greenteam.huntjumper.parameters.ViewConstants.BEFORE_END_NOTIF
 /**
  * User: GreenTea Date: 17.07.12 Time: 22:22
  */
-public abstract class AbstractMatchState extends AbstractGameState implements IMatch,
+public abstract class BaseMatchState extends AbstractGameState implements IMatch,
         ICommandExecutionContext
 {
    private static List<Class<? extends AbstractPhysBonus>> allBonusClasses = new ArrayList<>();
@@ -102,7 +102,7 @@ public abstract class AbstractMatchState extends AbstractGameState implements IM
 
    protected ScoresManager scoresManager;
 
-   protected AbstractMatchState(File mapFile)
+   protected BaseMatchState(File mapFile)
    {
       this.mapFile = mapFile;
    }

@@ -1,7 +1,6 @@
 package com.greenteam.huntjumper.match;
 
 import com.greenteam.huntjumper.audio.AudioSystem;
-import com.greenteam.huntjumper.commands.Command;
 import com.greenteam.huntjumper.contoller.AbstractJumperController;
 import com.greenteam.huntjumper.contoller.BotController;
 import com.greenteam.huntjumper.contoller.MouseController;
@@ -15,16 +14,13 @@ import com.greenteam.huntjumper.utils.Point;
 import com.greenteam.huntjumper.utils.Utils;
 import org.newdawn.slick.*;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.*;
 
 /**
  * User: GreenTea Date: 03.06.12 Time: 16:33
  */
-public class SinglePlayerMatchState extends AbstractMatchState
+public class SinglePlayerMatchState extends BaseMatchState
 {
    private boolean gameFinished = false;
 

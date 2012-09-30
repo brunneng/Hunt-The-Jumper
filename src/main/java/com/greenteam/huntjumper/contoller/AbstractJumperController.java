@@ -51,11 +51,14 @@ public abstract class AbstractJumperController implements IJumperController, IPa
    public void prepareParameters(ParametersHolder parametersHolder)
    {
       parametersHolder.addParameter(new Parameter<>(
-              ParameterType.ACCELERATION_COMMON_FACTOR, 1f));
+              ParameterType.ACCELERATION_COMMON_FACTOR,
+              DEFAULT_JUMPER_ACCELERATION_COMMON_FACTOR));
       parametersHolder.addParameter(new Parameter<>(
-              ParameterType.ACCELERATION_ANGLE_COEF_FACTOR, 1f));
+              ParameterType.ACCELERATION_ANGLE_COEF_FACTOR,
+              DEFAULT_JUMPER_ACCELERATION_ANGLE_COEF_FACTOR));
       parametersHolder.addParameter(new Parameter<>(
-              ParameterType.ACCELERATION_SPEED_COEF_FACTOR, 1f));
+              ParameterType.ACCELERATION_SPEED_COEF_FACTOR,
+              DEFAULT_JUMPER_ACCELERATION_SPEED_COEF_FACTOR));
    }
 
    public void update(Jumper jumper, int delta)

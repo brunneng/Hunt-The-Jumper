@@ -32,13 +32,13 @@ public class Camera implements IUpdateable
            ViewConstants.CAMERA_SAMPLES_TIMER_INTERVAL);
    private Deque<Float> velocitySamples = new LinkedList<Float>();
 
-   private AbstractMatchState matchState;
+   private BaseMatchState matchState;
 
    public static Camera getCamera() {
       return instance;
    }
 
-   Camera(AbstractMatchState matchState, Point pos, int viewWidth, int viewHeight)
+   Camera(BaseMatchState matchState, Point pos, int viewWidth, int viewHeight)
    {
       this.matchState = matchState;
       this.viewWidth = viewWidth;

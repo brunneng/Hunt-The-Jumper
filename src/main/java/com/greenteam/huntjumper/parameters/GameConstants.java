@@ -33,6 +33,10 @@ public class GameConstants
 
    public static float MAX_SOUNDS_DIST = JUMPER_RADIUS*50;
 
+   public static float DEFAULT_JUMPER_ACCELERATION_COMMON_FACTOR = 0.75f;
+   public static float DEFAULT_JUMPER_ACCELERATION_ANGLE_COEF_FACTOR = 2f;
+   public static float DEFAULT_JUMPER_ACCELERATION_SPEED_COEF_FACTOR = 1f;
+
    public static int PATH_FINDING_AVERAGE_TIME_INTERVAL = 500;
    public static int PATH_FINDING_TIME_DISPERSION = 100;
    public static int PATH_FINDING_MAP_TEST_POINTS_IN_CELL = 12;
